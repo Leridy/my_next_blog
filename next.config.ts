@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
             loaders: [
               'sass-loader',
             ],
-        }
+        },
       }
     }
   }

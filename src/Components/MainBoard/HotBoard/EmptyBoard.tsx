@@ -1,5 +1,4 @@
 import {ReactNode} from "react";
-import NotFound from "next/dist/client/components/not-found-error";
 
 interface EmptyBoardProps {
   text?: string;
@@ -13,7 +12,13 @@ export default function EmptyBoard(props: EmptyBoardProps) {
       <div
         className={'flex justify-center items-center'}
       >
-        {icon}
+        {icon || <img src={'/icons/empty.svg'} alt={'empty'}
+                      style={{
+                        width: '100px', height: '100px',
+                        color: 'var(--color-text-secondary)'
+                      }}
+
+        />}
       </div>
       <div
         className={'text-center'}

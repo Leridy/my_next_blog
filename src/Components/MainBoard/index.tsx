@@ -10,14 +10,21 @@ export default function MainBoard() {
   return (
     // 使用 grid 布局将 HotBoard 和 UserBoard 放在一起
     <div
-      className={'grid grid-cols-5 pt-16'}
+      className={'grid grid-cols-5 pt-16 h-full'}
     >
       <div
-        className={'grid grid-cols-1 col-span-5 md:col-span-4 gap-6 p-4  ' +
+        className={
+          'grid grid-cols-1 col-span-5 md:col-span-4 gap-6 p-4  ' +
           'sm:grid-cols-2 ' +
           'md:grid-cols-3 ' +
           'lg:grid-cols-5 ' +
-          'grid-rows-3 h-full'}
+          'h-full ' +
+          'overflow-y-auto'
+        }
+        style={{
+          height: 'calc(100vh - 4rem)',
+          overflowY: 'scroll'
+        }}
       >
         <HotBoard
           title={'知乎日报'}
@@ -88,7 +95,10 @@ export default function MainBoard() {
         />
       </div>
       <div
-        className={'hidden md:block col-span-1'}
+        className={
+          'hidden md:block col-span-1 pl-0 pr-4 pt-4 pb-4 h-full ' +
+          'gap-6'
+        }
       >
         <UserBoard/>
       </div>
