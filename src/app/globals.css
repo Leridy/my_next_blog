@@ -3,19 +3,81 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --text-size: 12px;
+    /**
+     color palette
+     main color is #DFF2EB #B9E5E8 #7AB2D3 #4A628A
+     */
+    --color-background: #DFF2EB;
+    --color-primary: #B9E5E8;
+    --color-secondary: #7AB2D3;
+    --color-tertiary: #4A628A;
+
+    --color-text: #333;
+    --color-text-light: #fff;
+    --color-text-dark: #000;
+    --color-text-secondary: #666;
+
+    --color-border: #ccc;
+    --color-border-dark: #333;
+
+    --color-link: #007bff;
+    --color-link-hover: #0056b3;
+    --color-link-visited: #4a628a;
+    --color-link-active: #0056b3;
+
+    --color-success: #28a745;
+    --color-success-hover: #218838;
+    --color-success-active: #1e7e34;
+    --color-success-text: #fff;
+
+    --color-navbar-background: var(--color-tertiary);
+    --color-hot-border-background: var(--color-primary);
+
+
+
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        /**
+            color palette for dark mode
+            main color is #1A3636 #40534C #677D6A #D6BD98
+         */
+
+        --color-background:  #D6BD98;
+        --color-primary: #677D6A;
+        --color-secondary:  #40534C;
+        --color-tertiary: #1A3636;
+
+        --color-text: #fff;
+        --color-text-light: #fff;
+        --color-text-dark: #000;
+        --color-text-secondary: #ccc;
+
+        --color-border: #ccc;
+        --color-border-dark: #333;
+
+        /* dark mode link colors should be deeper than light mode */
+        --color-link: rgba(0, 123, 255, 0.75);
+        --color-link-hover: rgba(0, 86, 179, 0.75);
+        --color-link-visited: rgba(74, 98, 138, 0.75);
+        --color-link-active: rgba(0, 86, 179, 0.75);
+
+        /* dark mode success colors should be deeper than light mode */
+        --color-success: rgba(40, 167, 69, 0.75);
+        --color-success-hover: rgba(33, 136, 56, 0.75);
+        --color-success-active: rgba(30, 126, 52, 0.75);
+        --color-success-text: #fff;
+
+
+
+    }
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, sans-serif;
+    font-size: var(--text-size);
 }
