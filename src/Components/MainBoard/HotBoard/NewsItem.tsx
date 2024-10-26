@@ -1,5 +1,5 @@
 import './NewsItem.styles.scss';
-import {useMemo} from "react";
+import {useCallback, useMemo} from "react";
 
 export interface News {
   /* 新闻的唯一标识符 */
@@ -18,6 +18,10 @@ export interface News {
   date?: string;
   /* 新闻的热度 */
   hotCount?: number;
+  /* highlight key word */
+  keyword?: string;
+  /* 点击事件 */
+  onClick?: (url: string) => void;
 }
 
 export interface NewsItemProps extends News {
@@ -40,10 +44,19 @@ const IndexColor = [
  */
 
 export default function NewsItem(props: NewsItemProps) {
-  const {index, title, url, tags, hotCount, description} = props;
+  const {index, title, url, tags, hotCount, description, keyword, onClick} = props;
+
+  const handleLinkClick = useCallback(() => {
+    if (url && onClick) {
+      onClick(url);
+    }
+  }, [url])
 
   const renderExtraData = useMemo(() => {
-    if (hotCount && hotCount >= 1000) return `${hotCount >= 10000 ? '🔥' : ''}${hotCount}`;
+    // make number as a number with number unit like 10000 -> 1万， 12000 -> 1.2万, and if the number is less than 1000, just show the number.
+    // if hotCount is big than 10000 return '🔥' + hotCount / 10000 + '万' else return hotCount
+    const hotCountText = hotCount && hotCount > 10000 ? `🔥${(hotCount / 10000).toFixed(1)}万` : hotCount;
+    if (hotCountText && hotCount && hotCount > 10000) return hotCountText;
 
     if (tags && tags.length) {
       if (tags.length === 1) return tags[0];
@@ -52,14 +65,21 @@ export default function NewsItem(props: NewsItemProps) {
     }
 
     return '';
-
   }, [hotCount, tags])
+
+  const renderTitleWithHighlight = useMemo(() => {
+    // if there is a keyword, use the keyword to highlight the title.
+    if (keyword) {
+      const reg = new RegExp(keyword, 'g');
+      return title.replace(reg, `<span class="bg-amber-200">${keyword}</span>`);
+    }
+    return title;
+  }, [keyword, title])
 
   return (
     <div
       className={`
             flex items-start 
-            ${IndexColor[index]}
             ${index < 2 ? 'font-bold' : ''}
             gap-1
             title
@@ -69,25 +89,25 @@ export default function NewsItem(props: NewsItemProps) {
         `}
       title={description || title}
     >
-      <p className={'w-1/12'}>{index + 1}.</p>
-      <a
-        href={url}
-        target={'_blank'}
+      <p className={`w-1/12 ${IndexColor[index]}`}>{index + 1}.</p>
+      <span
         rel={'noreferrer'}
         className={`
             overflow-hidden 
             whitespace-pre-wrap
             flex-1
             height-8
+            cursor-pointer
           `}
+        dangerouslySetInnerHTML={{__html: renderTitleWithHighlight}}
+        onClick={handleLinkClick}
       >
-        {title}
-      </a>
+      </span>
       <span
         style={{color: 'var(--color-text-secondary)'}}
       >
           {renderExtraData}
-        </span>
+      </span>
     </div>
   )
 }

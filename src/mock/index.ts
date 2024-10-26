@@ -1,5 +1,196 @@
 import {News} from "@/Components/MainBoard/HotBoard/NewsItem";
 
+/**
+ * mock data schema
+ *   id          Int      @id @default(autoincrement())
+ *   name        String   @unique
+ *   description String   @default("")
+ *   url         String   @unique
+ *   image       String   @default("")
+ *   // newsList is the JSON string of the news list
+ *   newsList    Json
+ *   createdAt   DateTime @default(now())
+ *   updatedAt   DateTime @updatedAt
+ */
+export const mockHotTopic = [
+  {
+    id: 1,
+    name: '知乎日报',
+    icon: 'zhihu',
+    description: '知乎日报是知乎官方发布的日报，每天推送最新的知乎热点内容。',
+    url: 'https://daily.zhihu.com/',
+    image: 'https://example.com/zhihu.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 2,
+    name: 'V2EX',
+    icon: 'v2ex',
+    description: 'V2EX 是一个关于分享和探索的地方，每天都有大量的新内容发布。',
+    url: 'https://www.v2ex.com/',
+    image: 'https://example.com/v2ex.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 3,
+    name: 'Github',
+    icon: 'github',
+    description: 'Github ��全球最大的开源代码托管平台，每天都有大量的新项目发布。',
+    url: 'http://github.com',
+    image: 'https://example.com/github.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 4,
+    name: '掘金',
+    icon: 'juejin',
+    description: '掘金是一个面向开发者的社区，每天都有大量的新内容发布。',
+    url: 'https://juejin.cn/',
+    image: 'https://example.com/juejin.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 5,
+    name: '微博热搜',
+    icon: 'weibo',
+    description: '微博热搜是微博官方发布的热门话题，每天都有大量的新内容发布。',
+    url: 'https://s.weibo.com/top/summary',
+    image: 'https://example.com/weibo.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 6,
+    name: 'IT之家',
+    icon: 'ithome',
+    description: 'IT之家是一个关于科技新闻的网站，每天都有大量的新内容发布。',
+    url: 'https://www.ithome.com/',
+    image: 'https://example.com/ithome.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 7,
+    name: '今日头条',
+    icon: 'toutiao',
+    description: '头条是一个关于新闻资讯的网站，每天都有大量的新内容发布。',
+    url: 'https://www.toutiao.com/',
+    image: 'https://example.com/toutiao.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 8,
+    name: '抖音',
+    icon: 'tiktok',
+    description: '抖音是一个短视频分享平台，每天都有大量的新内���发布。',
+    url: 'https://www.douyin.com/',
+    image: 'https://example.com/douyin.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 9,
+    name: '中关村在线',
+    icon: 'zol',
+    description: '中关村在线是一个关于科技新闻的网站，每天都有大量的新内容发布。',
+    url: 'https://www.zol.com.cn/',
+    image: 'https://example.com/zol.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 10,
+    name: '36氪',
+    icon: '36kr',
+    description: '36氪是一个关于创业新闻的网站，每天都有大量的新内容发布。',
+    url: 'https://36kr.com/',
+    image: 'https://example.com/36kr.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 11,
+    name: '虎扑步行街',
+    icon: 'hupu',
+    description: '虎扑步行街是一个关于体育新闻的网站，每天都有大量的新内容发布。',
+    url: 'https://bbs.hupu.com/bxj',
+    image: 'https://example.com/hupu.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 12,
+    name: '新浪',
+    icon: 'sina',
+    description: '新浪是一个关于新闻资讯的��站，每天都有大量的新内容发布。',
+    url: 'https://www.sina.com.cn/',
+    image: 'https://example.com/sina.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 13,
+    name: '虎嗅',
+    icon: 'huxiu',
+    description: '虎嗅是一个关于创业新闻的网站，每天都有大量的新内容发布。',
+    url: 'https://www.huxiu.com/',
+    image: 'https://example.com/huxiu.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 14,
+    name: '什么值得买',
+    icon: 'smzdm',
+    description: '什么值得买是一个关于购物优惠的网站，每天都有大量的新内容发布。',
+    url: 'https://www.smzdm.com/',
+    image: 'https://example.com/smzdm.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 15,
+    name: '豆瓣',
+    icon: 'douban',
+    description: '豆瓣是一个关于影视音乐的网站，每天都有大量的新内容发布。',
+    url: 'https://www.douban.com/',
+    image: 'https://example.com/douban.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  },
+  {
+    id: 16,
+    name: 'B站',
+    icon: 'bilibili',
+    description: '知乎日报是知乎官方发布的日报，每天推送最新的知乎热点内容。',
+    url: 'https://www.bilibili.com/',
+    image: 'https://example.com/bilibili.jpg',
+    newsList: [],
+    createdAt: '2021-10-01T00:00:00Z',
+    updatedAt: '2021-10-01T00:00:00Z',
+  }
+]
+
 export const mockNews: News[] = [
   {
     "id": "1",
@@ -274,7 +465,7 @@ export const mockNews: News[] = [
 
 export const mockedGithub: News[] = [
   {
-    "id": "1",
+    "id": '981',
     "title": "996icu",
     "description": "反对996工作制的项目",
     "cover": "http://example.com/cover1.jpg",
@@ -283,7 +474,7 @@ export const mockedGithub: News[] = [
     "tags": ["996", "劳动权益"]
   },
   {
-    "id": "2",
+    "id": '982',
     "title": "JavaGuide",
     "description": "Java面试指南",
     "cover": "http://example.com/cover2.jpg",
@@ -292,7 +483,7 @@ export const mockedGithub: News[] = [
     "tags": ["Java", "面试"]
   },
   {
-    "id": "3",
+    "id": '983',
     "title": "labuladong's Algorithms",
     "description": "算法学习指南",
     "cover": "http://example.com/cover3.jpg",
@@ -301,7 +492,7 @@ export const mockedGithub: News[] = [
     "tags": ["算法", "LeetCode"]
   },
   {
-    "id": "4",
+    "id": '984',
     "title": "FreeComputerBooks",
     "description": "免费的计算机编程类中文书籍",
     "cover": "http://example.com/cover4.jpg",
@@ -310,7 +501,7 @@ export const mockedGithub: News[] = [
     "tags": ["免费书籍", "编程"]
   },
   {
-    "id": "5",
+    "id": '985',
     "title": "Hello-Algorithm",
     "description": "动画图解、一键运行的数据结构与算法教程",
     "cover": "http://example.com/cover5.jpg",
@@ -319,7 +510,7 @@ export const mockedGithub: News[] = [
     "tags": ["算法", "教程"]
   },
   {
-    "id": "6",
+    "id": '986',
     "title": "Ant-Design",
     "description": "企业级UI设计语言和React组件库",
     "cover": "http://example.com/cover6.jpg",
@@ -328,7 +519,7 @@ export const mockedGithub: News[] = [
     "tags": ["UI框架", "React"]
   },
   {
-    "id": "7",
+    "id": "987",
     "title": "share-github-projects",
     "description": "分享GitHub上有趣、入门级的开源项目",
     "cover": "http://example.com/cover7.jpg",
@@ -337,7 +528,7 @@ export const mockedGithub: News[] = [
     "tags": ["开源项目", "入门级"]
   },
   {
-    "id": "8",
+    "id": "988",
     "title": "vue-element-admin",
     "description": "后台前端解决方案",
     "cover": "http://example.com/cover8.jpg",
@@ -346,7 +537,7 @@ export const mockedGithub: News[] = [
     "tags": ["Vue", "后台"]
   },
   {
-    "id": "9",
+    "id": "989",
     "title": "frp",
     "description": "内网穿透的高性能反向代理应用",
     "cover": "http://example.com/cover9.jpg",
@@ -355,11 +546,11 @@ export const mockedGithub: News[] = [
     "tags": ["内网穿透", "代理"]
   },
   {
-    "id": "10",
+    "id": "9810",
     "title": "GitHub-Chinese-Top-Charts",
     "description": "GitHub中文排行榜",
     "cover": "http://example.com/cover10.jpg",
-    "url": "https://gitee.com/GrowingGit/GitHub-Chinese-Top-Charts",
+    "url": "https://github.com/2noise/ChatTTS",
     "hotCount": 60000,
     "tags": ["中文项目", "排行榜"]
   }

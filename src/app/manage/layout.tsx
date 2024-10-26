@@ -8,7 +8,7 @@ import type {Metadata} from "next";
 
 export const metadata: Metadata = {
   title: "管理后台",
-  description: "摸鱼吧管理后台",
+  description: "划水网管理后台",
 };
 
 export default function ManageLayout({children}: Readonly<{

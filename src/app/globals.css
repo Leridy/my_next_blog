@@ -12,6 +12,7 @@
     --color-primary: #B9E5E8;
     --color-secondary: #7AB2D3;
     --color-tertiary: #4A628A;
+    --color-quaternary: #CBDCEB;
 
     --color-text: #333;
     --color-text-light: #fff;
@@ -33,6 +34,7 @@
 
     --color-navbar-background: var(--color-tertiary);
     --color-hot-border-background: var(--color-primary);
+    --color-card-background: var(--color-quaternary);
 
 
 
@@ -49,8 +51,9 @@
         --color-primary: #677D6A;
         --color-secondary:  #40534C;
         --color-tertiary: #1A3636;
+        --color-quaternary: #629584;
 
-        --color-text: #fff;
+        --color-text: #e2e2e2;
         --color-text-light: #fff;
         --color-text-dark: #000;
         --color-text-secondary: #ccc;

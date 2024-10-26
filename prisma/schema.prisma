@@ -18,6 +18,7 @@ datasource db {
 model HotTopic {
   id          Int      @id @default(autoincrement())
   name        String   @unique
+  icon        String   @default("")
   description String   @default("")
   url         String   @unique
   image       String   @default("")

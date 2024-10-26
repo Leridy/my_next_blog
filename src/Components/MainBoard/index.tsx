@@ -1,12 +1,38 @@
-import HotBoard from "./HotBoard";
-import UserBoard from "@/Components/MainBoard/UserBoard";
-import {mockedGithub, mockNews} from "@/mock";
+import HotBoard from "./HotBoard/HotBoard";
+import UserBoard from "@/Components/MainBoard/UserBoard/UserBoard";
+import {mockedGithub, mockNews, mockHotTopic} from "@/mock";
+import {useCallback, useMemo, useState} from "react";
+import LinkFrame from "@/Components/LinkFrame/LinkFrame";
+
+interface MainBoardProps {
+    keyword: string;
+}
 
 /**
  * MainBoard
  * @description 这是用来展示首页所有内容的一个框架
  */
-export default function MainBoard() {
+export default function MainBoard(props: MainBoardProps) {
+  const {keyword} = props;
+  const [openedLink, setOpenedLink] = useState<string>('');
+
+  const handleOpenLink = useCallback((url: string) => {
+    window.open(url, '_blank');
+  }, [])
+
+  const renderHotBoard = useMemo(() => {
+    return (
+      mockHotTopic.map((topic, ) => <HotBoard
+        title={topic.name}
+        key={topic.id}
+        keyword={keyword}
+        {...topic}
+        newsList={[...mockedGithub, ...mockNews].sort(() => Math.random() - 0.5)}
+        onOpenFrame={handleOpenLink}
+      />)
+    )
+  }, [keyword])
+
   return (
     // 使用 grid 布局将 HotBoard 和 UserBoard 放在一起
     <div
@@ -26,82 +52,20 @@ export default function MainBoard() {
           overflowY: 'scroll'
         }}
       >
-        <HotBoard
-          title={'知乎日报'}
-          icon={'zhihu'}
-          newsList={mockNews}
-        />
-        <HotBoard
-          title={'V2EX'}
-          icon={'v2ex'}
-          newsList={[...mockNews].reverse()}
-        />
-        <HotBoard
-          title={'Github'}
-          icon={'github'}
-          newsList={mockedGithub}
-        />
-        <HotBoard
-          title={'掘金'}
-          icon={'juejin'}
-        />
-        <HotBoard
-          title={'微博热搜'}
-          icon={'weibo'}
-        />
-        <HotBoard
-          title={'IT之家'}
-          icon={'ithome'}
-        />
-        <HotBoard
-          title={'头条'}
-          icon={'toutiao'}
-        />
-        <HotBoard
-          title={'抖音'}
-          icon={'tiktok'}
-        />
-        <HotBoard
-          title={'中关村在线'}
-          icon={'zol'}
-        />
-        <HotBoard
-          title={'36氪'}
-          icon={'36kr'}
-        />
-        <HotBoard
-          title={'虎扑步行街'}
-          icon={'hupu'}
-        />
-        <HotBoard
-          title={'新浪'}
-          icon={'sina'}
-        />
-        <HotBoard
-          title={'虎嗅'}
-          icon={'huxiu'}
-        />
-        <HotBoard
-          title={'什么值得买'}
-          icon={'smzdm'}
-        />
-        <HotBoard
-          title={'豆瓣'}
-          icon={'douban'}
-        />
-        <HotBoard
-          title={'B站'}
-          icon={'bilibili'}
-        />
+        {renderHotBoard}
       </div>
       <div
         className={
           'hidden md:block col-span-1 pl-0 pr-4 pt-4 pb-4 h-full ' +
-          'gap-6'
+          'gap-6 overflow-y-scroll'
         }
       >
         <UserBoard/>
       </div>
+
+      {
+        openedLink && <LinkFrame url={openedLink} onClose={() => setOpenedLink('')} title={'Opened Link'}/>
+      }
 
     </div>
   )

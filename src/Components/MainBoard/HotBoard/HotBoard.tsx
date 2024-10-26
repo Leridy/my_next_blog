@@ -2,6 +2,7 @@ import EmptyBoard from "./EmptyBoard";
 import BrandIcon from "./BrandIcon";
 import NewsItem, {News} from "./NewsItem";
 import "./HotBoard.styles.scss";
+import {useCallback, useMemo} from "react";
 
 
 interface HotBoardProps {
@@ -12,6 +13,8 @@ interface HotBoardProps {
   newsList?: News[];
   rowSpan?: number;
   colSpan?: number;
+  keyword?: string;
+  onOpenFrame?: (url: string) => void;
 }
 
 /**
@@ -20,13 +23,24 @@ interface HotBoardProps {
  * @description 这个组件是用来展示热门内容的，你需要传入以下信息，然后这个组件会展示出来
  */
 export default function HotBoard(props: HotBoardProps) {
-  const {icon, title, description, url, newsList, rowSpan, colSpan} = props;
+  const {icon, title, description, url, newsList, rowSpan, colSpan, keyword, onOpenFrame} = props;
 
-  const renderNews = () => {
-    return (
-      newsList?.map((news, i) => <NewsItem index={i} {...news} key={news.id}/>)
-    )
-  }
+  const filterNews = useMemo(() => {
+    return newsList?.filter(ele => ele.title.includes(keyword || ''))
+  }, [newsList, keyword]);
+
+  const openFrame = useCallback((url: string) => {
+    onOpenFrame?.(url);
+  }, [onOpenFrame])
+
+  const renderNews = useMemo(() => {
+      return (
+        filterNews?.map((news, i) => <NewsItem
+          onClick={openFrame}
+          keyword={keyword} index={i} {...news} key={news.id}/>) || ''
+      )
+    }, [filterNews, keyword, openFrame]
+  )
 
   return (
     <div
@@ -35,7 +49,7 @@ export default function HotBoard(props: HotBoardProps) {
         background: 'var(--color-hot-border-background)',
         gridRow: `span ${rowSpan || 1}`,
         gridColumn: `span ${colSpan || 1}`,
-    }}
+      }}
     >
       <div
         className={'flex items-center space-x-2'}
@@ -50,9 +64,12 @@ export default function HotBoard(props: HotBoardProps) {
       </div>
 
       <div
-        className={'hotBoardNewsList mt-4 mb-4 flex-1'}>
+        className={
+          'hotBoardNewsList mt-4 mb-4 flex-1 ' +
+          `${filterNews?.length ? 'fade-in' : ''}`
+        }>
         {
-          newsList?.length ? renderNews() : <EmptyBoard/>
+          filterNews?.length ? renderNews : <EmptyBoard/>
         }
       </div>
 
