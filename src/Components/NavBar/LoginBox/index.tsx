@@ -11,8 +11,9 @@ export default function LoginBox(props: LoginBoxProps) {
     <Space
       direction="horizontal"
     >
-      <Button type="primary"
-              onClick={onClick}
+      <Button
+        type="primary"
+        onClick={onClick}
       >登录</Button>
       <Button
         type={'default'}

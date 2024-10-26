@@ -23,7 +23,7 @@ export default function ManageLayout({children}: Readonly<{
         <div
           style={{width: 32, height: 32, background: 'var(--color-primary)', marginRight: 8}}
         />
-        <div className="text-white text-2xl mr-2">Touch Fish Bar Manager</div>
+        <div className="text-white text-2xl mr-2">划水管理平台</div>
         <NavMenu/>
       </Header>
       <Layout>

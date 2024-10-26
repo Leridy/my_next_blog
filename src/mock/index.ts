@@ -1,4 +1,4 @@
-import {News} from "@/Components/MainBoard/HotBoard/NewsItem";
+import {HotTopic, News} from "../../type/hot";
 
 /**
  * mock data schema
@@ -12,7 +12,7 @@ import {News} from "@/Components/MainBoard/HotBoard/NewsItem";
  *   createdAt   DateTime @default(now())
  *   updatedAt   DateTime @updatedAt
  */
-export const mockHotTopic = [
+export const mockHotTopic: HotTopic[] = [
   {
     id: 1,
     name: '知乎日报',

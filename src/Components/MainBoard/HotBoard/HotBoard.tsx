@@ -1,8 +1,9 @@
 import EmptyBoard from "./EmptyBoard";
 import BrandIcon from "./BrandIcon";
-import NewsItem, {News} from "./NewsItem";
+import NewsItem from "./NewsItem";
 import "./HotBoard.styles.scss";
 import {useCallback, useMemo} from "react";
+import type {News} from "../../../../type/hot";
 
 
 interface HotBoardProps {
@@ -15,6 +16,7 @@ interface HotBoardProps {
   colSpan?: number;
   keyword?: string;
   onOpenFrame?: (url: string) => void;
+  index?: number;
 }
 
 /**
@@ -23,7 +25,7 @@ interface HotBoardProps {
  * @description 这个组件是用来展示热门内容的，你需要传入以下信息，然后这个组件会展示出来
  */
 export default function HotBoard(props: HotBoardProps) {
-  const {icon, title, description, url, newsList, rowSpan, colSpan, keyword, onOpenFrame} = props;
+  const {icon, title, description, url, newsList, rowSpan, colSpan, keyword, onOpenFrame, index} = props;
 
   const filterNews = useMemo(() => {
     return newsList?.filter(ele => ele.title.includes(keyword || ''))
@@ -44,11 +46,12 @@ export default function HotBoard(props: HotBoardProps) {
 
   return (
     <div
-      className={'p-4 rounded-lg shadow-md hotBoard flex-col'}
+      className={'p-4 rounded-lg shadow-md hotBoard flex-col hover:shadow-xl'}
       style={{
         background: 'var(--color-hot-border-background)',
         gridRow: `span ${rowSpan || 1}`,
         gridColumn: `span ${colSpan || 1}`,
+        animationDelay: `${(index||0) * 0.1}s`
       }}
     >
       <div
@@ -65,9 +68,11 @@ export default function HotBoard(props: HotBoardProps) {
 
       <div
         className={
-          'hotBoardNewsList mt-4 mb-4 flex-1 ' +
+          'hotBoardNewsList mt-4 mb-4 ' +
+          'overflow-y-scroll' +
           `${filterNews?.length ? 'fade-in' : ''}`
-        }>
+        }
+      >
         {
           filterNews?.length ? renderNews : <EmptyBoard/>
         }

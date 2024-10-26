@@ -23,7 +23,7 @@ model HotTopic {
   url         String   @unique
   image       String   @default("")
   // newsList is the JSON string of the news list
-  newsList    Json
+  newsList    Json     @default("[]")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

@@ -1,11 +1,13 @@
 .hotBoard {
   min-height: 30vh;
+  animation: slideIn ease-in-out .5s forwards;
+  opacity: 0;
+  transition: all 0.2s;
 }
 
 .hotBoardNewsList {
-  flex: 1;
-  height: 85%;
-  max-height: 85%;
+  height: calc(100% - 35px);
+  margin-bottom: 16px;
   overflow: scroll;
 }
 
@@ -18,6 +20,17 @@
     opacity: 0;
   }
   to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(10%);
+    opacity: 0.01;
+  }
+  to {
+    transform: translateY(0);
     opacity: 1;
   }
 }

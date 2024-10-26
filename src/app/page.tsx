@@ -1,7 +1,7 @@
 'use client'
 import {useCallback, useEffect, useState} from "react";
 import NavBar from "@/Components/NavBar";
-import MainBoard from "@/Components/MainBoard";
+import MainBoard from "@/Components/MainBoard/MainBoard";
 import FakeMask from "@/Components/FakeMask/FakeMask";
 
 export default function Home() {
@@ -42,9 +42,9 @@ export default function Home() {
       <MainBoard
         keyword={keyword}
       />
-      {fakeMode && <FakeMask
-          onExit={toggleFakeMode}
-      />}
+      {/*{fakeMode && <FakeMask*/}
+      {/*    onExit={toggleFakeMode}*/}
+      {/*/>}*/}
     </>
 
   )

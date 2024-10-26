@@ -1,11 +1,12 @@
 import HotBoard from "./HotBoard/HotBoard";
 import UserBoard from "@/Components/MainBoard/UserBoard/UserBoard";
-import {mockedGithub, mockNews, mockHotTopic} from "@/mock";
-import {useCallback, useMemo, useState} from "react";
+import {mockedGithub, mockNews} from "@/mock";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import LinkFrame from "@/Components/LinkFrame/LinkFrame";
+import {useHotData} from "@/app/manage/hot/hooks/useHotData";
 
 interface MainBoardProps {
-    keyword: string;
+  keyword: string;
 }
 
 /**
@@ -16,13 +17,20 @@ export default function MainBoard(props: MainBoardProps) {
   const {keyword} = props;
   const [openedLink, setOpenedLink] = useState<string>('');
 
+  const {fetch, hotList} = useHotData();
+
   const handleOpenLink = useCallback((url: string) => {
     window.open(url, '_blank');
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    fetch();
+  }, []);
 
   const renderHotBoard = useMemo(() => {
     return (
-      mockHotTopic.map((topic, ) => <HotBoard
+      [...hotList].map((topic,i) => <HotBoard
+        index={i}
         title={topic.name}
         key={topic.id}
         keyword={keyword}
@@ -31,7 +39,7 @@ export default function MainBoard(props: MainBoardProps) {
         onOpenFrame={handleOpenLink}
       />)
     )
-  }, [keyword])
+  }, [keyword, handleOpenLink, hotList])
 
   return (
     // 使用 grid 布局将 HotBoard 和 UserBoard 放在一起
@@ -49,7 +57,7 @@ export default function MainBoard(props: MainBoardProps) {
         }
         style={{
           height: 'calc(100vh - 4rem)',
-          overflowY: 'scroll'
+          overflowY: 'scroll',
         }}
       >
         {renderHotBoard}

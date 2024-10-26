@@ -43,12 +43,12 @@ export default function SideMenu() {
   const router = useRouter();
 
   const parentPath = useMemo<SideMenuType>(() => {
-    return pathname.split('/')[2] as SideMenuType;
+    return pathname?.split('/')[2] as SideMenuType;
   }, [pathname]);
 
   const childPath = useMemo(() => {
-    const splitPath = pathname.split('/');
-    return splitPath.length >= 3 ? splitPath[3] : '';
+    const splitPath = pathname?.split('/');
+    return splitPath?.length || 0 >= 3 ? splitPath?.[3] : '';
   }, [pathname]);
 
   const currentMenu = useMemo(() => {
@@ -68,17 +68,22 @@ export default function SideMenu() {
 
   return (
     currentMenu ? (
-      <Sider
-        width={200}
-      >
-        <Menu
-          onClick={handleClick}
-          mode="inline"
-          selectedKeys={selectedKeys}
-          style={{height: '100%', borderRight: 0}}
-          items={currentMenu}
-        />
-      </Sider>
-    ) : null
-  );
+        <Sider
+          width={200}
+          className="bg-white"
+          style={{height: 'calc(100vh - 64px)'}}
+        >
+
+          <Menu
+            onClick={handleClick}
+            mode="inline"
+            selectedKeys={selectedKeys}
+            style={{height: '100%', borderRight: 0, padding: 4}}
+            items={currentMenu}
+          />
+        </Sider>
+      ) :
+      null
+  )
+    ;
 }
