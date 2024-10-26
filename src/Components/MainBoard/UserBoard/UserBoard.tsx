@@ -33,7 +33,7 @@ export default function UserBoard() {
         }
       >
         todo here should be a small game, it generate a random food for you to eat.
-        you can also add your food or manage delete the food you don't want to eat.
+        you can also add your food or manage delete the food you don&#39;t want to eat.
       </Card>
 
       <Card

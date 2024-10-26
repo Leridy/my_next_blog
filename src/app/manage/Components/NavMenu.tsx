@@ -34,13 +34,13 @@ export default function NavMenu() {
   const pathname = usePathname();
   const router = useRouter();
   const selectedKeys = useMemo(() => {
-    const splitPath = pathname.split('/');
-    const currentPath = splitPath.length >= 3 ? splitPath[2] : '/';
+    const splitPath = pathname?.split('/');
+    const currentPath = splitPath?.length || 0 >= 3 ? splitPath?.[2] || '' : '/';
     return [currentPath];
   }, [pathname])
 
-  const handleClick = (e: any) => {
-    router.push(`/manage/${e.key}`);
+  const handleClick = (e :{key:string}) => {
+    router.push(`/manage/${e?.key}`);
   };
 
   return (

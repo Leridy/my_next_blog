@@ -25,7 +25,7 @@ interface HotBoardProps {
  * @description 这个组件是用来展示热门内容的，你需要传入以下信息，然后这个组件会展示出来
  */
 export default function HotBoard(props: HotBoardProps) {
-  const {icon, title, description, url, newsList, rowSpan, colSpan, keyword, onOpenFrame, index} = props;
+  const {icon, title, newsList, rowSpan, colSpan, keyword, onOpenFrame, index} = props;
 
   const filterNews = useMemo(() => {
     return newsList?.filter(ele => ele.title.includes(keyword || ''))

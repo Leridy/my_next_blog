@@ -6,8 +6,7 @@ import Sider from "antd/es/layout/Sider";
 
 type SideMenuType = 'hot' | 'user' | 'setting';
 
-export interface SideMenuItem extends Record<SideMenuType, MenuProps['items']> {
-}
+export type SideMenuItem = Record<SideMenuType, MenuProps['items']>
 
 export const sideMenuData: SideMenuItem = {
   hot: [

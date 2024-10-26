@@ -18,7 +18,7 @@ export default function UserCard(props: CardProps) {
         {header}
       </div>
     )
-  }, []);
+  }, [header]);
 
   const renderAction = useMemo(
     () => {

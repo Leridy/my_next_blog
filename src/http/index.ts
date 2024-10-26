@@ -7,7 +7,7 @@ const requestHandler = (request: any) => {
   return request;
 }
 
-const responseHandler = (response: any): AxiosResponse["data"] => {
+const responseHandler = (response: AxiosResponse): AxiosResponse["data"] => {
   // add response handler
   /**
    * if response status code starts with 2, return response.data

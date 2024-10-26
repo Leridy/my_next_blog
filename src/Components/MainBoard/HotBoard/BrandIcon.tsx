@@ -1,6 +1,6 @@
 'use client';
 import {ReactNode, useMemo} from "react";
-import {TikTokOutlined, FileTextOutlined} from "@ant-design/icons";
+import {FileTextOutlined} from "@ant-design/icons";
 import Image from "next/image";
 
 interface BrandIconProps {

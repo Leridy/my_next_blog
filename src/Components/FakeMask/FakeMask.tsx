@@ -1,4 +1,4 @@
-import {Button, Input,} from "antd";
+import {Button, Input} from "antd";
 import {useState} from "react";
 import './FakeMask.style.scss'
 

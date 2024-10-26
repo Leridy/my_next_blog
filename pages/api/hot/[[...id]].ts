@@ -4,7 +4,7 @@ import {HotTopic} from "@prisma/client";
 
 
 const get = async (query: Partial<HotTopic> | string):Promise<HotTopic[] | HotTopic | null> => {
-  let queryObj = typeof query === 'string' ? {id: Number(query)} : query;
+  const queryObj = typeof query === 'string' ? {id: Number(query)} : query;
   return getHots(queryObj);
 }
 

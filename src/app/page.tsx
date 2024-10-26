@@ -42,9 +42,9 @@ export default function Home() {
       <MainBoard
         keyword={keyword}
       />
-      {/*{fakeMode && <FakeMask*/}
-      {/*    onExit={toggleFakeMode}*/}
-      {/*/>}*/}
+      {fakeMode && <FakeMask
+          onExit={toggleFakeMode}
+      />}
     </>
 
   )
