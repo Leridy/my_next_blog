@@ -1,6 +1,8 @@
 'use client'
 import UserBox from "./UserBox";
 import {Input} from "antd";
+import LoginBox from "@/Components/NavBar/LoginBox";
+import LoginModal from "@/Components/NavBar/LoginModal/LoginModal";
 
 interface NavBarProps {
   onSearch?: (value: string) => void;
@@ -21,10 +23,11 @@ export default function NavBar(props: NavBarProps) {
     >
       <h1 className="text-2xl font-bold">划水网</h1>
       <Input
-        placeholder="搜索..."
+        placeholder="在本页筛选..."
         onChange={handleSearch}
       />
       <UserBox/>
+      <LoginModal />
     </nav>
   )
 }

@@ -1,4 +1,5 @@
 import {CSSProperties, ReactNode, useMemo} from "react";
+import './Card.style.scss'
 
 export interface CardProps {
   header?: ReactNode;
@@ -14,6 +15,9 @@ export default function UserCard(props: CardProps) {
     return (
       <div
         className={'flex justify-between items-center font-bold'}
+        style={{
+          animationDelay: '0.1s',
+        }}
       >
         {header}
       </div>
@@ -32,7 +36,7 @@ export default function UserCard(props: CardProps) {
 
   return (
     <div
-      className={'p-4 rounded-lg shadow-md flex-col'}
+      className={'p-4 rounded-lg shadow-md flex-col card'}
       style={{
         background: 'var(--color-card-background)',
         height: '20vh',

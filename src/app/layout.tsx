@@ -17,6 +17,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "🚣‍♀️划水网 - 一个划水的网站",
   description: "划水网是一个划水的网站",
+  keywords: ["划水", "水", "网站"],
 };
 
 export default function RootLayout({

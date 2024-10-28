@@ -1,30 +1,23 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import {createHot, deleteHot, getHots, updateHot} from "@/server/db/dao/hot.dao";
 import {HotTopic} from "@prisma/client";
 import {validationAuthToken, logger} from "@/server/middleware";
 
 
-const get = async (query: Partial<HotTopic> | string): Promise<HotTopic[] | HotTopic | null> => {
+const get = async (query: Partial<HotTopic> | string):Promise<HotTopic[] | HotTopic | null> => {
   const queryObj = typeof query === 'string' ? {id: Number(query)} : query;
-  return getHots(queryObj);
+  return [];
 }
 
-const post = async (req: NextApiRequest):Promise<HotTopic> => {
-  const data = req.body;
-  return createHot(data)
+const post = async (data: Omit<HotTopic, 'id' | 'newsList'>) => {
+  return null;
 }
 
-const put = async (id: string, data: Omit<HotTopic, 'newsList'>) => {
-  return updateHot(id, data);
-}
-
-const del = async (id: string) => {
-  return deleteHot(id);
+const put = async (id:string, data: Omit<HotTopic, 'newsList'>) => {
+  return null;
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   let result;
-  const id = req?.query?.id?.[0] || ''
   try {
     // get the query params
     switch (req.method) {
@@ -34,15 +27,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         break
       case 'POST':
         // Create a new record
-        result = await post(req);
+        result = await post(req.body)
         break
       case 'PUT':
         // Update a record
-        result = await put(id, req.body)
+        const id = req?.query?.id?.[0] || ''
+        result = await put(id ,  req.body)
         break
       case 'DELETE':
         // Delete a record
-        result = await del(id)
         break
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])
@@ -56,4 +49,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default logger(validationAuthToken(handler, ['POST', 'PUT', 'DELETE']));
+export default logger(validationAuthToken(handler, []));

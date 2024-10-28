@@ -1,0 +1,5 @@
+@import "../../app/scss/animations.scss";
+
+.card {
+  animation: slideIn ease-in-out 0.5s;
+}

@@ -61,7 +61,7 @@ export default function NewsItem(props: NewsItemProps) {
             ${index < 2 ? 'font-bold' : ''}
             gap-1
             title
-            hover:text-amber-700
+            hover:text-amber-500
             hover:font-bold
             ease-in-out
         `}
@@ -76,6 +76,7 @@ export default function NewsItem(props: NewsItemProps) {
             flex-1
             height-8
             cursor-pointer
+            news-title
           `}
         dangerouslySetInnerHTML={{__html: renderTitleWithHighlight}}
         onClick={handleLinkClick}

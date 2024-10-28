@@ -23,6 +23,10 @@ export default function Home() {
   }, [toggleFakeMode]);
 
   useEffect(() => {
+    document.title = fakeMode ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
+  }, [fakeMode]);
+
+  useEffect(() => {
     // 当这个窗口（tab）切换到后台的时候，开启 fakeMode
     window.addEventListener('blur', changeToFakeMode);
     // while press esc key, enter fake mode
@@ -32,7 +36,7 @@ export default function Home() {
         window.removeEventListener('blur', changeToFakeMode);
         window.removeEventListener('keydown', handlePressEsc);
     }
-  }, [])
+  }, [changeToFakeMode, handlePressEsc]);
 
   return (
     <>

@@ -37,7 +37,8 @@ export default function HotList() {
       title: 'id',
       dataIndex: 'id',
       key: 'id',
-      align: 'center'
+      align: 'center',
+      width: 80,
     },
     {
       title: '栏目名称',
@@ -48,10 +49,11 @@ export default function HotList() {
       title: '图标',
       dataIndex: 'icon',
       key: 'icon',
+      width: 100,
       render: (icon: string) =>
-      <div className={'flex justify-center'}>
-        <BrandIcon src={icon}/>
-      </div>
+        <div className={'flex justify-center'}>
+          <BrandIcon src={icon}/>
+        </div>
 
       ,
       align: 'center'

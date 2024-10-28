@@ -17,7 +17,7 @@ export default function FakeMask(props: FakeMaskProps) {
 
 
   const handleSearch = () => {
-    window.open(`https://cn.bing.com/search?q=${searchValue}`);
+    if(searchValue) window.open(`https://cn.bing.com/search?q=${searchValue}`);
   }
 
   const exitFakeMode = () => {

@@ -13,7 +13,7 @@ export default function UserBoard() {
       <Card
         header={'Tips'}
       >
-        按 <code>Esc</code> 切换 fake 模式
+        1. 按 <code>Esc</code> 切换 fake 模式
       </Card>
       <Card
         header={
