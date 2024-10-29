@@ -1,3 +1,5 @@
 {
-  "USER_PASSWORD_SALT":"0/4RC@jg-n*a8J/*Be&*_Jc_iMj865qzh)@Q)9JmAV_zEvJJ0Hbmwo#Jd5er43$8M0ZceE^+rKr%Tx#*AAS/me2r5g*eYDtR8gNvy2f/hloLWfb_y/e!0zOcyUg67)siql685+sL+j%pK4DH%!LrdJgEz20#zQpA%8cmkxs1LqrrS!YMLQFEXneBoLZzj9m8#KCe7XK!6RtbfX+a1a(B^-$th-5LEY*O#EK4B^Kx!(MONAmg9AGbAD0rKKm+6+svEw/-6E2gX(4VCH%0qKuaro*18y!0(Qvi1)EEZ2J6@QPH"
+  "USER_PASSWORD_SALT":"0/4RC@jg-n*a8J/*Be&*_Jc_iMj865qzh)@Q)9JmAV_zEvJJ0Hbmwo#Jd5er43$8M0ZceE^+rKr%Tx#*AAS/me2r5g*eYDtR8gNvy2f/hloLWfb_y/e!0zOcyUg67)siql685+sL+j%pK4DH%!LrdJgEz20#zQpA%8cmkxs1LqrrS!YMLQFEXneBoLZzj9m8#KCe7XK!6RtbfX+a1a(B^-$th-5LEY*O#EK4B^Kx!(MONAmg9AGbAD0rKKm+6+svEw/-6E2gX(4VCH%0qKuaro*18y!0(Qvi1)EEZ2J6@QPH",
+  "JWT_TOKEN_SECRET":"J6+PnQ/9Tr+!Y9dg2)FtKOA9ie$8*%",
+  "SESSION_SECRET":"+eGdf%xq8bYg9V!7aKQlOuyl/D!gZX"
 }

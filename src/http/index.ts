@@ -3,7 +3,7 @@ import axios, {AxiosResponse} from 'axios';
 const requestHandler = (request: any) => {
   // add jwt token to request header
   const token = localStorage.getItem('token');
-  if (token) request.headers['Authorization'] = `Bearer ${token}`;
+  if (token) request.headers['Authorization'] = `${token}`;
   return request;
 }
 

@@ -33,8 +33,8 @@ export default function Home() {
     window.addEventListener('keydown', handlePressEsc);
 
     return () => {
-        window.removeEventListener('blur', changeToFakeMode);
-        window.removeEventListener('keydown', handlePressEsc);
+      window.removeEventListener('blur', changeToFakeMode);
+      window.removeEventListener('keydown', handlePressEsc);
     }
   }, [changeToFakeMode, handlePressEsc]);
 
@@ -45,6 +45,9 @@ export default function Home() {
       />
       <MainBoard
         keyword={keyword}
+      />
+      <img
+        src={`/api/image/validationCode`}
       />
       {fakeMode && <FakeMask
           onExit={toggleFakeMode}

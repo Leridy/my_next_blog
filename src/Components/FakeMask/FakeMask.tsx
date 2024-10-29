@@ -30,6 +30,8 @@ export default function FakeMask(props: FakeMaskProps) {
       style={{
         zIndex: 9999,
         transition: 'all 0.5s',
+        // todo: 这里是为了让这个组件不显示，为了开发方便，你可以删除这个 style
+        display: 'none',
       }}
     >
       <div

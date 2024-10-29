@@ -1,8 +1,6 @@
 'use client'
 import UserBox from "./UserBox";
 import {Input} from "antd";
-import LoginBox from "@/Components/NavBar/LoginBox";
-import LoginModal from "@/Components/NavBar/LoginModal/LoginModal";
 
 interface NavBarProps {
   onSearch?: (value: string) => void;
@@ -27,7 +25,6 @@ export default function NavBar(props: NavBarProps) {
         onChange={handleSearch}
       />
       <UserBox/>
-      <LoginModal />
     </nav>
   )
 }

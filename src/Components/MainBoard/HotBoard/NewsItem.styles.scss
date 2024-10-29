@@ -22,6 +22,7 @@
 
   &:hover{
     transform: translateX(1%);
+    color: var(--color-link);
     &:after {
       // apply hover effect , a line under the title when hover
       transform: scaleX(1);

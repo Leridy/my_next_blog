@@ -1,23 +1,29 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import {HotTopic} from "@prisma/client";
-import {validationAuthToken, logger} from "@/server/middleware";
+import {User} from "@prisma/client";
+import {logger, Role, validationAuthToken} from "@/server/middlewares";
+import userDao from "@/server/db/dao/user.dao";
 
 
-const get = async (query: Partial<HotTopic> | string):Promise<HotTopic[] | HotTopic | null> => {
+const get = async (query: Partial<User> | string): Promise<User[] | User | null> => {
   const queryObj = typeof query === 'string' ? {id: Number(query)} : query;
-  return [];
+  return userDao.getUsers(queryObj);
 }
 
-const post = async (data: Omit<HotTopic, 'id' | 'newsList'>) => {
-  return null;
+const post = async (data: User) => {
+  return userDao.createUser(data);
 }
 
-const put = async (id:string, data: Omit<HotTopic, 'newsList'>) => {
-  return null;
+const put = async (id: string, data: User) => {
+  return userDao.updateUser({...data, id: Number(id)})
+}
+
+const remove = async (id: string) => {
+  return userDao.deleteUser(id);
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   let result;
+  const id = req?.query?.id?.[0] || ''
   try {
     // get the query params
     switch (req.method) {
@@ -27,15 +33,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         break
       case 'POST':
         // Create a new record
-        result = await post(req.body)
+        result = await post(req.body);
         break
       case 'PUT':
         // Update a record
-        const id = req?.query?.id?.[0] || ''
-        result = await put(id ,  req.body)
+        result = await put(id, req.body)
         break
       case 'DELETE':
         // Delete a record
+        result = await remove(id)
         break
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])
@@ -44,9 +50,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(result);
   } catch (e) {
-    console.log(e)
     res.status(500).json(e)
   }
 }
 
-export default logger(validationAuthToken(handler, []));
+export default logger(validationAuthToken(handler, {
+  validateMethod: ['GET', 'POST', 'PUT', 'DELETE'],
+  role: Role.ADMIN
+}));

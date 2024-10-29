@@ -61,7 +61,6 @@ export default function NewsItem(props: NewsItemProps) {
             ${index < 2 ? 'font-bold' : ''}
             gap-1
             title
-            hover:text-amber-500
             hover:font-bold
             ease-in-out
         `}

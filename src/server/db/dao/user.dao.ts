@@ -28,6 +28,16 @@ export class UserDao {
     });
   }
 
+  public async login(data: Pick<User, 'email'|'password'>): Promise<User | null> {
+    // some logic to login user
+    return UserModel.findUnique({
+      where: {
+        email: data.email,
+        password: data.password
+      }
+    });
+  }
+
   public async getUsers(query: Partial<User>): Promise<User[]> {
     // some logic to get users from database
     return UserModel.findMany(
@@ -51,3 +61,5 @@ export class UserDao {
     );
   }
 }
+
+export default new UserDao();

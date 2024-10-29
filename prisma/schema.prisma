@@ -34,6 +34,7 @@ model User {
   email      String       @unique
   password   String
   name       String       @default("")
+  role       String       @default("1") // 1: normal user, 2: admin user
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   UserConfig UserConfig[]
@@ -65,4 +66,14 @@ model Blog {
   content     String   @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// Session: means the session info，for the user login and register which need to save the session info and validation code
+model validateCode {
+  id          Int      @id @unique @default(autoincrement())
+  sessionId   String   @unique
+  validate    String   @default("")
+  // 防止恶意请求验证码
+  requestTime Int      @default(0)
+  createdAt   DateTime @default(now())
 }

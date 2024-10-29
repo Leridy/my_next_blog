@@ -1,7 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {createHot, deleteHot, getHots, updateHot} from "@/server/db/dao/hot.dao";
 import {HotTopic} from "@prisma/client";
-import {validationAuthToken, logger} from "@/server/middleware";
+import {logger, Role, validationAuthToken} from "@/server/middlewares";
 
 
 const get = async (query: Partial<HotTopic> | string): Promise<HotTopic[] | HotTopic | null> => {
@@ -42,7 +42,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         break
       case 'DELETE':
         // Delete a record
-        result = await del(id)
+        result = await del(id);
         break
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])
@@ -51,9 +51,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(result);
   } catch (e) {
-    console.log(e)
     res.status(500).json(e)
   }
 }
 
-export default logger(validationAuthToken(handler, ['POST', 'PUT', 'DELETE']));
+export default logger(validationAuthToken(handler, {
+  validateMethod: ['POST', 'PUT', 'DELETE'],
+  role: Role.ADMIN
+}));
