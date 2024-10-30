@@ -28,12 +28,21 @@ export class UserDao {
     });
   }
 
-  public async login(data: Pick<User, 'email'|'password'>): Promise<User | null> {
+  public async login(data: Pick<User, 'email' | 'password'>): Promise<User | null> {
     // some logic to login user
     return UserModel.findUnique({
       where: {
         email: data.email,
         password: data.password
+      }
+    });
+  }
+
+  public async getUserById(id: number): Promise<User | null> {
+    // some logic to get user from database
+    return UserModel.findUnique({
+      where: {
+        id
       }
     });
   }
@@ -44,7 +53,6 @@ export class UserDao {
       {
         where: {
           ...query,
-          id: query.id ? Number(query.id) : undefined,
           name: {
             contains: query.name,
             mode: 'insensitive'

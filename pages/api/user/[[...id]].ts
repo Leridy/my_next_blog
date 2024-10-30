@@ -1,11 +1,14 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {User} from "@prisma/client";
-import {logger, Role, validationAuthToken} from "@/server/middlewares";
+import { Role, validationAuthToken} from "@/server/middlewares";
 import userDao from "@/server/db/dao/user.dao";
 
 
 const get = async (query: Partial<User> | string): Promise<User[] | User | null> => {
   const queryObj = typeof query === 'string' ? {id: Number(query)} : query;
+  if (queryObj.id) {
+    return userDao.getUserById(queryObj.id)
+  }
   return userDao.getUsers(queryObj);
 }
 
@@ -54,7 +57,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default logger(validationAuthToken(handler, {
+export default validationAuthToken(handler, {
   validateMethod: ['GET', 'POST', 'PUT', 'DELETE'],
   role: Role.ADMIN
-}));
+});

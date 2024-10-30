@@ -2,7 +2,7 @@
 import CryptoJS from "crypto-js";
 import {NextApiRequest, NextApiResponse} from "next";
 import env from "../../../.project.json";
-import type {MiddlewareHandler} from "@/server/middlewares";
+import type {MiddlewareHandler} from "./index";
 
 export function hashPassword(password: string, salt: string): string {
   return CryptoJS.PBKDF2(password, salt, {

@@ -9,7 +9,7 @@ const get = async (query: Partial<HotTopic> | string): Promise<HotTopic[] | HotT
   return getHots(queryObj);
 }
 
-const post = async (req: NextApiRequest):Promise<HotTopic> => {
+const post = async (req: NextApiRequest): Promise<HotTopic> => {
   const data = req.body;
   return createHot(data)
 }

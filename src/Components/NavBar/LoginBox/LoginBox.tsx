@@ -1,12 +1,11 @@
-import {Button, Space} from "antd";
-import type {ButtonProps} from "antd";
-import UserModal from "@/Components/UserModal/UserModal";
 import {useState} from "react";
+import {Button, Space} from "antd";
+import UserModal from "@/Components/UserComponents/UserModal";
+import {UserInfo} from "@/Components/UserComponents/hooks/useUserModalData";
+import {useUser} from "@/Provider/UserProvider";
 
-type LoginBoxProps = ButtonProps
-
-export default function LoginBox(props: LoginBoxProps) {
-  const {onClick} = props;
+export default function LoginBox() {
+  const {setUser} = useUser();
 
   const [visible, setVisible] = useState(false);
   const [type, setType] = useState<'login' | 'register'>('login');
@@ -16,8 +15,9 @@ export default function LoginBox(props: LoginBoxProps) {
     setType(isLogin ? 'login' : 'register');
   }
 
-  const handleSuccess = () => {
+  const handleSuccess = (user: UserInfo | null) => {
     setVisible(false);
+    setUser(user);
   }
 
   const handleCancel = () => {

@@ -46,9 +46,6 @@ export default function Home() {
       <MainBoard
         keyword={keyword}
       />
-      <img
-        src={`/api/image/validationCode`}
-      />
       {fakeMode && <FakeMask
           onExit={toggleFakeMode}
       />}

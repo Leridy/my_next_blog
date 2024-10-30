@@ -1,10 +1,9 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {MiddlewareHandler} from "@/server/middlewares";
+import {MiddlewareHandler} from "./index";
 import jwt from "jsonwebtoken";
 import env from "../../../.project.json";
 import {User} from "@prisma/client";
-import validateCodeDao from "@/server/db/dao/validateCode.dao";
-
+import validateCodeDao from "../db/dao/validateCode.dao";
 const defaultValidateMethod = ['POST', 'PUT', 'DELETE'];
 
 export enum Role {
@@ -35,15 +34,14 @@ export function validationAuthToken(handler: MiddlewareHandler, options: AuthMid
         if (user.role < role) throw new Error('low permission');
         if (user.exp * 1000 < Date.now()) throw new Error('token expired');
 
-
       } catch (e) {
-        res.status(401).json({message: 'Unauthorized', e});
         res.setHeader('Set-Cookie', `token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;`);
+        res.status(401).json({message: 'Unauthorized', e});
         return;
       }
     }
 
-    return handler(req, res)
+    return handler(req, res);
   }
 }
 

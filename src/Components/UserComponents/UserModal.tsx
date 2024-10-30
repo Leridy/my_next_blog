@@ -1,9 +1,10 @@
 import {Button, Modal} from "antd";
 import {useState} from "react";
-import LoginForm from "@/Components/UserModal/LoginForm";
-import RegisterForm from "@/Components/UserModal/RegisterForm";
-import useUserModalData from "@/Components/UserModal/hooks/useUserModalData";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
+import useUserModalData, {UserInfo} from "./hooks/useUserModalData";
 import {User} from "@prisma/client";
+import {RegisterData} from "./type";
 
 /**
  * UserModal component·
@@ -14,31 +15,37 @@ interface UserModalProps {
   visible: boolean;
   defaultType?: 'login' | 'register';
   onClose: () => void;
-  onLogin: () => void;
-  onRegister?: () => void;
+  onLogin: (user: UserInfo | null) => void;
+  onRegister?: (user: UserInfo | null) => void;
 }
 
 export default function UserModal(props: UserModalProps) {
   const {visible, onClose, onLogin, onRegister, defaultType} = props;
 
-  const {loading, requestRegister, requestLogin, requestLogout} = useUserModalData();
+  const {loading, requestRegister, requestLogin} = useUserModalData();
 
   const [type, setType] = useState<'login' | 'register'>(defaultType || 'login');
 
   const handleLogin = async (data: Pick<User, 'email' | 'password'> & { validateCode: string }) => {
     try {
       const result = await requestLogin(data);
-      console.log(result);
-      onLogin();
+      onLogin(result);
       onClose();
     } catch (e) {
       console.log(e);
+      alert('Login ')
     }
   }
 
-  const handleRegister = () => {
-    onRegister?.();
-    onClose();
+  const handleRegister = async (data: RegisterData) => {
+    try {
+      const user = await requestRegister(data);
+      onRegister?.(user);
+      onClose();
+    } catch (e) {
+      console.error(e);
+      alert('Register failed, more details check in console');
+    }
   }
 
   return (
@@ -50,7 +57,8 @@ export default function UserModal(props: UserModalProps) {
       destroyOnClose
     >
       {
-        type === 'login' ? <LoginForm onLogin={handleLogin}/> : <RegisterForm onRegister={handleRegister}/>
+        type === 'login' ? <LoginForm loading={loading} onLogin={handleLogin}/> :
+          <RegisterForm loading={loading} onRegister={handleRegister}/>
       }
       {/* 已有账户？点击登录 */}
       {

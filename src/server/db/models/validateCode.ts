@@ -1,3 +1,3 @@
-import {db} from "@/server/db/utils";
+import {db} from "../utils";
 
 export const ValidateCode  = db.validateCode;

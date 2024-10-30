@@ -1,4 +1,4 @@
-import {ValidateCode as VC} from "@/server/db/models/validateCode";
+import {ValidateCode as VC} from "../models/validateCode";
 import {validateCode} from "@prisma/client";
 
 export class ValidateCodeDao {
@@ -35,12 +35,12 @@ export class ValidateCodeDao {
     });
   }
 
-  public async updateValidateCode(validateCode: validateCode): Promise<validateCode> {
+  public async updateValidateCode(data: validateCode): Promise<validateCode> {
     return VC.update({
       where: {
-        id: validateCode.id
+        id: data.id
       },
-      data: validateCode
+      data: data
     });
   }
 
