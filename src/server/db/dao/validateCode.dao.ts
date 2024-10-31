@@ -1,6 +1,8 @@
 import {ValidateCode as VC} from "../models/validateCode";
 import {validateCode} from "@prisma/client";
 
+
+
 export class ValidateCodeDao {
   public async clearTimeoutValidateCode(): Promise<void> {
     await VC.deleteMany({

@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import {AntdRegistry} from "@ant-design/nextjs-registry";
 
+export const runtime = "nodejs";
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",

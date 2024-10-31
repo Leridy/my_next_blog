@@ -1,7 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {User} from "@prisma/client";
-import { Role, validationAuthToken} from "@/server/middlewares";
 import userDao from "@/server/db/dao/user.dao";
+import {Role, validationAuthToken} from "@/server/ApiUtils/auth";
 
 
 const get = async (query: Partial<User> | string): Promise<User[] | User | null> => {
@@ -27,6 +27,12 @@ const remove = async (id: string) => {
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   let result;
   const id = req?.query?.id?.[0] || ''
+
+  // validationAuthToken(req, {
+  //   validateMethod: ['GET', 'POST', 'PUT', 'DELETE'],
+  //   role: Role.ADMIN
+  // })
+
   try {
     // get the query params
     switch (req.method) {
@@ -57,7 +63,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default validationAuthToken(handler, {
-  validateMethod: ['GET', 'POST', 'PUT', 'DELETE'],
-  role: Role.ADMIN
-});
+export default handler;

@@ -2,6 +2,7 @@ import {Hot} from '../models/hot';
 import {HotTopic} from "@prisma/client";
 
 
+
 export async function getHots(query: Partial<Omit<HotTopic, 'newsList'>>) {
   if (Object.keys(query).length === 1 && query.id) {
     return Hot.findUnique({

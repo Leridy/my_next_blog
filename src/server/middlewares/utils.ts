@@ -1,6 +1,11 @@
 // 日志中间件 记录请求的方法和路径
 import {NextApiRequest, NextApiResponse} from "next";
 import {MiddlewareHandler} from "@/server/middlewares";
+import {NextRequest, NextResponse} from "next/server";
+import jwt from "jsonwebtoken";
+import env from "../../../.project.json";
+import {UserInfo} from "@/Components/UserComponents/hooks/useUserModalData";
+import {Role} from "@/server/ApiUtils/auth";
 
 type LogLevel = 'info' | 'warn' | 'error' | { method?: boolean, url?: boolean, headers?: boolean, payload?: boolean }
 
@@ -31,4 +36,23 @@ export function logger(handler: MiddlewareHandler, level?: LogLevel) {
     }
     return handler(req, res)
   }
+}
+
+export function checkTokenRole(req: NextRequest) {
+  try {
+    // getToken from cookie
+    const token = req.cookies.get('token')?.value || '';
+    // 对 token 进行 JWT 校验
+    const result = jwt.verify(token, env.JWT_TOKEN_SECRET) as UserInfo;
+
+    if (result.role >= Role.ADMIN) {
+      NextResponse.next();
+    } else {
+      throw new Error('low permission');
+    }
+  } catch (e) {
+    console.error(e);
+    NextResponse.rewrite('/');
+  }
+
 }

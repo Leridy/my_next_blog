@@ -6,6 +6,7 @@ import {useCallback, useEffect, useMemo} from "react";
 import {HotTopic} from "@prisma/client";
 import {useHotData} from "@/app/manage/hot/hooks/useHotData";
 
+
 export default function HotEditor() {
   const pathname = usePathname() || '';
   const router = useRouter();

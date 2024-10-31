@@ -1,10 +1,13 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {validateCodeGen} from "../../../utils/randomStringGen";
-import {hashPassword} from "@/server/middlewares";
-import env from "../../../.project.json";
 import Sharp from 'sharp';
+import type {validateCode} from "@prisma/client";
+import {NextResponse} from "next/server";
 import validateCodeDao from "@/server/db/dao/validateCode.dao";
-import {validateCode} from "@prisma/client";
+import {hashPassword} from "@/server/ApiUtils/encryption";
+import {validateCodeGen} from "../../../../../utils/randomStringGen";
+import env from "../../../../../.project.json";
+
+import type {NextRequest} from "next/server";
+
 
 // I need some color to generate the image
 /**
@@ -86,34 +89,26 @@ const generateValidateCodeImage = (code: string) => {
   `;
 
   return Sharp(Buffer.from(svgText)).png().toBuffer();
-
 }
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+export async function GET(req: NextRequest) {
+  let sessionId = req.cookies.get('sessionId')?.value;
+  let isNewSession = false;
+  let data: validateCode | null = null;
+  const requestLimit = 10;
+  let isReachRequestLimit = false;
+  let isCodeOutdated = false;
+
   try {
-    if (req.method !== 'GET') res.status(405).json({message: `Method ${req.method} not Allowed`, allowedMethods: ['GET'],});
-
-    // 检查是否存在 sessionId
-    let sessionId = req.cookies.sessionId;
-    // 是否是新的会话
-    let isNewSession = false;
-    let data: validateCode | null = null;
-    const requestLimit = 10;
-    let isReachRequestLimit = false;
-    let isCodeOutdated = false;
-
     await validateCodeDao.clearTimeoutValidateCode();
-
     if (!sessionId) {
-      // 如果不存在 sessionId 则生成一个 sessionId, 并且清除所有超过十分钟的验证码
-      // figerprint 是一个唯一标识符来自客户端的 ua 和 ip 和 时间戳
-      const userFingerprint = req.headers['user-agent'] || '' + req.socket.remoteAddress || '' + Date.now() as string;
+      // get some user agent and ip address and timestamp to generate a fingerprint
+      // you should know that type of req is NextRequest.
+      const userFingerprint = req.headers.get('user-agent') || '' + req.headers.get('remoteAddress') || '' + Date.now() as string;
       sessionId = hashPassword(userFingerprint, env.SESSION_SECRET);
       isNewSession = true;
     } else {
-      // 检查是否存在这个 sessionId 检查这个 sessionId 对应的 validate 请求次数是否超过限制
-      // 限制为五分钟内十次， 超过限制则返回错误
       data = await validateCodeDao.getValidateCodeBySessionId(sessionId);
-
       if (data) {
         if (Date.now() - data.createdAt.getTime() < FIVE_MINUTES && data.requestTime >= requestLimit) {
           isReachRequestLimit = true;
@@ -123,10 +118,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
     }
-
-    // 生成一个随机的6位数验证码
     const code = isReachRequestLimit ? 'exceeded limit' : validateCodeGen(6, false);
-    // 生成验证码图片
     const buffer = await generateValidateCodeImage(code);
 
     if (!isReachRequestLimit) {
@@ -146,15 +138,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
+    return new NextResponse(buffer, {
+      status: 200,
+      headers: {
+        'Content-Type': 'image/png',
+        'Set-Cookie': `sessionId=${sessionId}; Path=/; HttpOnly; SameSite=Strict;`,
+        'Cache-Control': 'no-store, max-age=0',
+      }
+    })
 
-    res.setHeader('Content-Type', 'image/png');
-    // 设置 cookie 为 sessionId,这个 cookie 在关闭浏览器后失效
-    res.setHeader('Set-Cookie', `sessionId=${sessionId}; Path=/; HttpOnly; SameSite=Strict;`);
-    // 不允许缓存验证码
-    res.setHeader('Cache-Control', 'no-store, max-age=0');
-
-    res.send(buffer);
   } catch (e) {
-    res.status(500).json({message: 'Internal Server Error', error: e});
+    console.log(e)
+    return NextResponse.json({message: 'Internal Server Error ', error: (e as Error).message}, {status: 500});
   }
 }

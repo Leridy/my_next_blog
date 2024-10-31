@@ -1,6 +1,9 @@
 import {User as UserModel} from '../models/user';
 import {User} from "@prisma/client";
 
+
+
+
 export class UserDao {
   public async createUser(data: User): Promise<User> {
     // some logic to get user from database

@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import { Role, validationAuthToken} from "@/server/middlewares";
+
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') res.status(405).json({
@@ -17,4 +17,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default validationAuthToken(handler, {validateMethod: ['POST'], role: Role.USER });
+export default handler;
