@@ -2,7 +2,7 @@
 import CryptoJS from "crypto-js";
 import env from "../../../.project.json";
 import {NextRequest} from "next/server";
-import {readableStreamToJSON} from "../../../utils/readableStreamToJSON";
+import {readableStreamToJSON} from "@/utils/readableStreamToJSON";
 
 
 export function hashPassword(password: string, salt: string): string {

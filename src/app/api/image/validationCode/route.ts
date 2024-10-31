@@ -3,7 +3,7 @@ import type {validateCode} from "@prisma/client";
 import {NextResponse} from "next/server";
 import validateCodeDao from "@/server/db/dao/validateCode.dao";
 import {hashPassword} from "@/server/ApiUtils/encryption";
-import {validateCodeGen} from "../../../../../utils/randomStringGen";
+import {validateCodeGen} from "@/utils/randomStringGen";
 import env from "../../../../../.project.json";
 
 import type {NextRequest} from "next/server";

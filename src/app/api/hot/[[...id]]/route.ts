@@ -2,8 +2,8 @@ import {createHot, deleteHot, getHots, updateHot} from "@/server/db/dao/hot.dao"
 import {HotTopic} from "@prisma/client";
 import * as Yup from 'yup';
 import {NextRequest, NextResponse} from "next/server";
-import {readableStreamToJSON} from "../../../../../utils/readableStreamToJSON";
-import {getIdFromPath} from "../../../../../utils/getIdFromPath";
+import {readableStreamToJSON} from "@/utils/readableStreamToJSON";
+import {getIdFromPath} from "@/utils/getIdFromPath";
 
 
 

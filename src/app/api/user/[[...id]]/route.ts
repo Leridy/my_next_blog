@@ -1,8 +1,8 @@
 import {User} from "@prisma/client";
 import userDao from "@/server/db/dao/user.dao";
 import {NextRequest, NextResponse} from "next/server";
-import {getIdFromPath} from "../../../../../utils/getIdFromPath";
-import {readableStreamToJSON} from "../../../../../utils/readableStreamToJSON";
+import {getIdFromPath} from "@/utils/getIdFromPath";
+import {readableStreamToJSON} from "@/utils/readableStreamToJSON";
 import {encryptPwdWithSalt} from "@/server/ApiUtils/encryption";
 
 export async function GET(req: NextRequest) {

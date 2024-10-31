@@ -1,11 +1,11 @@
+import {NextRequest, NextResponse} from "next/server";
+import {User} from "@prisma/client";
 import * as Yup from 'yup';
 import userDao from "@/server/db/dao/user.dao";
-import {User} from "@prisma/client";
-import {checkValidationCode} from "@/server/ApiUtils/auth";
 import {Role, SetHeaderOperation} from "@/server/middlewares";
-import {NextRequest, NextResponse} from "next/server";
-import {encryptPwdWithSalt} from "@/server/ApiUtils/encryption";
-import {mergeHeaderObj} from "../../../../../utils/mergeObject";
+import {checkValidationCode, encryptPwdWithSalt} from "@/server/ApiUtils";
+import {mergeHeaderObj} from "@/utils/mergeObject";
+
 export async function POST(req: NextRequest) {
   let resHeaderOperation: SetHeaderOperation = {};
 
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const sessionId = req.cookies.get('sessionId')?.value || '';
     const validateResult = await checkValidationCode(data.validateCode, sessionId);
 
-    const dataToCreate: Partial<typeof data> = {...data} ;
+    const dataToCreate: Partial<typeof data> = {...data};
     // remove double-check data
     delete dataToCreate.password2;
     delete dataToCreate.validateCode;
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     // remove password field
     delete result.password;
 
-    if(validateResult) resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
+    if (validateResult) resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
 
     return NextResponse.json(result, {status: 200, headers: resHeaderOperation as Record<string, string>});
   } catch (e) {

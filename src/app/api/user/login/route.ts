@@ -1,13 +1,13 @@
+import {NextRequest, NextResponse} from "next/server";
+import {User} from "@prisma/client";
 import * as Yup from 'yup';
 import jwt from 'jsonwebtoken';
-import {User} from "@prisma/client";
 import userDao from "@/server/db/dao/user.dao";
 import {checkValidationCode} from "@/server/ApiUtils/auth";
-import env from "../../../../../.project.json";
-import {mergeHeaderObj} from "../../../../../utils/mergeObject";
-import {NextRequest, NextResponse} from "next/server";
 import {SetHeaderOperation} from "@/server/middlewares";
 import {encryptPwdWithSalt} from "@/server/ApiUtils/encryption";
+import {mergeHeaderObj} from "@/utils/mergeObject";
+import env from "../../../../../.project.json";
 
 
 const login = async (data: Pick<User, 'email' | 'password'>) => {
