@@ -1,5 +1,6 @@
 import validateCodeDao from "@/server/db/dao/validateCode.dao";
 import type {SetHeaderOperation} from "@/server/middlewares";
+import {MyNRError} from "@/utils/MyNRError";
 
 
 export async function checkValidationCode(code: string, id: string):Promise<SetHeaderOperation | undefined> {
@@ -7,13 +8,13 @@ export async function checkValidationCode(code: string, id: string):Promise<SetH
   const validateCode = code;
   const sessionId = id;
 
-  if (!validateCode || !sessionId) throw new Error('Validate Code is required');
+  if (!validateCode || !sessionId) throw new MyNRError('Validate Code is incorrect', 400, {validateCode, sessionId});
 
   // 验证验证码是否正确
   const data = await validateCodeDao.getValidateCode({sessionId, validate: validateCode});
 
   if (!data) {
-    throw new Error('Validate Code is incorrect');
+    throw new MyNRError('Validate Code is incorrect', 400, {validateCode, sessionId});
   } else {
     // remove the validate code
     await validateCodeDao.deleteValidateCode(String(data.id));

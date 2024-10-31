@@ -8,6 +8,7 @@ import {SetHeaderOperation} from "@/server/middlewares";
 import {encryptPwdWithSalt} from "@/server/ApiUtils/encryption";
 import {mergeHeaderObj} from "@/utils/mergeObject";
 import env from "../../../../../.project.json";
+import {MyNRError} from "@/utils/MyNRError";
 
 
 const login = async (data: Pick<User, 'email' | 'password'>) => {
@@ -27,13 +28,13 @@ export async function POST(req: NextRequest) {
   });
 
   try {
-    const data = await encryptPwdWithSalt(req) as Pick<User, 'email' | 'password'> & {validateCode: string};
+    const data = await encryptPwdWithSalt(req) as Pick<User, 'email' | 'password'> & { validateCode: string };
 
     const sessionId = req.cookies.get('sessionId')?.value || '';
     await schema.validate(data);
     const validateResult = await checkValidationCode(data.validateCode, sessionId);
     const result = await login(data);
-    if (!result) throw new Error('User not found');
+    if (!result) throw new MyNRError('User not found', 404);
 
     const returnResult = {...result} as Partial<User>
     delete returnResult.password;
@@ -46,9 +47,16 @@ export async function POST(req: NextRequest) {
       resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
     }
 
-    return NextResponse.json({access_token: token}, {status: 200, headers: resHeaderOperation as Record<string, string>});
+    return NextResponse.json({access_token: token}, {
+      status: 200,
+      headers: resHeaderOperation as Record<string, string>
+    });
   } catch (e) {
-    return NextResponse.json({message: (e as Error).message}, {status: 400});
+    if (e instanceof MyNRError) {
+      return NextResponse.json({message: e.message, errorDetail: e.getData()}, {status: e.statusCode});
+    } else {
+      return NextResponse.json(e, {status: 400});
+    }
   }
 
 }

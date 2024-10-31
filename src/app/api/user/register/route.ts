@@ -25,8 +25,6 @@ export async function POST(req: NextRequest) {
     }
     await schema.validate(data);
 
-    console.log(data);
-
     const sessionId = req.cookies.get('sessionId')?.value || '';
     const validateResult = await checkValidationCode(data.validateCode, sessionId);
 
@@ -48,6 +46,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result, {status: 200, headers: resHeaderOperation as Record<string, string>});
   } catch (e) {
     console.log(e);
-    return NextResponse.json({message: (e as Error).message}, {status: 401});
+    return NextResponse.json(e, {status: 400});
   }
 }

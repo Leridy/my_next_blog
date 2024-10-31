@@ -1,22 +1,22 @@
 import {NextRequest, NextResponse} from "next/server";
 import {Role, validationAuthToken} from "@/server/middlewares";
-import {encryptPwdWithSalt} from "@/server/ApiUtils/encryption";
+import {MyNRError} from "@/utils/MyNRError";
 
 const routerMap = new Map<string[], (req: NextRequest) => Promise<NextResponse> | Promise<void> | NextResponse | undefined>();
 
 const pathRequireTokenAdminRole = [
   '/manage',
 ];
-const pathRequireEncryptWithSalt = [
-    '/api/user/login',
-    '/api/user/register',
-]
 
 routerMap.set(pathRequireTokenAdminRole, (req: NextRequest) => validationAuthToken(req, {
   role: Role.ADMIN,
   validateMethod: ['GET', 'POST', 'PUT', 'DELETE']
 }));
-// routerMap.set(pathRequireEncryptWithSalt, (req: NextRequest) => encryptPwdWithSalt(req));
+
+routerMap.set(['/api/hot'], (req: NextRequest) => validationAuthToken(req, {
+  role: Role.ADMIN,
+  validateMethod: ['POST', 'PUT', 'DELETE']
+}));
 
 export async function middleware(req: NextRequest) {
   const {pathname} = req.nextUrl;
@@ -32,7 +32,11 @@ export async function middleware(req: NextRequest) {
     }
 
   } catch (e) {
-    console.error('Middleware error', e);
+    if (e instanceof MyNRError) {
+      console.log(e.message, e.getData());
+    } else {
+      console.log((e as Error).message);
+    }
     return NextResponse.error();
   }
   return NextResponse.next();
