@@ -1,66 +1,66 @@
-import type {NextApiRequest, NextApiResponse} from 'next'
 import {User} from "@prisma/client";
 import userDao from "@/server/db/dao/user.dao";
-import {Role, validationAuthToken} from "@/server/ApiUtils/auth";
+import {NextRequest, NextResponse} from "next/server";
+import {getIdFromPath} from "../../../../../utils/getIdFromPath";
+import {readableStreamToJSON} from "../../../../../utils/readableStreamToJSON";
+import {encryptPwdWithSalt} from "@/server/ApiUtils/encryption";
 
-
-const get = async (query: Partial<User> | string): Promise<User[] | User | null> => {
-  const queryObj = typeof query === 'string' ? {id: Number(query)} : query;
-  if (queryObj.id) {
-    return userDao.getUserById(queryObj.id)
-  }
-  return userDao.getUsers(queryObj);
-}
-
-const post = async (data: User) => {
-  return userDao.createUser(data);
-}
-
-const put = async (id: string, data: User) => {
-  return userDao.updateUser({...data, id: Number(id)})
-}
-
-const remove = async (id: string) => {
-  return userDao.deleteUser(id);
-}
-
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  let result;
-  const id = req?.query?.id?.[0] || ''
-
-  // validationAuthToken(req, {
-  //   validateMethod: ['GET', 'POST', 'PUT', 'DELETE'],
-  //   role: Role.ADMIN
-  // })
-
+export async function GET(req: NextRequest) {
   try {
-    // get the query params
-    switch (req.method) {
-      case 'GET':
-        // Get data from your database
-        result = await get(req.query)
-        break
-      case 'POST':
-        // Create a new record
-        result = await post(req.body);
-        break
-      case 'PUT':
-        // Update a record
-        result = await put(id, req.body)
-        break
-      case 'DELETE':
-        // Delete a record
-        result = await remove(id)
-        break
-      default:
-        res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])
-        res.status(405).end(`Method ${req.method} Not Allowed`);
+    const pathname = req.nextUrl.pathname;
+    const id = getIdFromPath(pathname);
+    let data: User[] | User | null = null;
+    const query = req.nextUrl.searchParams as Partial<User>;
+
+    if (id) {
+      data = await userDao.getUserById(Number(id));
+    } else {
+      data = await userDao.getUsers(query);
     }
 
-    res.status(200).json(result);
+    return NextResponse.json(data, {status: 200});
   } catch (e) {
-    res.status(500).json(e)
+    return NextResponse.json({message: (e as Error).message}, {status: 401});
+  }
+
+}
+
+
+export async function POST(req: NextRequest) {
+  try {
+    const data = await encryptPwdWithSalt(req) as Pick<User, 'name' | 'password' | 'email'> & {
+      password2: string,
+      validateCode: string
+    };
+    const result = await userDao.createUser(data);
+    return NextResponse.json(result, {status: 200});
+  } catch (e) {
+    return NextResponse.json({message: (e as Error).message}, {status: 401});
   }
 }
 
-export default handler;
+export async function PUT(req: NextRequest) {
+  try {
+    const pathname = req.nextUrl.pathname;
+    const id = getIdFromPath(pathname);
+    const data = await readableStreamToJSON<Omit<User, 'id'>>(req.body);
+    if (typeof data !== 'object') throw new Error('Invalid data');
+    const result = await userDao.updateUser({...data, id: Number(id)});
+    return NextResponse.json(result, {status: 200});
+  } catch (e) {
+    return NextResponse.json({message: (e as Error).message}, {status: 401});
+  }
+}
+
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const pathname = req.nextUrl.pathname;
+    const id = getIdFromPath(pathname);
+    if (!id) throw new Error('Invalid id');
+    const result = await userDao.deleteUser(id);
+    return NextResponse.json(result, {status: 200});
+  } catch (e) {
+    return NextResponse.json({message: (e as Error).message}, {status: 401});
+  }
+}

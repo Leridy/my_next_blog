@@ -1,11 +1,10 @@
 // 日志中间件 记录请求的方法和路径
 import {NextApiRequest, NextApiResponse} from "next";
-import {MiddlewareHandler} from "@/server/middlewares";
+import {MiddlewareHandler, Role} from "@/server/middlewares";
 import {NextRequest, NextResponse} from "next/server";
 import jwt from "jsonwebtoken";
 import env from "../../../.project.json";
 import {UserInfo} from "@/Components/UserComponents/hooks/useUserModalData";
-import {Role} from "@/server/ApiUtils/auth";
 
 type LogLevel = 'info' | 'warn' | 'error' | { method?: boolean, url?: boolean, headers?: boolean, payload?: boolean }
 

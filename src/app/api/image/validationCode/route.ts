@@ -93,48 +93,51 @@ const generateValidateCodeImage = (code: string) => {
 
 export async function GET(req: NextRequest) {
   let sessionId = req.cookies.get('sessionId')?.value;
-  let isNewSession = false;
   let data: validateCode | null = null;
   const requestLimit = 10;
+  let isNewSession = false;
   let isReachRequestLimit = false;
   let isCodeOutdated = false;
 
   try {
     await validateCodeDao.clearTimeoutValidateCode();
     if (!sessionId) {
+      // if request does not have sessionId, create a new one
       // get some user agent and ip address and timestamp to generate a fingerprint
       // you should know that type of req is NextRequest.
       const userFingerprint = req.headers.get('user-agent') || '' + req.headers.get('remoteAddress') || '' + Date.now() as string;
       sessionId = hashPassword(userFingerprint, env.SESSION_SECRET);
       isNewSession = true;
     } else {
+      // if sessionId exists, check if it reaches the request limit and expired
       data = await validateCodeDao.getValidateCodeBySessionId(sessionId);
       if (data) {
         if (Date.now() - data.createdAt.getTime() < FIVE_MINUTES && data.requestTime >= requestLimit) {
           isReachRequestLimit = true;
         } else if (Date.now() - data.createdAt.getTime() > FIVE_MINUTES) {
+          // if the code is outdated, delete it
           await validateCodeDao.deleteValidateCode(String(data.id));
           isCodeOutdated = true;
         }
       }
     }
+
     const code = isReachRequestLimit ? 'exceeded limit' : validateCodeGen(6, false);
     const buffer = await generateValidateCodeImage(code);
 
-    if (!isReachRequestLimit) {
-      // 如果sessionId 存在 且请求次数未超过限制 则更新这个 sessionId 对应的验证码并更新请求次数， 否则创建一个新的验证码
-      if (sessionId && !isCodeOutdated && !isNewSession) {
-        if (data) {
-          data.validate = code;
-          data.requestTime++;
-          await validateCodeDao.updateValidateCode(data);
-        } else {
-          await validateCodeDao.createValidateCode({
-            sessionId,
-            validate: code,
-            requestTime: 1,
-          });
-        }
+    if (!isReachRequestLimit) { // once the request reaches the limit, do not create a new code
+      // if the code is outdated, or it is a new session, create a new code.
+      if (isCodeOutdated || isNewSession || !data) {
+        await validateCodeDao.createValidateCode({
+          sessionId,
+          validate: code,
+          requestTime: 1,
+        });
+      } else if (data) {
+        // if the code is not outdated, update the code and request time.
+        data.validate = code;
+        data.requestTime++;
+        await validateCodeDao.updateValidateCode(data);
       }
     }
 
@@ -148,7 +151,6 @@ export async function GET(req: NextRequest) {
     })
 
   } catch (e) {
-    console.log(e)
     return NextResponse.json({message: 'Internal Server Error ', error: (e as Error).message}, {status: 500});
   }
 }

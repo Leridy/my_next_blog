@@ -1,20 +1,22 @@
-import {NextApiRequest, NextApiResponse} from "next";
 import * as Yup from 'yup';
 import jwt from 'jsonwebtoken';
 import {User} from "@prisma/client";
 import userDao from "@/server/db/dao/user.dao";
-import {checkValidationCode, SetHeaderOperation} from "@/server/ApiUtils/auth";
+import {checkValidationCode} from "@/server/ApiUtils/auth";
 import env from "../../../../../.project.json";
 import {mergeHeaderObj} from "../../../../../utils/mergeObject";
 import {NextRequest, NextResponse} from "next/server";
+import {SetHeaderOperation} from "@/server/middlewares";
+import {encryptPwdWithSalt} from "@/server/ApiUtils/encryption";
 
 
 const login = async (data: Pick<User, 'email' | 'password'>) => {
   return userDao.login(data);
 }
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') res.status(405).json({message: 'Method Not Allowed', allowedMethods: ['POST'],});
+export async function POST(req: NextRequest) {
+  // the refactor logic code above into this function you should remember the req is a NextRequest object,
+  // and you should return a NextResponse object.
 
   let resHeaderOperation: SetHeaderOperation = {};
 
@@ -24,42 +26,29 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     validateCode: Yup.string().required(),
   });
 
-
   try {
-    await schema.validate(req.body);
-    const validateResult = await checkValidationCode(req);
-    const result = await login(req.body);
-    console.log(result, req.body);
+    const data = await encryptPwdWithSalt(req) as Pick<User, 'email' | 'password'> & {validateCode: string};
+
+    const sessionId = req.cookies.get('sessionId')?.value || '';
+    await schema.validate(data);
+    const validateResult = await checkValidationCode(data.validateCode, sessionId);
+    const result = await login(data);
     if (!result) throw new Error('User not found');
 
-
     const returnResult = {...result} as Partial<User>
-
     delete returnResult.password;
 
-    // use jwt to generate token
     const token = jwt.sign(returnResult, env.JWT_TOKEN_SECRET, {expiresIn: '30d'});
-
-
     resHeaderOperation['Set-Cookie'] = `token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60};`;
+
 
     if (validateResult) {
       resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
     }
 
-    console.log(resHeaderOperation);
-
-    Object.keys(resHeaderOperation).forEach(key => {
-      res.setHeader(key, resHeaderOperation[key]);
-    });
-
-    res.status(200).json({access_token: token});
+    return NextResponse.json({access_token: token}, {status: 200, headers: resHeaderOperation as Record<string, string>});
   } catch (e) {
-    res.status(400).json({message: (e as Error).message});
-    return;
+    return NextResponse.json({message: (e as Error).message}, {status: 400});
   }
-}
 
-export async function POST(req: NextRequest) {
-  return NextResponse.json({message: 'hello'}, {status: 200});
 }

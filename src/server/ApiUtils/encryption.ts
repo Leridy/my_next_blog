@@ -1,10 +1,9 @@
 // 使用 PBKDF2 算法对密码进行哈希
 import CryptoJS from "crypto-js";
-import {NextApiRequest, NextApiResponse} from "next";
 import env from "../../../.project.json";
-import type {MiddlewareHandler} from "../middlewares";
+import {NextRequest} from "next/server";
+import {readableStreamToJSON} from "../../../utils/readableStreamToJSON";
 
-;
 
 export function hashPassword(password: string, salt: string): string {
   return CryptoJS.PBKDF2(password, salt, {
@@ -13,11 +12,14 @@ export function hashPassword(password: string, salt: string): string {
   }).toString();
 }
 
-export function encryptWithSalt(handler: MiddlewareHandler): MiddlewareHandler {
-  return async function (req: NextApiRequest, res: NextApiResponse) {
-    if (req.body.password) req.body.password = hashPassword(req.body.password, env.USER_PASSWORD_SALT);
-    if (req.body.password2) req.body.password2 = hashPassword(req.body.password2, env.USER_PASSWORD_SALT);
-    // 加密
-    return handler(req, res);
+export async function encryptPwdWithSalt(req: NextRequest) {
+  // update the password with the hashed password in req.body
+  const data = await readableStreamToJSON(req.body) as Record<string, string>;
+
+  if (data.password) data.password = hashPassword(data.password, env.USER_PASSWORD_SALT);
+  if (data.password2) data.password2 = hashPassword(data.password2, env.USER_PASSWORD_SALT);
+
+  return {
+    ...data
   }
 }
