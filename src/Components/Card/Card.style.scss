@@ -3,19 +3,24 @@
 .card {
   animation: slideIn ease-in-out 0.5s;
   overflow: hidden;
+
   .card-action-part {
     height: 11vh;
-    //background: var(--color-card-background);
     z-index: 1;
     transition: all 1s;
     transform: translate3d(0, 100%, 0);
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(10px);
     opacity: 0;
     will-change: auto;
   }
 
   &:hover .card-action-part {
-    transform: translateY(0);
     opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
+
+
 }
+
+
+

@@ -95,16 +95,16 @@ export default function HotList() {
         )
       }
     }
-  ], []);
+  ], [handleDelete, router]);
 
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     router.push('/manage/hot/create');
-  }
+  }, [router]);
 
   useEffect(() => {
     fetch();
-    console.log('fetch changed')
-  }, []);
+  }, [fetch]);
+
   const renderTitle = useMemo(() => {
     return (
       <div
@@ -118,7 +118,7 @@ export default function HotList() {
         >+</Button>
       </div>
     )
-  }, []);
+  }, [handleCreate]);
 
   return (
     <Card

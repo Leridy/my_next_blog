@@ -1,6 +1,7 @@
 // client component
 'use client'
 import {useMemo} from "react";
+import './index.style.scss';
 
 interface AvatarProps {
   name: string;
@@ -10,24 +11,45 @@ interface AvatarProps {
 }
 
 enum AvatarSize {
-    small = 30,
-    medium = 50,
-    large = 80,
+  small = 30,
+  medium = 50,
+  large = 80,
 }
+
+let hash = 0;
 
 /**
  * generate a color based on the string
  * @param str
  */
 const generateColorByString = (str: string = 'ABC') => {
-    const hash = str.split('').reduce((acc, char) => {
-        return char.charCodeAt(0) + ((acc << 5) - acc);
-    }, 0);
-    const c = (hash & 0x00FFFFFF)
-        .toString(16)
-        .toUpperCase();
+  hash = str.split('').reduce((acc, char) => {
+    return char.charCodeAt(0) + ((acc << 5) - acc);
+  }, 0);
+  const c = (hash & 0x00FFFFFF)
+    .toString(16)
+    .toUpperCase();
 
-    return `#${'00000'.substring(0, 6 - c.length)}${c}`;
+  return `#${'00000'.substring(0, 6 - c.length)}${c}`;
+}
+
+const avatarFontColor = () => {
+  return ['white', 'gray', 'black', 'red', 'green', 'blue'][hash % 6];
+}
+
+const avatarFontFamily = () => {
+  const fontFamily = ['Microsoft Yahei', 'SimHei', 'KaiTi', 'FangSong', 'Arial', 'sans-serif'];
+  return fontFamily[hash % fontFamily.length];
+}
+
+const avatarFontWeight = () => {
+  const fontWeight = ['normal', 'bold', 'bolder', 'lighter'];
+  return fontWeight[hash % fontWeight.length];
+}
+
+const avatarFontStyle = () => {
+  const fontStyle = ['normal', 'italic', 'oblique'];
+  return fontStyle[hash % fontStyle.length];
 }
 
 /**
@@ -41,7 +63,7 @@ const generateColorByString = (str: string = 'ABC') => {
  *
  */
 export default function Avatar(props: AvatarProps) {
-  const {name,src, size, onClick} = props;
+  const {name, src, size, onClick} = props;
 
   const avatarSize = useMemo(() => {
     return AvatarSize[size || 'small'];
@@ -59,26 +81,27 @@ export default function Avatar(props: AvatarProps) {
       return '';
     }
 
-    canvas.width = avatarSize;
-    canvas.height = avatarSize;
+    canvas.width = avatarSize * 8;
+    canvas.height = avatarSize * 8;
     context.fillStyle = generateColorByString(name);
-    context.fillRect(0, 0, avatarSize, avatarSize);
-    context.font = `${avatarSize / 2}px Arial`;
-    context.fillStyle = 'white';
+    context.fillRect(0, 0, avatarSize * 8, avatarSize * 8);
+    context.font = `${avatarSize * 6}px ${avatarFontFamily()} ${avatarFontWeight()} ${avatarFontStyle()}`;
+
+    context.fillStyle = avatarFontColor();
     context.textAlign = 'center';
 
-    context.fillText(name[0].toUpperCase(), avatarSize / 2, avatarSize / 1.5);
+    context.fillText((name || '客')[0].toUpperCase(), avatarSize * 4, avatarSize * 6.1);
     return canvas.toDataURL();
   }, [name, src, avatarSize]);
 
   return (
     <div
-      className="flex items-center justify-center rounded-full "
+      className="flex items-center justify-center rounded-full avatar"
       style={{width: avatarSize, height: avatarSize}}
       onClick={onClick}
     >
       <img
-        className="rounded-full cursor-pointer"
+        className="cursor-pointer rounded"
         src={avatarSrc} alt={name} width={avatarSize} height={avatarSize}/>
     </div>
   );

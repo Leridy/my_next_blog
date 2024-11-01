@@ -89,7 +89,6 @@ export async function APIErrorHandler(req: NextRequest, res: NextResponse, next:
         const user = jwt.verify(token, env.JWT_TOKEN_SECRET) as { exp: number, iat: number };
         if (user.exp * 1000 < Date.now()) throw new Error('token expired');
 
-        console.log('user checked', user);
       }
     } catch (e) {
       console.error(e);
@@ -104,6 +103,7 @@ export async function APIErrorHandler(req: NextRequest, res: NextResponse, next:
         headers: e.getHeaders()
       });
     }
+    console.error(e);
     return NextResponse.json(e, {status: 400});
   }
 }

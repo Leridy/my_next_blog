@@ -15,14 +15,15 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
   const userId = req.headers.get('x-user-id');
   const userRole = req.headers.get('x-user-role');
 
-  let data: User[] | User | null = null;
+  let data: Omit<User, 'password'>[] | Omit<User, 'password'> | null = null;
 
   // if user is not admin, only get user's own info
 
+
   if (userRole === Role.ADMIN) {
-    if (id) {
+    if (id && !id?.includes('all')) {
       data = await userDao.getUserById(Number(id));
-    } else if (Object.keys(query).length) {
+    } else if (query && id?.includes('all')) {
       data = await userDao.getUsers(query);
     } else {
       data = await userDao.getUserById(Number(userId));

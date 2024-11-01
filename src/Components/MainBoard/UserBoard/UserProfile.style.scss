@@ -1,10 +1,10 @@
 @use "../../../app/scss/animations.scss";
 
-.user-profile-avatar {
-  transition: transform 0.3s;
-
-  &:hover img {
-    // 反复运动
-    animation: rotate300 ease-in-out 30s infinite;
-  }
-}
+//.user-profile-avatar {
+//  transition: transform 0.3s;
+//
+//  &:hover img {
+//    // 反复运动
+//    animation: rotate300 ease-in-out 30s infinite;
+//  }
+//}

@@ -6,7 +6,7 @@ import './UserProfile.style.scss'
 import InputtingText from "@/Components/InputtingText/InputtingText";
 import {sayings, someEmoji} from "@/mock/emojiAndSayings";
 import {Button, Space} from "antd";
-import {SettingFilled, UserOutlined} from "@ant-design/icons";
+import {SettingFilled} from "@ant-design/icons";
 
 
 export default function UserProfile() {
@@ -87,7 +87,7 @@ export default function UserProfile() {
           style={{gridColumn: 'span 3'}}
         >
           <strong className={'text-lg'}>
-            {name ? <InputtingText text={name}/> : <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'}/>}
+            <InputtingText text={name || oldSaying} cursorBlinkSpeed={'fast'}/>
           </strong>
 
         </div>

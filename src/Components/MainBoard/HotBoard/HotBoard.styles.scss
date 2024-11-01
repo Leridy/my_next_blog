@@ -2,6 +2,7 @@
 
 
 .hotBoard {
+  position: relative;
   min-height: 30vh;
   animation: slideIn ease-in-out .5s forwards;
   opacity: 0;
