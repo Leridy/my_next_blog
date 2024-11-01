@@ -31,6 +31,9 @@ export default function FakeMask(props: FakeMaskProps) {
       const animations = [
         'shakeAndUpDown .2s ease-in-out infinite',
         'rotate3D 3s ease-in-out infinite',
+        '',
+        '',
+        '',
       ]
       setLogoAnimation(animations[Math.floor(Math.random() * animations.length)]);
     }, 20000);
@@ -47,7 +50,7 @@ export default function FakeMask(props: FakeMaskProps) {
         zIndex: 9999,
         transition: 'all 0.5s',
         // todo: 这里是为了让这个组件不显示，为了开发方便，你可以删除这个 style
-        // display: 'none',
+        display: 'none',
       }}
     >
       <div

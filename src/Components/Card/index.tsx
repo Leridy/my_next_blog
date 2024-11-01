@@ -28,7 +28,7 @@ export default function UserCard(props: CardProps) {
     () => {
       return (
         <div
-          className={'flex justify-between items-center absolute bottom-0 left-0 w-full rounded-b-lg overflow-hidden card-action-part'}
+          className={'flex justify-center items-center absolute bottom-0 left-0 w-full rounded-b-lg overflow-hidden card-action-part'}
         >
           {actions}
         </div>

@@ -1,5 +1,4 @@
 import axios, {AxiosResponse} from 'axios';
-
 const requestHandler = (request: any) => {
   // add jwt token to request header
   const token = localStorage.getItem('token');

@@ -1,4 +1,4 @@
-import {Button, Modal} from "antd";
+import {Button, message, Modal} from "antd";
 import {useState} from "react";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
@@ -19,6 +19,7 @@ interface UserModalProps {
   onRegister?: (user: UserInfo | null) => void;
 }
 
+
 export default function UserModal(props: UserModalProps) {
   const {visible, onClose, onLogin, onRegister, defaultType} = props;
 
@@ -31,9 +32,10 @@ export default function UserModal(props: UserModalProps) {
       const result = await requestLogin(data);
       onLogin(result);
       onClose();
+      message.success('登录成功');
     } catch (e) {
       console.log(e);
-      alert('Login ')
+      message.error(e.message);
     }
   }
 
@@ -42,8 +44,10 @@ export default function UserModal(props: UserModalProps) {
       const user = await requestRegister(data);
       onRegister?.(user);
       onClose();
+      message.success('注册成功');
     } catch (e) {
       console.error(e);
+      message.error('注册失败，更多详情请查看控制');
       alert('Register failed, more details check in console');
     }
   }

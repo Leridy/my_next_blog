@@ -24,7 +24,6 @@ export default function NavBar(props: NavBarProps) {
 
   const handleInitialUserInfo = useCallback(async () => {
     if (user || tryTime.current > 1) return;
-    console.log('tryTime', tryTime.current);
     try {
       const result = await requestUserInfo();
       setUser(result);

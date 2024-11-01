@@ -48,7 +48,7 @@ export default function Avatar(props: AvatarProps) {
   }, [size]);
 
   const avatarSrc = useMemo(() => {
-    if (src) {
+    if (src || !document) {
       return src;
     }
 

@@ -10,7 +10,6 @@
     transition: all 1s;
     transform: translate3d(0, 100%, 0);
     backdrop-filter: blur(15px);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     opacity: 0;
     will-change: auto;
   }
