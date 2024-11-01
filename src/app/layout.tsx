@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import {AntdRegistry} from "@ant-design/nextjs-registry";
+import {UserProvider} from "@/Provider/UserProvider";
 
 export const runtime = "nodejs";
 
@@ -22,21 +23,19 @@ export const metadata: Metadata = {
   keywords: ["划水", "水", "网站"],
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+
+export default async function RootLayout({children}: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en" className={'h-full'}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
-      >
-      <AntdRegistry>
-        {children}
-      </AntdRegistry>
-      </body>
+    <body
+      className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+    >
+    <AntdRegistry>
+      {children}
+    </AntdRegistry>
+    </body>
     </html>
   );
 }

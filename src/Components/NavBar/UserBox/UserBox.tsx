@@ -1,10 +1,12 @@
 'use client';
 import Avatar from "@/Components/NavBar/Avatar";
 import LoginBox from "../LoginBox/LoginBox";
-import {useUser} from "@/Provider/UserProvider";
+import {useUserContext} from "@/Provider/UserProvider";
+import {useEffect} from "react";
 
 export default function UserBox() {
-  const {user} = useUser();
+  const {user} = useUserContext();
+
 
   return (
     <div
@@ -13,8 +15,6 @@ export default function UserBox() {
       {
         user ? <Avatar name={user.name}/> : <LoginBox/>
       }
-
     </div>
-
   )
 }

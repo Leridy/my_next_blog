@@ -1,7 +1,8 @@
-import {Button, DatePicker, Form, Input} from "antd";
+import {Button, Form, Input} from "antd";
 import {useForm} from "antd/es/form/Form";
 import FormItem from "antd/es/form/FormItem";
 import {HotTopic} from "@prisma/client";
+import {useCallback} from "react";
 
 interface FilterFormProps {
   onSearch?: (params: Partial<HotTopic>) => void;
@@ -11,15 +12,15 @@ export default function FilterForm(props: FilterFormProps) {
   const {onSearch} = props;
   const [form] = useForm<Partial<HotTopic>>();
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     const result = await form.getFieldsValue();
     onSearch?.(result);
-  }
+  }, [form, onSearch]);
 
-    const handleReset = () => {
-        form.resetFields();
-        handleSearch();
-    }
+  const handleReset = useCallback(() => {
+    form.resetFields();
+    handleSearch();
+  }, [form, handleSearch]);
 
   return (
     <Form

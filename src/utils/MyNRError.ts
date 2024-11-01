@@ -1,3 +1,8 @@
+import {NextRequest, NextResponse} from "next/server";
+import jwt from "jsonwebtoken";
+import env from "../../.project.json";
+
+
 /**
  * This class is used to create custom Next Response Errors.
  * @class MyNRError
@@ -22,15 +27,23 @@ export class MyNRError extends Error {
   data: any;
 
   /**
+   * The custom headers of the error.
+   * @type {Record<string, string | string[]>}
+   */
+  headers: HeadersInit | undefined;
+
+  /**
    * Creates an instance of MyNRError.
    * @param {string} message The error message.
    * @param {number} [statusCode=500] The status code of the error.
    * @param {any} [data] The custom data of the error.
    */
-  constructor(message: string, statusCode: number = 500, data?: any) {
+  constructor(message: string, statusCode: number = 500, operation?: Record<string, any>) {
     super(message);
     this.statusCode = statusCode;
-    this.data = data;
+    this.headers = operation?.headers;
+    delete operation?.headers;
+    this.data = operation;
   }
 
   /**
@@ -55,5 +68,42 @@ export class MyNRError extends Error {
    */
   getData(): any {
     return this.data || Error.captureStackTrace(this, this.constructor);
+  }
+
+  getHeaders(): HeadersInit | undefined {
+    return this.headers
+  }
+}
+
+export async function APIErrorHandler(req: NextRequest, res: NextResponse, next: Function) {
+  try {
+
+    /**
+     * get token from cookie if token exists, use jwt to verify token, for expired token, redirect to homepage
+     */
+
+    try {
+      const token = req.cookies.get('token')?.value
+      if (token) {
+        // verify token
+        const user = jwt.verify(token, env.JWT_TOKEN_SECRET) as { exp: number, iat: number };
+        if (user.exp * 1000 < Date.now()) throw new Error('token expired');
+
+        console.log('user checked', user);
+      }
+    } catch (e) {
+      console.error(e);
+      return NextResponse.redirect(req.nextUrl.origin, {headers: {'Set-Cookie': `token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;`}});
+    }
+
+    return await next(req, res);
+  } catch (e) {
+    if (e instanceof MyNRError) {
+      return NextResponse.json({message: e.message, details: e.getData()}, {
+        status: e.statusCode,
+        headers: e.getHeaders()
+      });
+    }
+    return NextResponse.json(e, {status: 400});
   }
 }

@@ -1,4 +1,4 @@
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {createHot, deleteHot, getHot, getHots, updateHot} from "./api";
 import {HotTopic} from "@prisma/client";
 
@@ -9,6 +9,7 @@ export function useHotData() {
 
   const fetch = useCallback(async (params?: Partial<HotTopic>) => {
     try {
+      console.error('fetch', params);
       setLoading(true);
       const res = await getHots(params);
       setHotList(res);
@@ -18,7 +19,7 @@ export function useHotData() {
     }
   }, []);
 
-  const fetchOne = async (id: string) => {
+  const fetchOne = useCallback(async (id: string) => {
     try {
       setLoading(true);
       const res = await getHot(id);
@@ -26,7 +27,7 @@ export function useHotData() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   const create = async (data: Partial<HotTopic>) => {
     try {
@@ -37,7 +38,7 @@ export function useHotData() {
     }
   };
 
-  const edit = async (id: string, data: Partial<HotTopic>) => {
+  const edit = useCallback(async (id: string, data: Partial<HotTopic>) => {
     try {
       setLoading(true);
       const res = await updateHot(id, data);
@@ -45,9 +46,9 @@ export function useHotData() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const remove = async (id: string) => {
+  const remove = useCallback(async (id: string) => {
     try {
       setLoading(true);
       const res = await deleteHot(id);
@@ -55,7 +56,7 @@ export function useHotData() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
 
   return {

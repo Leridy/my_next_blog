@@ -2,7 +2,7 @@ import {Button, Modal} from "antd";
 import {useState} from "react";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
-import useUserModalData, {UserInfo} from "./hooks/useUserModalData";
+import useUserAuthData, {UserInfo} from "./hooks/useUserAuthData";
 import {User} from "@prisma/client";
 import {RegisterData} from "./type";
 
@@ -22,7 +22,7 @@ interface UserModalProps {
 export default function UserModal(props: UserModalProps) {
   const {visible, onClose, onLogin, onRegister, defaultType} = props;
 
-  const {loading, requestRegister, requestLogin} = useUserModalData();
+  const {loading, requestRegister, requestLogin} = useUserAuthData();
 
   const [type, setType] = useState<'login' | 'register'>(defaultType || 'login');
 

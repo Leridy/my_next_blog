@@ -29,19 +29,26 @@ export class UserDao {
     });
   }
 
-  public async login(data: Pick<User, 'email' | 'password'>): Promise<User | null> {
+  public async login(data: Pick<User, 'email'>): Promise<User | null> {
     // some logic to login user
     return UserModel.findUnique({
       where: {
         email: data.email,
-        password: data.password
-      }
+      },
     });
   }
 
-  public async getUserById(id: number): Promise<User | null> {
+  public async getUserById(id: number): Promise<Omit<User, 'password'> | null> {
     // some logic to get user from database
     return UserModel.findUnique({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true
+      },
       where: {
         id
       }

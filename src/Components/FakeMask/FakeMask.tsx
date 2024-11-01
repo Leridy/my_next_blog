@@ -1,6 +1,7 @@
 import {Button, Input} from "antd";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import './FakeMask.style.scss'
+import DigitalClock from "@/Components/MainBoard/UserBoard/TipsAndNotification/DigitalClock/DigitalClock";
 
 interface FakeMaskProps {
   onExit?: () => void;
@@ -14,15 +15,30 @@ interface FakeMaskProps {
 export default function FakeMask(props: FakeMaskProps) {
   const {onExit} = props;
   const [searchValue, setSearchValue] = useState<string>('');
+  const [logoAnimation, setLogoAnimation] = useState<string>('shakeAndUpDown .3s ease-in-out infinite');
 
 
   const handleSearch = () => {
-    if(searchValue) window.open(`https://cn.bing.com/search?q=${searchValue}`);
+    if (searchValue) window.open(`https://cn.bing.com/search?q=${searchValue}`);
   }
 
   const exitFakeMode = () => {
     onExit?.();
   }
+
+  useEffect(() => {
+    const handler = setInterval(() => {
+      const animations = [
+        'shakeAndUpDown .2s ease-in-out infinite',
+        'rotate3D 3s ease-in-out infinite',
+      ]
+      setLogoAnimation(animations[Math.floor(Math.random() * animations.length)]);
+    }, 20000);
+
+    return () => {
+      clearInterval(handler);
+    }
+  }, []);
 
   return (
     <div
@@ -31,7 +47,7 @@ export default function FakeMask(props: FakeMaskProps) {
         zIndex: 9999,
         transition: 'all 0.5s',
         // todo: 这里是为了让这个组件不显示，为了开发方便，你可以删除这个 style
-        display: 'none',
+        // display: 'none',
       }}
     >
       <div
@@ -43,6 +59,9 @@ export default function FakeMask(props: FakeMaskProps) {
         <div
           className={'mb-8 flex logo'}
           onDoubleClick={exitFakeMode}
+          style={{
+            animation: logoAnimation,
+          }}
         >
           <img
             className={'w-60'}
@@ -66,6 +85,11 @@ export default function FakeMask(props: FakeMaskProps) {
           >必应搜索</Button>
         </div>
 
+
+        <DigitalClock
+          title={'当前时间'}
+
+        />
 
       </div>
 

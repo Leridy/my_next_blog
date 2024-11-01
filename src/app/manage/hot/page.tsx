@@ -1,7 +1,7 @@
 'use client'
 import {Button, Card, Modal, Table, TableColumnProps} from "antd";
 import {useHotData} from "./hooks/useHotData";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import FilterForm from "@/app/manage/hot/Components/FilterForm";
 import {useRouter} from "next/navigation";
 import BrandIcon from "@/Components/MainBoard/HotBoard/BrandIcon";
@@ -16,12 +16,12 @@ export default function HotList() {
     setDeleteInfo(data);
   }
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = useCallback(async () => {
     if (!deleteInfo) return;
     await remove(deleteInfo?.id);
     setDeleteInfo(null);
     fetch();
-  }
+  }, [deleteInfo, remove, fetch]);
 
 
   /**
@@ -32,7 +32,7 @@ export default function HotList() {
    *   url         String   @unique
    *   image       String   @default("")
    */
-  const columns: TableColumnProps[] = [
+  const columns = useMemo<TableColumnProps[]>(() => [
     {
       title: 'id',
       dataIndex: 'id',
@@ -95,7 +95,7 @@ export default function HotList() {
         )
       }
     }
-  ];
+  ], []);
 
   const handleCreate = () => {
     router.push('/manage/hot/create');
@@ -103,9 +103,9 @@ export default function HotList() {
 
   useEffect(() => {
     fetch();
+    console.log('fetch changed')
   }, []);
-
-  const renderTitle = () => {
+  const renderTitle = useMemo(() => {
     return (
       <div
         style={{display: 'flex', justifyContent: 'space-between'}}
@@ -118,14 +118,14 @@ export default function HotList() {
         >+</Button>
       </div>
     )
-  }
+  }, []);
 
   return (
     <Card
-      title={renderTitle()}
+      title={renderTitle}
       size={"small"}
       className={'flex-1 h-full'}
-      loading={loading}
+      // loading={loading}
     >
       <div className={'mb-4'}>
         <FilterForm onSearch={fetch}/>

@@ -1,14 +1,28 @@
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {User} from "@prisma/client";
-import {login, register, logout} from "./api";
+import {login, register, logout, getUserByToken} from "./api";
 import {RegisterData} from "../type";
 import jwt from "jsonwebtoken";
 
 export type UserInfo = Omit<User, 'password'>;
 
-export default function useUserModalData() {
+export default function useUserAuthData() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  /**
+   * send a request to get user info, using token in cookie, checking user's status
+   * @returns user info
+   */
+  const requestUserInfo = async () => {
+    setLoading(true);
+    try {
+      const result = await getUserByToken()
+      return result;
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const requestLogin = async (data: Pick<User, 'email' | 'password'>) => {
     setLoading(true);
@@ -29,7 +43,7 @@ export default function useUserModalData() {
     return logout();
   }
 
-  const requestRegister = async (data: RegisterData) => {
+  const requestRegister = useCallback(async (data: RegisterData) => {
     setLoading(true);
     try {
       const result = await register(data);
@@ -40,7 +54,7 @@ export default function useUserModalData() {
       setLoading(false);
     }
 
-  }
+  }, [])
 
   return {
     user,
@@ -48,6 +62,7 @@ export default function useUserModalData() {
     requestLogin,
     requestLogout,
     requestRegister,
+    requestUserInfo,
   }
 
 }

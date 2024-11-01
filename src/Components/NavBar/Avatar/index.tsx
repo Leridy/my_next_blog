@@ -12,7 +12,7 @@ interface AvatarProps {
 enum AvatarSize {
     small = 30,
     medium = 50,
-    large = 100,
+    large = 80,
 }
 
 /**

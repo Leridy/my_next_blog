@@ -14,7 +14,7 @@ export default function HotEditor() {
 
   const isEditMode = useMemo(
     () => !pathname.includes('create')
-    , [])
+    , [pathname])
 
   const cardTitle = useMemo((): string => isEditMode ? '编辑栏目信息' : '创建新的栏目', [isEditMode]);
   const itemId = useMemo(() => {
@@ -37,8 +37,8 @@ export default function HotEditor() {
 
   useEffect(
     () => {
-      itemId && itemId !== 'create' && fetchOne(itemId)
-    }, [itemId]
+      itemId && fetchOne(itemId)
+    }, [fetchOne, itemId]
   )
 
   return (

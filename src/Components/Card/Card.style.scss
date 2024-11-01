@@ -2,4 +2,21 @@
 
 .card {
   animation: slideIn ease-in-out 0.5s;
+  overflow: hidden;
+  .card-action-part {
+    height: 11vh;
+    //background: var(--color-card-background);
+    z-index: 1;
+    transition: all 1s;
+    transform: translate3d(0, 100%, 0);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    will-change: auto;
+  }
+
+  &:hover .card-action-part {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

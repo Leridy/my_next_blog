@@ -1,7 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {User} from "@prisma/client";
 import jwt from "jsonwebtoken";
-import env from "../../../.project.json";
 import {NextApiRequest} from "next";
 import {MyNRError} from "@/utils/MyNRError";
 
@@ -30,26 +29,50 @@ export function validationAuthToken(req: NextRequest, options: AuthMiddlewareOpt
   const {validateMethod = defaultValidateMethod, role} = options;
   // 鉴权, 从 header.authorization 或者 cookie 中获取 token
   if (validateMethod.includes(req.method)) {
-    const token = req.cookies.get('token')?.value || req.headers.get('authorization')?.split('Bearer ')[1];
+    const token = req.cookies.get('token')?.value;
 
     let user: { exp: number, iat: number } & User | null = null
     // 从 token 中解析出用户信息
     try {
-      if (!token) throw new MyNRError('no token', 401);
+      if (!token) throw new MyNRError('No Token', 401);
 
       // 由于边缘计算不支持 crypto 模块，所以无法 verify token. 目前只能 decode token
       user = jwt.decode(token) as { exp: number, iat: number } & User;
 
-      if (user.role < role) throw new MyNRError('no permission', 403);
+      if (user.role < role) throw new MyNRError('No Permission', 403);
       if (user.exp * 1000 < Date.now()) throw new MyNRError('token expired', 401);
 
-      return NextResponse.next();
     } catch (e) {
       // catch error is meanness, just for type check
-      if (e instanceof MyNRError) {
-        console.log(e.message);
-      }
+      console.log(e);
       return NextResponse.redirect(req.nextUrl.origin); // 重定向到首页
     }
+  }
+}
+
+export function getUserIdAndRoleToHeaders(req: NextRequest): Headers | NextResponse<unknown> {
+  const token = req.cookies.get('token')?.value
+
+  let user: { exp: number, iat: number } & User | null = null
+  // 从 token 中解析出用户信息
+  try {
+    if (!token) throw new MyNRError('no token', 401);
+
+    // 由于边缘计算不支持 crypto 模块，所以无法 verify token. 目前只能 decode token
+    user = jwt.decode(token) as { exp: number, iat: number } & User;
+
+    if (user.exp * 1000 < Date.now()) throw new MyNRError('token expired', 401);
+
+    const newHeaders = new Headers(req.headers);
+
+    newHeaders.set('x-user-id', user.id.toString());
+    newHeaders.set('x-user-role', user.role);
+
+
+    return newHeaders;
+
+  } catch (e) {
+    console.log(e);
+    return NextResponse.redirect(req.nextUrl.origin); // 重定向到首页
   }
 }

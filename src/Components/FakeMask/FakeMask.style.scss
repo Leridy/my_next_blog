@@ -3,9 +3,9 @@
 }
 
 .logo {
+  will-change: auto;
   &:hover {
     animation: spark 0.5s;
-    backdrop-filter: drop-shadow(0 0 0.5rem #ccc);
   }
 }
 

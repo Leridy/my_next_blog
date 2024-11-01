@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User } from '@prisma/client';
-import {UserInfo} from "@/Components/UserComponents/hooks/useUserModalData";
+import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
 
 interface UserContextType {
   user: Omit<User, 'password'> | null;
@@ -9,7 +9,7 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children , initialState = null }: { children: ReactNode, initialState: UserInfo | null}) => {
+export const UserProvider = ({ children , initialState = null }: { children: ReactNode, initialState?: UserInfo | null}) => {
   const [user, setUser] = useState<UserInfo | null>(initialState);
 
   return (
@@ -19,7 +19,7 @@ export const UserProvider = ({ children , initialState = null }: { children: Rea
   );
 };
 
-export const useUser = () => {
+export const useUserContext = () => {
   const context = useContext(UserContext);
   if (!context) {
     throw new Error('useUser must be used within a UserProvider');

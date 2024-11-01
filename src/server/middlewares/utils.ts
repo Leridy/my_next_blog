@@ -4,7 +4,7 @@ import {MiddlewareHandler, Role} from "@/server/middlewares";
 import {NextRequest, NextResponse} from "next/server";
 import jwt from "jsonwebtoken";
 import env from "../../../.project.json";
-import {UserInfo} from "@/Components/UserComponents/hooks/useUserModalData";
+import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
 
 type LogLevel = 'info' | 'warn' | 'error' | { method?: boolean, url?: boolean, headers?: boolean, payload?: boolean }
 

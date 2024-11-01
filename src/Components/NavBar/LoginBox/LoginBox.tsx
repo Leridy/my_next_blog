@@ -1,11 +1,11 @@
 import {useState} from "react";
 import {Button, Space} from "antd";
 import UserModal from "@/Components/UserComponents/UserModal";
-import {UserInfo} from "@/Components/UserComponents/hooks/useUserModalData";
-import {useUser} from "@/Provider/UserProvider";
+import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
+import {useUserContext} from "@/Provider/UserProvider";
 
 export default function LoginBox() {
-  const {setUser} = useUser();
+  const {setUser} = useUserContext();
 
   const [visible, setVisible] = useState(false);
   const [type, setType] = useState<'login' | 'register'>('login');

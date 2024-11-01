@@ -27,8 +27,10 @@ export default function UserCard(props: CardProps) {
   const renderAction = useMemo(
     () => {
       return (
-        <div>
-          action
+        <div
+          className={'flex justify-between items-center absolute bottom-0 left-0 w-full rounded-b-lg overflow-hidden card-action-part'}
+        >
+          {actions}
         </div>
       )
     }, []
@@ -36,7 +38,7 @@ export default function UserCard(props: CardProps) {
 
   return (
     <div
-      className={'p-4 rounded-lg shadow-md flex-col card'}
+      className={'flex p-4 rounded-lg shadow-md flex-col card relative'}
       style={{
         background: 'var(--color-card-background)',
         height: '20vh',
@@ -44,7 +46,7 @@ export default function UserCard(props: CardProps) {
       }}
     >
       {header && renderHeader}
-      <div className={'pt-2 pb-2'}>
+      <div className={'pt-2 pb-2 flex-1'}>
         {children}
       </div>
       {actions && renderAction}
