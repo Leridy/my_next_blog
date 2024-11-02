@@ -38,12 +38,12 @@ export class MyNRError extends Error {
    * @param {number} [statusCode=500] The status code of the error.
    * @param {any} [data] The custom data of the error.
    */
-  constructor(message: string, statusCode: number = 500, operation?: Record<string, any>) {
+  constructor(message: string, statusCode: number = 500, optional?: Record<string, any>) {
     super(message);
     this.statusCode = statusCode;
-    this.headers = operation?.headers;
-    delete operation?.headers;
-    this.data = operation;
+    this.headers = optional?.headers;
+    delete optional?.headers;
+    this.data = optional;
   }
 
   /**

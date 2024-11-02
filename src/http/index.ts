@@ -97,7 +97,7 @@ export function axiosErrorToNetworkError(error: AxiosError) {
     default:
       notification.error({
         message: `未知错误, 错误码 ${status} `,
-        description: error.response?.data?.message || '未知错误，请稍后再试',
+        description: newError.bizMessage || newError.message || '未知错误',
       });
       break;
   }

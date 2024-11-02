@@ -5,17 +5,17 @@ import FormItem from "antd/es/form/FormItem";
 import {useEffect} from "react";
 
 
-
 interface ManageFormProps<T> {
   onSubmit?: (params: Partial<T>) => void;
   onCancel?: () => void;
   loading?: boolean;
   initialValues?: T | null;
   children?: React.ReactNode;
+  size?: 'small' | 'large';
 }
 
 export default function ManageForm<T>(props: ManageFormProps<T>) {
-  const {onSubmit, onCancel, loading, initialValues, children} = props;
+  const {onSubmit, onCancel, loading, initialValues, children, size = 'small'} = props;
   const [form] = useForm<Partial<T>>();
 
   const handleSubmit = async () => {
@@ -36,21 +36,30 @@ export default function ManageForm<T>(props: ManageFormProps<T>) {
   useEffect(() => {
     if (initialValues) {
       form.setFieldsValue(initialValues);
+    } else {
+        form.resetFields();
     }
   }, [form, initialValues])
+
+  useEffect(() => {
+    return () => {
+      console.log('form reset');
+      form.resetFields();
+    }
+  }, [form])
 
   return (
     <Form
       form={form}
       layout={'horizontal'}
-      wrapperCol={{span: 8}}
-      labelCol={{span: 2}}
+      wrapperCol={{span: size === 'small' ? 16 : 20}}
+      labelCol={{span: size === 'small' ? 8 : 4}}
       initialValues={initialValues || {}}
     >
       {children}
 
       <FormItem
-        wrapperCol={{offset: 2}}
+        wrapperCol={{offset: size === 'small' ? 8 : 4}}
       >
         <Button
           type={"primary"}

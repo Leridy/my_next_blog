@@ -17,13 +17,6 @@ export default function HotList() {
    */
   const columns = useMemo<TableColumnProps[]>(() => [
     {
-      title: 'id',
-      dataIndex: 'id',
-      key: 'id',
-      align: 'center',
-      width: 80,
-    },
-    {
       title: '栏目名称',
       dataIndex: 'name',
       key: 'name',

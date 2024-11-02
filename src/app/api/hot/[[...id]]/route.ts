@@ -1,4 +1,4 @@
-import {createHot, deleteHot, getHots, updateHot} from "@/server/db/dao/hot.dao";
+import hotDao from "@/server/db/dao/hot.dao";
 import {HotTopic} from "@prisma/client";
 import * as Yup from 'yup';
 import {NextRequest, NextResponse} from "next/server";
@@ -11,11 +11,12 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
   const id = (await params).id
   let data: HotTopic[] | HotTopic | null = null;
   const query = id ? {id: Number(id)} : originQuery;
-  data = await getHots(query);
+  data = await hotDao.get(query);
 
   if (!data) throw new MyNRError('你寻找的热门栏目不存在', 404, {
     id, query,
   });
+
   return NextResponse.json(data, {status: 200});
 }
 
@@ -28,9 +29,9 @@ async function post(req: NextRequest) {
 
 
   const data = await readableStreamToJSON<Omit<HotTopic, 'newsList' | 'id'>>(req.body);
-  if (typeof data !== 'object') throw new MyNRError('Invalid data', 401, {data});
-  await schema.validateSync(data);
-  const result = await createHot(data);
+  if (typeof data !== 'object') throw new MyNRError('无效数据', 401, {data});
+  await schema.validate(data);
+  const result = await hotDao.create(data);
   return NextResponse.json(result, {status: 200});
 }
 
@@ -42,18 +43,18 @@ async function put(req: NextRequest, {params}: { params: Promise<{ id: string }>
   const pathname = req.nextUrl.pathname;
   const id = (await params).id;
   const data = await readableStreamToJSON<Omit<HotTopic, 'newsList' | 'id'>>(req.body);
-  if (typeof data !== 'object') throw new MyNRError('Invalid data', 401, {data});
+  if (typeof data !== 'object') throw new MyNRError('无效数据', 401, {data});
   await schema.validateSync(data);
-  if (!id) throw new MyNRError('Invalid id', 401, {id, request: {body: data, pathname}});
-  const result = await updateHot(id, data);
+  if (!id) throw new MyNRError('无效的 id', 401, {id, request: {body: data, pathname}});
+  const result = await hotDao.update(id, data);
   return NextResponse.json(result, {status: 200});
 }
 
 async function del(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
   const pathname = req.nextUrl.pathname;
   const id = (await params).id;
-  if (!id) throw new MyNRError('Invalid id', 401, {id, request: {pathname}});
-  const result = await deleteHot(id);
+  if (!id) throw new MyNRError('无效的 id', 401, {id, request: {pathname}});
+  const result = await hotDao.del(id);
   return NextResponse.json(result, {status: 200});
 }
 

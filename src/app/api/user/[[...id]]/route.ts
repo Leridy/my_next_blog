@@ -58,7 +58,7 @@ async function put(req: NextRequest, {params}: { params: Promise<{ id: string }>
   try {
     const {id} = await params;
     const data = await readableStreamToJSON<Omit<User, 'id'>>(req.body);
-    if (typeof data !== 'object') throw new MyNRError('Invalid data', 401, {data});
+    if (typeof data !== 'object') throw new MyNRError('无效数据', 401, {data});
     const result = await userDao.updateUser({...data, id: Number(id)});
     return NextResponse.json(result, {status: 200});
   } catch (e) {
@@ -69,7 +69,7 @@ async function put(req: NextRequest, {params}: { params: Promise<{ id: string }>
 
 async function del(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
   const {id} = await params;
-  if (!id) throw new MyNRError('Invalid id', 401, {id});
+  if (!id) throw new MyNRError('无效的 id', 401, {id});
   const result = await userDao.deleteUser(id);
   return NextResponse.json(result, {status: 200});
 }

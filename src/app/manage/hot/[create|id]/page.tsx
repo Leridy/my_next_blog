@@ -10,7 +10,8 @@ export default function HotEditor() {
   const {
     cardTitle,
     handleSubmit,
-    handleCancel
+    handleCancel,
+    initialValues
   } = useEditCard<HotTopic>({
     titleGroup: {
       create: '创建新热搜',
@@ -29,6 +30,7 @@ export default function HotEditor() {
       <ManageForm
         onSubmit={handleSubmit}
         onCancel={handleCancel}
+        initialValues={initialValues}
       >
         <FormItem
           label={"名称"}

@@ -11,6 +11,7 @@ type EditCardProps = {
   };
   fallbackPath?: string;
   apiURL: string;
+  id?: string;
 }
 
 type EditCardReturn<T> = {
@@ -25,21 +26,22 @@ type EditCardReturn<T> = {
 }
 
 export default function useEditCard<T>(props: EditCardProps): EditCardReturn<T> {
-  const {titleGroup, fallbackPath, apiURL} = props;
-  const {getOne, create, edit, data, loading} = useApi<T>({apiURL});
+  const {titleGroup, fallbackPath, apiURL, id} = props;
+  const {getOne, create, edit, data, loading, clearData} = useApi<T>({apiURL});
   const router = useRouter();
   const pathname = usePathname() || '';
 
+  const itemId = useMemo(() => {
+    if (id) return id;
+    const idInPath = pathname.split('/').pop();
+    return Number.isNaN(idInPath) ? idInPath : undefined;
+  }, [id, pathname]);
+
   const isEditMode = useMemo(
-    () => !pathname.includes('create')
-    , [pathname])
+    () => itemId !== undefined
+    , [itemId])
 
   const cardTitle = useMemo((): string => isEditMode ? titleGroup.edit : titleGroup.create, [isEditMode, titleGroup.create, titleGroup.edit]);
-
-  const itemId = useMemo(() => {
-    const id = pathname.split('/').pop();
-    return id === 'create' ? undefined : id;
-  }, [pathname]);
 
   const handleCancel = useCallback(() => {
     router.push(props.fallbackPath || '/')
@@ -48,8 +50,13 @@ export default function useEditCard<T>(props: EditCardProps): EditCardReturn<T> 
   useEffect(() => {
       if (isEditMode && itemId) {
         getOne(itemId)
+      } else {
+        clearData()
       }
-    }, [getOne, isEditMode, itemId]
+      return () => {
+        clearData()
+      }
+    }, [clearData, getOne, isEditMode, itemId]
   )
 
   const handleSubmit = useCallback(async (data: Partial<T>): Promise<boolean | void> => {
@@ -59,11 +66,11 @@ export default function useEditCard<T>(props: EditCardProps): EditCardReturn<T> 
           itemId || '',
           data
         )
-        router.push(fallbackPath || '/');
+        if (fallbackPath) router.push(fallbackPath || '/');
         message.success('编辑成功');
       } else {
         await create(data);
-        router.push(fallbackPath || '/');
+        if (fallbackPath) router.push(fallbackPath || '/');
         message.success('创建成功');
       }
     } catch (e) {

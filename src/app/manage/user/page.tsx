@@ -8,13 +8,6 @@ import {User} from "@prisma/client";
 export default function ManageUser() {
   const columns = useMemo<TableColumnProps<User>[]>(() => [
     {
-      title: 'id',
-      dataIndex: 'id',
-      key: 'id',
-      align: 'center',
-      width: 80,
-    },
-    {
       title: '用户名',
       dataIndex: 'name',
       key: 'name',

@@ -11,9 +11,9 @@ interface ManageListProps<T> {
   columns: ColumnProps<T>[];
   manageName?: string; // 目前正在管理的模块的名称
   cardProps?: CardProps
-  onEdit?: (record: T) => void;
-  onDelete?: (record: T) => void;
-  onCreate?: () => void;
+  onEdit?: (record: T) => Promise<void> | void;
+  onDelete?: (record: T) => Promise<void> | void;
+  onCreate?: () => Promise<void> | void;
   onClickItem?: (record: T) => void;
   children?: ReactNode;
 }
@@ -62,31 +62,54 @@ export default function ManageList<T>(props: ManageListProps<T>) {
       });
       return;
     } else {
-      onDelete(record);
+      try {
+        onDelete(record);
+        await get(queryData);
+      } catch (e) {
+        message.error('操作失败');
+      }
+
     }
   }, [del, get, onDelete, queryData]);
 
-  const handleEdit = useCallback((record: T) => {
+  const handleEdit = useCallback(async (record: T) => {
     if (onEdit) {
-      onEdit(record);
+      try {
+        await onEdit(record);
+        get(queryData);
+      } catch (e) {
+        message.error('操作失败');
+      }
     } else {
       // @ts-expect-error there must have ID
       router.push(`${pathname}/${record.id}`);
     }
   }, [manageName, onEdit, router]);
 
-  const handleCreate = useCallback(() => {
+  const handleCreate = useCallback(async () => {
     if (onCreate) {
-      onCreate();
+      try {
+        await onCreate();
+        get(queryData);
+      } catch (e) {
+        message.error('操作失败');
+      }
     } else {
       // the create name is formPath
       router.push(`${pathname}/create`);
 
     }
-  }, [manageName, onCreate, router]);
+  }, [get, onCreate, pathname, queryData, router]);
 
 
   const columnsConfig = useMemo<TableColumnProps<T>[]>(() => [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 80,
+      align: 'center'
+    },
     ...columns,
     {
       title: '操作',

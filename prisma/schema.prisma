@@ -78,3 +78,13 @@ model validateCode {
   requestTime Int      @default(0)
   createdAt   DateTime @default(now())
 }
+
+model setting {
+  id        Int      @id @unique @default(autoincrement())
+  key       String   @unique
+  value     String   @default("")
+  label     String   @default("")
+  role      String   @default("1") // 1: public, 2: internal
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

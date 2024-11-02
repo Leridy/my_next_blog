@@ -18,6 +18,7 @@ export type UseApiReturn<T> = {
   create: (data: Partial<T>) => Promise<T>;
   edit: (id: string, data: Partial<T>) => Promise<T>;
   del: (id: string) => Promise<void>;
+  clearData: () => void;
 }
 
 export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
@@ -79,6 +80,10 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
     }
   }, [apiURL]);
 
+  const clearData = useCallback(() => {
+    setData(null);
+  }, []);
+
   return {
     items,
     loading,
@@ -87,7 +92,8 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
     getOne,
     create,
     edit,
-    del
+    del,
+    clearData
   }
 }
 

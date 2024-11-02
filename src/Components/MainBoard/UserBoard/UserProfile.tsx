@@ -105,12 +105,10 @@ export default function UserProfile() {
           className={'flex justify-center items-center user-profile-avatar'}
           style={{gridColumn: 'span 3'}}
         >
-
           <Avatar
             size={'medium'}
             name={name || '客人'}
           />
-
         </div>
 
         <div
@@ -119,7 +117,7 @@ export default function UserProfile() {
         >
           <strong className={'text-lg'}>
             {name ?
-              <InputtingText text={`${name}, 欢迎访问`} cursorBlinkSpeed={'fast'} key={name}/> :
+              <InputtingText text={`${name}, 您来啦`} cursorBlinkSpeed={'fast'} key={name}/> :
               <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={oldSaying}/>
             }
           </strong>
