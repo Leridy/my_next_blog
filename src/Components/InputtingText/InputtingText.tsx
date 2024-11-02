@@ -42,7 +42,7 @@ export default function InputtingText(props: InputtingTextProps) {
       clearInterval(deleteIntervalHandler.current as NodeJS.Timeout);
       addIntervalHandler.current = setInterval(() => {
         setDisplayText((prev) => {
-          if (prev.length >= curText.length) {
+          if (prev.length >= curText.length || prev.join('') === curText) {
             clearInterval(addIntervalHandler.current as NodeJS.Timeout);
             return prev;
           } else {

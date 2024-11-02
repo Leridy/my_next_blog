@@ -13,7 +13,7 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
   const query = id ? {id: Number(id)} : originQuery;
   data = await getHots(query);
 
-  if (!data) throw new MyNRError('Hot Not Found', 404, {
+  if (!data) throw new MyNRError('你寻找的热门栏目不存在', 404, {
     id, query,
   });
   return NextResponse.json(data, {status: 200});

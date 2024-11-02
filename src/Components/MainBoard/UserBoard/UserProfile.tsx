@@ -5,18 +5,21 @@ import {useEffect, useMemo, useState} from "react";
 import './UserProfile.style.scss'
 import InputtingText from "@/Components/InputtingText/InputtingText";
 import {sayings, someEmoji} from "@/mock/emojiAndSayings";
-import {Button, Space} from "antd";
-import {SettingFilled} from "@ant-design/icons";
+import {Button, message, Space} from "antd";
+import {DesktopOutlined, LogoutOutlined, SettingFilled} from "@ant-design/icons";
+import {useRouter} from "next/navigation";
+import {Role} from "@/server/middlewares";
+import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
 
 
 export default function UserProfile() {
-  const {user} = useUserContext();
+  const {user, requestLogout} = useUserContext();
+  const router = useRouter();
 
   const [oldSaying, setOldSaying] = useState<string>('有朋自远方来，不亦乐乎');
 
-  const {name, createdAt} = useMemo<{ name: string, createdAt: Date }>(
-    () => {
-      return user || {name: '', createdAt: new Date()};
+  const {name, createdAt, role} = useMemo<UserInfo>(() => {
+      return user || {name: '', createdAt: new Date(), role: Role.USER} as UserInfo;
     }, [user]
   )
 
@@ -38,15 +41,43 @@ export default function UserProfile() {
           type={"link"}
           onClick={
             () => {
-              console.log('click user');
+              message.info('功能暂未开放');
             }}
         >
-          <SettingFilled/> Setting
+          <SettingFilled/> 设置
         </Button>
-      </Space>
+        {
+          name && <Button
+                size={"small"}
+                type={"link"}
+                onClick={
+                  async () => {
+                    await requestLogout();
+                    message.success('登出成功，感谢划水时间的陪伴');
+                    router.push('/');
+                  }}
+            >
+                <LogoutOutlined/> 登出
+            </Button>
+        }
 
+        {
+          role >= Role.ADMIN && (
+            <Button
+              size={"small"}
+              type={"link"}
+              onClick={
+                () => {
+                  router.push('/manage');
+                }}
+            >
+              <DesktopOutlined /> 管理
+            </Button>
+          )
+        }
+      </Space>
     )
-  }, []);
+  }, [requestLogout, name]);
 
   useEffect(() => {
     const handler = setInterval(() => {
@@ -87,7 +118,10 @@ export default function UserProfile() {
           style={{gridColumn: 'span 3'}}
         >
           <strong className={'text-lg'}>
-            <InputtingText text={name || oldSaying} cursorBlinkSpeed={'fast'}/>
+            {name ?
+              <InputtingText text={`${name}, 欢迎访问`} cursorBlinkSpeed={'fast'} key={name}/> :
+              <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={oldSaying}/>
+            }
           </strong>
 
         </div>

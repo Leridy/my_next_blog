@@ -3,7 +3,8 @@ import UserBoard from "@/Components/MainBoard/UserBoard/UserBoard";
 import {mockedGithub, mockNews} from "@/mock";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import LinkFrame from "@/Components/LinkFrame/LinkFrame";
-import {useHotData} from "@/app/manage/hot/hooks/useHotData";
+import useApi from "@/app/manage/hooks/useApi";
+import {HotTopic} from "@prisma/client";
 
 interface MainBoardProps {
   keyword: string;
@@ -17,19 +18,19 @@ export default function MainBoard(props: MainBoardProps) {
   const {keyword} = props;
   const [openedLink, setOpenedLink] = useState<string>('');
 
-  const {fetch, hotList} = useHotData();
+  const {get, items} = useApi<HotTopic>({apiURL: '/hot'});
 
   const handleOpenLink = useCallback((url: string) => {
     window.open(url, '_blank');
   }, []);
 
   useEffect(() => {
-    fetch();
-  }, []);
+    get();
+  }, [get]);
 
   const renderHotBoard = useMemo(() => {
     return (
-      [...hotList].map((topic,i) => <HotBoard
+      items.map((topic, i) => <HotBoard
         index={i}
         title={topic.name}
         key={topic.id}
@@ -39,7 +40,7 @@ export default function MainBoard(props: MainBoardProps) {
         onOpenFrame={handleOpenLink}
       />)
     )
-  }, [keyword, handleOpenLink, hotList])
+  }, [items, keyword, handleOpenLink])
 
   return (
     // 使用 grid 布局将 HotBoard 和 UserBoard 放在一起
@@ -62,6 +63,8 @@ export default function MainBoard(props: MainBoardProps) {
       >
         {renderHotBoard}
       </div>
+
+
       <div
         className={
           'hidden md:block col-span-1 pl-0 pr-4 pt-4 pb-4 h-full ' +
@@ -70,6 +73,7 @@ export default function MainBoard(props: MainBoardProps) {
       >
         <UserBoard/>
       </div>
+
 
       {
         openedLink && <LinkFrame url={openedLink} onClose={() => setOpenedLink('')} title={'Opened Link'}/>

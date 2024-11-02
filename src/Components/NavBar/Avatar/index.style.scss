@@ -25,7 +25,7 @@
   }
 
   &:hover:after {
-    animation: backgroundRotation 1s linear infinite;
+    animation: backgroundRotation 1s linear infinite forwards;
     transform: scale(1.15);
   }
 }

@@ -5,8 +5,9 @@ import userDao from "@/server/db/dao/user.dao";
 import {Role, SetHeaderOperation} from "@/server/middlewares";
 import {checkValidationCode, encryptPwdWithSalt} from "@/server/ApiUtils";
 import {mergeHeaderObj} from "@/utils/mergeObject";
+import {APIErrorHandler} from "@/utils/MyNRError";
 
-export async function POST(req: NextRequest) {
+export async function post(req: NextRequest) {
   let resHeaderOperation: SetHeaderOperation = {};
 
   const schema = Yup.object().shape({
@@ -18,34 +19,31 @@ export async function POST(req: NextRequest) {
     password2: Yup.string().required().equals([Yup.ref('password')]),
   });
 
-  try {
-    const data = await encryptPwdWithSalt(req) as Pick<User, 'name' | 'password' | 'email' | 'role'> & {
-      password2: string,
-      validateCode: string
-    }
-    await schema.validate(data);
-
-    const sessionId = req.cookies.get('sessionId')?.value || '';
-    const validateResult = await checkValidationCode(data.validateCode, sessionId);
-
-    const dataToCreate: Partial<typeof data> = {...data};
-    // remove double-check data
-    delete dataToCreate.password2;
-    delete dataToCreate.validateCode;
-
-    // add User role
-    dataToCreate.role = Role.USER;
-
-    const result = await userDao.createUser(dataToCreate as User);
-
-    // remove password field
-    delete result.password;
-
-    if (validateResult) resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
-
-    return NextResponse.json(result, {status: 200, headers: resHeaderOperation as Record<string, string>});
-  } catch (e) {
-    console.log(e);
-    return NextResponse.json(e, {status: 400});
+  const data = await encryptPwdWithSalt(req) as Pick<User, 'name' | 'password' | 'email' | 'role'> & {
+    password2: string,
+    validateCode: string
   }
+  await schema.validate(data);
+
+  const sessionId = req.cookies.get('sessionId')?.value || '';
+  const validateResult = await checkValidationCode(data.validateCode, sessionId);
+
+  const dataToCreate: Partial<typeof data> = {...data};
+  // remove double-check data
+  delete dataToCreate.password2;
+  delete dataToCreate.validateCode;
+
+  // add User role
+  dataToCreate.role = Role.USER;
+
+  const result = await userDao.createUser(dataToCreate as User);
+
+  // remove password field
+  delete result.password;
+
+  if (validateResult) resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
+
+  return NextResponse.json(result, {status: 200, headers: resHeaderOperation as Record<string, string>});
 }
+
+export const POST = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, post);

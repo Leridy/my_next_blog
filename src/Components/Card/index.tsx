@@ -33,7 +33,7 @@ export default function UserCard(props: CardProps) {
           {actions}
         </div>
       )
-    }, []
+    }, [actions]
   )
 
   return (

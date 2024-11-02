@@ -1,45 +1,24 @@
 'use client'
-import {Card} from "antd";
-import HotForm from "@/app/manage/hot/Components/HotForm";
-import {usePathname, useRouter} from "next/navigation";
-import {useCallback, useEffect, useMemo} from "react";
+import {Card, Input} from "antd";
+import ManageForm from "@/app/manage/Components/ManageForm";
+import useEditCard from "@/app/manage/hooks/useEditCard";
 import {HotTopic} from "@prisma/client";
-import {useHotData} from "@/app/manage/hot/hooks/useHotData";
+import FormItem from "antd/es/form/FormItem";
 
 
 export default function HotEditor() {
-  const pathname = usePathname() || '';
-  const router = useRouter();
-  const {create, edit, loading, fetchOne, data} = useHotData();
-
-  const isEditMode = useMemo(
-    () => !pathname.includes('create')
-    , [pathname])
-
-  const cardTitle = useMemo((): string => isEditMode ? '编辑栏目信息' : '创建新的栏目', [isEditMode]);
-  const itemId = useMemo(() => {
-    const id = pathname.split('/').pop();
-    return id === 'create' ? undefined : id;
-  }, [pathname]);
-
-  const handleSubmit = useCallback(async (data: Partial<HotTopic>) => {
-    if (isEditMode) {
-      await edit(
-        itemId || '',
-        data
-      )
-      router.push('/manage/hot')
-    } else {
-      await create(data);
-      router.push('/manage/hot')
-    }
-  }, [isEditMode, edit, itemId, router, create]);
-
-  useEffect(
-    () => {
-      itemId && fetchOne(itemId)
-    }, [fetchOne, itemId]
-  )
+  const {
+    cardTitle,
+    handleSubmit,
+    handleCancel
+  } = useEditCard<HotTopic>({
+    titleGroup: {
+      create: '创建新热搜',
+      edit: '编辑热搜'
+    },
+    fallbackPath: '/manage/hot',
+    apiURL: '/hot'
+  })
 
   return (
     <Card
@@ -47,12 +26,45 @@ export default function HotEditor() {
       size={"small"}
       className={'h-full'}
     >
-      <HotForm
+      <ManageForm
         onSubmit={handleSubmit}
-        onCancel={() => router.push('/manage/hot')}
-        loading={loading}
-        initialValues={data}
-      />
+        onCancel={handleCancel}
+      >
+        <FormItem
+          label={"名称"}
+          name={"name"}
+          required
+          rules={[{required: true, message: '请输入名称'}]}
+          validateTrigger={['onBlur']}
+        >
+          <Input/>
+        </FormItem>
+        <FormItem
+          label={"图标"}
+          name={"icon"}
+        >
+          <Input/>
+        </FormItem>
+        <FormItem
+          label={"描述"}
+          name={"description"}
+        >
+          <Input/>
+        </FormItem>
+        <FormItem
+          label={"链接"}
+          name={"url"}
+          rules={[{required: true, type: 'url', message: '请输入正确的链接'}]}
+        >
+          <Input/>
+        </FormItem>
+        <FormItem
+          label={"图片"}
+          name={"image"}
+        >
+          <Input/>
+        </FormItem>
+      </ManageForm>
     </Card>
   );
 }

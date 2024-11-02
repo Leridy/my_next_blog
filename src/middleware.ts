@@ -32,7 +32,7 @@ export async function middleware(req: NextRequest) {
     // 遍历 routerMap 并将符合条件的中间件执行
     for (const [pathList, mdw] of routerMap) {
       if (pathList.some(path => pathname.startsWith(path))) {
-        console.log('Middleware', pathname, pathList);
+        // console.log('Middleware', pathname, pathList);
         const res = mdw(req);
         if (res instanceof NextResponse) return res;
         if (res instanceof Headers) {

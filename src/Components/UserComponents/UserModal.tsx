@@ -5,6 +5,7 @@ import RegisterForm from "./RegisterForm";
 import useUserAuthData, {UserInfo} from "./hooks/useUserAuthData";
 import {User} from "@prisma/client";
 import {RegisterData} from "./type";
+import {NetworkError} from "@/http";
 
 /**
  * UserModal component·
@@ -34,8 +35,8 @@ export default function UserModal(props: UserModalProps) {
       onClose();
       message.success('登录成功');
     } catch (e) {
-      console.log(e);
-      message.error(e.message);
+      console.error(e);
+      message.error((e as NetworkError).bizMessage || (e as Error).message || '登录失败');
     }
   }
 
@@ -46,9 +47,7 @@ export default function UserModal(props: UserModalProps) {
       onClose();
       message.success('注册成功');
     } catch (e) {
-      console.error(e);
-      message.error('注册失败，更多详情请查看控制');
-      alert('Register failed, more details check in console');
+      message.error((e as NetworkError).bizMessage || (e as Error).message || '注册失败');
     }
   }
 

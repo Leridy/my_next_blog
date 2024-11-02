@@ -15,6 +15,10 @@ const login = async (data: Pick<User, 'email' | 'password'>) => {
   return userDao.login(data);
 }
 
+const updateLastLoginData = async (data: Pick<User, 'id'>) => {
+  return userDao.updateLastLoginData(data);
+}
+
 export async function post(req: NextRequest) {
   // the refactor logic code above into this function you should remember the req is a NextRequest object,
   // and you should return a NextResponse object.
@@ -46,6 +50,8 @@ export async function post(req: NextRequest) {
   if (validateResult) {
     resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
   }
+
+  updateLastLoginData({id: result.id});
 
   return NextResponse.json({access_token: token}, {
     status: 200,

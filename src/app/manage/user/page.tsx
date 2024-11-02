@@ -1,25 +1,12 @@
 'use client'
-import {Button, Card, Space, Table, TableColumnProps} from "antd";
-import {useCallback, useEffect, useMemo} from "react";
-import {useRouter} from "next/navigation";
-import useUserData from "@/app/manage/user/hooks/useUserData";
+import FormItem from "antd/es/form/FormItem";
+import ManageList from "@/app/manage/Components/ManageList";
+import {Input, TableColumnProps} from "antd";
+import {useMemo} from "react";
 import {User} from "@prisma/client";
-import FilterForm from "@/app/manage/user/Components/FilterForm";
 
 export default function ManageUser() {
-  const router = useRouter();
-
-  const {fetch, users} = useUserData();
-
-  const handleCreate = useCallback(() => {
-    router.push('/manage/user/create');
-  }, [router]);
-
-  useEffect(() => {
-    fetch({});
-  }, [fetch]);
-
-  const columns = useMemo<TableColumnProps[]>(() => [
+  const columns = useMemo<TableColumnProps<User>[]>(() => [
     {
       title: 'id',
       dataIndex: 'id',
@@ -37,72 +24,25 @@ export default function ManageUser() {
       dataIndex: 'email',
       key: 'email',
     },
-    {
-      title: '操作',
-      key: 'action',
-      render: (record: User) => {
-        return (
-          <Space>
-            <Button
-              size={"small"}
-              type={"link"}
-              onClick={() => {
-                router.push(`/manage/user/${record.id}`);
-              }}
-            >查看</Button>
-
-            <Button
-              danger
-              size={"small"}
-              type={"link"}
-              onClick={() => {
-                console.log('delete', record);
-              }}
-            >删除</Button>
-          </Space>
-
-        )
-      }
-    }
-  ], [router]);
-
-  const renderTitle = useMemo(() => {
-    return (
-      <div
-        style={{display: 'flex', justifyContent: 'space-between'}}
-      >
-        <h3>用户列表</h3>
-        <Button
-          size={'small'}
-          type={"primary"}
-          onClick={handleCreate}
-        >+</Button>
-      </div>
-    )
-  }, [handleCreate]);
+  ], []);
 
   return (
-    <Card
-      title={renderTitle}
-      size={"small"}
-      className={'flex-1 h-full'}
-      // loading={loading}
+    <ManageList
+      title={'用户管理'} apiURL={'user'} columns={columns}
+      manageName={'user'}
     >
-      <div className={'mb-4'}>
-        <FilterForm onSearch={fetch}/>
-      </div>
-
-      <Table
-        columns={columns}
-        size={"small"}
-        scroll={{y: 'calc(100vh - 350px)'}}
-        pagination={{
-          defaultPageSize: 15,
-          pageSizeOptions: ['10', '15', '20', '50', '100'],
-          showSizeChanger: true,
-        }}
-        dataSource={users}
-      />
-    </Card>
+      <FormItem
+        label={"用户名"}
+        name={"name"}
+      >
+        <Input/>
+      </FormItem>
+      <FormItem
+        label={"邮箱"}
+        name={"email"}
+      >
+        <Input/>
+      </FormItem>
+    </ManageList>
   );
 }

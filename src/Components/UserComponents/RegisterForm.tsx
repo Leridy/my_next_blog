@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Button, Form, Input, Space} from "antd";
+import {Button, Form, Input, message, Space} from "antd";
 import FormItem from "antd/es/form/FormItem";
 import type {RegisterData} from "./type";
 import './UserModal.style.scss';
@@ -22,7 +22,8 @@ export default function RegisterForm(props: RegisterFormProps) {
       const values = await form.validateFields();
       onRegister(values);
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      message.error(`请检查输入的内容`);
     }
   }
 

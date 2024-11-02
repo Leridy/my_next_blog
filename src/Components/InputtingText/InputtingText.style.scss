@@ -4,13 +4,19 @@
   justify-content: center;
   align-items: baseline;
 
+  // overflow show ...
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   &::after {
     content: ' 1';
     display: inline-block;
     width: 2px;
     height: 100%;
     margin-left: 2px;
-    background-color: #fff;
+    background-color: var(--color-text);
     color: transparent;
     animation: blink .5s infinite;
   }

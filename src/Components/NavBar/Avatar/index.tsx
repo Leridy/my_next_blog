@@ -34,7 +34,7 @@ const generateColorByString = (str: string = 'ABC') => {
 }
 
 const avatarFontColor = () => {
-  return ['white', 'gray', 'black', 'red', 'green', 'blue'][hash % 6];
+  return '#fff';
 }
 
 const avatarFontFamily = () => {

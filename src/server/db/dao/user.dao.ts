@@ -47,7 +47,8 @@ export class UserDao {
         email: true,
         role: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
+        lastLogin: true,
       },
       where: {
         id
@@ -75,6 +76,18 @@ export class UserDao {
         }
       }
     );
+  }
+
+  public async updateLastLoginData(data: Pick<User, 'id'>): Promise<void> {
+    // some logic to update user last login data
+    await UserModel.update({
+      where: {
+        id: data.id
+      },
+      data: {
+        lastLogin: new Date()
+      }
+    });
   }
 }
 

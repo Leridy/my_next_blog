@@ -1,4 +1,4 @@
-import {Button, Form, Input, Space} from "antd";
+import {Button, Form, Input, message, Space} from "antd";
 import FormItem from "antd/es/form/FormItem";
 import {User} from "@prisma/client";
 import {useState} from "react";
@@ -23,7 +23,8 @@ export default function LoginForm(props: LoginFormProps) {
       const values = await form.validateFields();
       onLogin(values);
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      message.error(`请检查输入的内容`);
     }
   }
 
