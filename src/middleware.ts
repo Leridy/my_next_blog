@@ -13,7 +13,7 @@ routerMap.set(pathRequireTokenAdminRole, (req: NextRequest) => validationAuthTok
   validateMethod: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 
-routerMap.set(['/api/hot', '/api/user'], (req: NextRequest) => validationAuthToken(req, {
+routerMap.set(['/api/hot', '/api/user', '/api/setting'], (req: NextRequest) => validationAuthToken(req, {
   role: Role.ADMIN,
   validateMethod: ['POST', 'PUT', 'DELETE']
 }));

@@ -14,15 +14,16 @@ export default function useUserAuthData() {
    * send a request to get user info, using token in cookie, checking user's status
    * @returns user info
    */
-  const requestUserInfo = async () => {
+  const requestUserInfo = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getUserByToken()
+      setUser(result);
       return result;
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   const requestLogin = async (data: Pick<User, 'email' | 'password'>) => {
     setLoading(true);
@@ -39,8 +40,8 @@ export default function useUserAuthData() {
 
   const requestLogout = async () => {
     // remove access token form cookie and local storage and reset user state
+    await logout();
     setUser(null);
-    return logout();
   }
 
   const requestRegister = useCallback(async (data: RegisterData) => {

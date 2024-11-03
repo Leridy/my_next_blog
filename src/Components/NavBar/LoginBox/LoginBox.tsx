@@ -5,19 +5,19 @@ import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
 import {useUserContext} from "@/Provider/UserProvider";
 
 export default function LoginBox() {
-  const {setUser} = useUserContext();
 
   const [visible, setVisible] = useState(false);
   const [type, setType] = useState<'login' | 'register'>('login');
+  const {requestUserInfo} = useUserContext();
 
   const showModal = (isLogin: boolean) => {
     setVisible(true);
     setType(isLogin ? 'login' : 'register');
   }
 
-  const handleSuccess = (user: UserInfo | null) => {
+  const handleSuccess = async (user: UserInfo | null) => {
     setVisible(false);
-    setUser(user);
+    requestUserInfo()
   }
 
   const handleCancel = () => {

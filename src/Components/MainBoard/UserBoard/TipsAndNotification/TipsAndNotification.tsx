@@ -1,24 +1,37 @@
 import Card from "@/Components/Card";
 import DigitalClock from "@/Components/MainBoard/UserBoard/TipsAndNotification/DigitalClock/DigitalClock";
+import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
+import useSettingMap from "@/Components/hooks/useSettingMap";
+
+const SITE_SETTING_KEY = 'UserBoard.Notification';
 
 export default function TipsAndNotification() {
+  const {setting} = useSiteSettingContext();
+
+  const {enable, content} = useSettingMap({
+    baseKey: SITE_SETTING_KEY,
+    setting,
+    subKeys: [
+      'enable',
+      'content',
+    ]
+  }) || {enable: true, content: ''};
+
   return (
-    <Card
-      header={'Tips & Notification'}
-    >
-      <DigitalClock
-        showDate={true}
-        showTitle={true}
-      />
+    enable ? (
+      <Card
+        header={'Tips & Notification'}
+      >
+        <DigitalClock
+          showDate={true}
+          showTitle={true}
+        />
 
-      1. 按 <code>Esc</code> 切换 fake 模式
-      <br/>
-      2. 当窗口切换到后台时，自动进入 fake 模式
-      <br/>
-      3. fake 模式的必应搜索是可用的
+        <div
+          dangerouslySetInnerHTML={{__html: content as string}}
+        />
 
-      <br/>
-
-    </Card>
+      </Card>
+    ) : null
   )
 }

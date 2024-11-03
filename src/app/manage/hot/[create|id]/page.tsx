@@ -31,6 +31,7 @@ export default function HotEditor() {
         onSubmit={handleSubmit}
         onCancel={handleCancel}
         initialValues={initialValues}
+        size={'small'}
       >
         <FormItem
           label={"名称"}

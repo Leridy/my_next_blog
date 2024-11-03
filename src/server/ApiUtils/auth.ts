@@ -8,13 +8,13 @@ export async function checkValidationCode(code: string, id: string):Promise<SetH
   const validateCode = code;
   const sessionId = id;
 
-  if (!validateCode || !sessionId) throw new MyNRError('Validate Code is incorrect', 400, {validateCode, sessionId});
+  if (!validateCode || !sessionId) throw new MyNRError('验证码错误', 400, {validateCode, sessionId});
 
   // 验证验证码是否正确
   const data = await validateCodeDao.getValidateCode({sessionId, validate: validateCode});
 
   if (!data) {
-    throw new MyNRError('Validate Code is incorrect', 400, {validateCode, sessionId});
+    throw new MyNRError('验证码错误', 400, {validateCode, sessionId});
   } else {
     // remove the validate code
     await validateCodeDao.deleteValidateCode(String(data.id));

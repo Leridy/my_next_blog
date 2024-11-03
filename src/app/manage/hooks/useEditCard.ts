@@ -34,7 +34,7 @@ export default function useEditCard<T>(props: EditCardProps): EditCardReturn<T> 
   const itemId = useMemo(() => {
     if (id) return id;
     const idInPath = pathname.split('/').pop();
-    return Number.isNaN(idInPath) ? idInPath : undefined;
+    return Number.isNaN(Number(idInPath)) ? undefined : idInPath;
   }, [id, pathname]);
 
   const isEditMode = useMemo(

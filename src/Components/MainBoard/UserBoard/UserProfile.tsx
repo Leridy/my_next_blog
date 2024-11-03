@@ -1,22 +1,35 @@
 import Card from "@/Components/Card";
 import Avatar from "@/Components/NavBar/Avatar";
 import {useUserContext} from "@/Provider/UserProvider";
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import './UserProfile.style.scss'
 import InputtingText from "@/Components/InputtingText/InputtingText";
-import {sayings, someEmoji} from "@/mock/emojiAndSayings";
+import {sayings, someEmoji, politeWords2} from "@/mock/emojiAndSayings";
 import {Button, message, Space} from "antd";
 import {DesktopOutlined, LogoutOutlined, SettingFilled} from "@ant-design/icons";
 import {useRouter} from "next/navigation";
 import {Role} from "@/server/middlewares";
 import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
+import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
+import useSettingMap from "@/Components/hooks/useSettingMap";
 
+
+const SITE_SETTING_KEY = 'UserBoard.UserProfile';
 
 export default function UserProfile() {
   const {user, requestLogout} = useUserContext();
   const router = useRouter();
+  const {setting} = useSiteSettingContext();
 
-  const [oldSaying, setOldSaying] = useState<string>('有朋自远方来，不亦乐乎');
+  const {setting: settingEntry} = useSettingMap({
+    baseKey: SITE_SETTING_KEY,
+    setting,
+    subKeys: [
+      'setting',
+    ]
+  })
+
+  const [oldSaying, setOldSaying] = useState<string>('你好 👋');
 
   const {name, createdAt, role} = useMemo<UserInfo>(() => {
       return user || {name: '', createdAt: new Date(), role: Role.USER} as UserInfo;
@@ -33,19 +46,37 @@ export default function UserProfile() {
     return Math.floor((now.getTime() - joined.getTime()) / (1000 * 3600 * 24));
   }, [createdAt]);
 
+  const generateSaying = useCallback(() => {
+    let oldSaying = '';
+    if (!name) {
+      const prefixEmoji = someEmoji[Math.floor(Math.random() * someEmoji.length)];
+      const suffixEmoji = someEmoji[Math.floor(Math.random() * someEmoji.length)];
+      oldSaying = prefixEmoji + ' ' + sayings[Math.floor(Math.random() * sayings.length)] + ' ' + suffixEmoji;
+    } else {
+      oldSaying = politeWords2[Math.floor(Math.random() * politeWords2.length)]
+    }
+
+    setOldSaying(oldSaying);
+  }, [name]);
+
   const renderActions = useMemo(() => {
     return (
       <Space>
-        <Button
-          size={"small"}
-          type={"link"}
-          onClick={
-            () => {
-              message.info('功能暂未开放');
-            }}
-        >
-          <SettingFilled/> 设置
-        </Button>
+        {
+          settingEntry ? (
+            <Button
+              size={"small"}
+              type={"link"}
+              onClick={
+                () => {
+                  message.info('功能暂未开放');
+                }}
+            >
+              <SettingFilled/> 设置
+            </Button>
+          ) : null
+        }
+
         {
           name && <Button
                 size={"small"}
@@ -71,7 +102,7 @@ export default function UserProfile() {
                   router.push('/manage');
                 }}
             >
-              <DesktopOutlined /> 管理
+              <DesktopOutlined/> 管理
             </Button>
           )
         }
@@ -81,16 +112,13 @@ export default function UserProfile() {
 
   useEffect(() => {
     const handler = setInterval(() => {
-      const prefixEmoji = someEmoji[Math.floor(Math.random() * someEmoji.length)];
-      const suffixEmoji = someEmoji[Math.floor(Math.random() * someEmoji.length)];
-      const oldSaying = prefixEmoji + ' ' + sayings[Math.floor(Math.random() * sayings.length)] + ' ' + suffixEmoji;
-      setOldSaying(oldSaying);
+      generateSaying();
     }, 10000);
 
     return () => {
       clearInterval(handler);
     }
-  }, []);
+  }, [generateSaying]);
 
   return (
     <Card
@@ -117,7 +145,7 @@ export default function UserProfile() {
         >
           <strong className={'text-lg'}>
             {name ?
-              <InputtingText text={`${name}, 您来啦`} cursorBlinkSpeed={'fast'} key={name}/> :
+              <InputtingText text={`${name},${oldSaying}`} cursorBlinkSpeed={'fast'} key={name}/> :
               <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={oldSaying}/>
             }
           </strong>

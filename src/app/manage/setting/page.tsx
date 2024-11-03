@@ -24,13 +24,13 @@ export default function ManageSetting() {
       title: '值',
       dataIndex: 'value',
       key: 'value',
+      overflow: 'ellipsis',
     },
     {
       title: '可见范围',
       dataIndex: 'role',
       key: 'role',
       render: (role: string) => {
-        console.log('role', role)
         return {1: '公开', 2: '内部'}[role]
       }
     },
@@ -137,7 +137,7 @@ export default function ManageSetting() {
         >
           <MonacoEditor
             height="300"
-            language="javascript"
+            language="JSON"
             theme="vs-dark"
           />
         </FormItem>

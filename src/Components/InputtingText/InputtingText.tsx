@@ -1,13 +1,14 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import './InputtingText.style.scss';
 
 interface InputtingTextProps {
-  text?: string
+  text?: string,
   cursorBlinkSpeed?: 'slow' | 'fast'
+  align?: 'left' | 'center' | 'right'
 }
 
 export default function InputtingText(props: InputtingTextProps) {
-  const {text = '', cursorBlinkSpeed = 'slow'} = props;
+  const {text = '', cursorBlinkSpeed = 'slow', align = 'center'} = props;
 
   const [curText, setCurText] = useState<string>('');
   const [displayText, setDisplayText] = useState<string[]>(['']);
@@ -16,6 +17,18 @@ export default function InputtingText(props: InputtingTextProps) {
 
   const deleteIntervalHandler = useRef<NodeJS.Timeout | null>(null);
   const addIntervalHandler = useRef<NodeJS.Timeout | null>(null);
+
+
+  const alignType = useMemo(() => {
+    switch (align) {
+      case 'left':
+        return 'flex-start';
+      case 'right':
+        return 'flex-end';
+      default:
+        return 'center';
+    }
+  }, [align]);
 
   /**
    * 做到以下功能，
@@ -76,6 +89,11 @@ export default function InputtingText(props: InputtingTextProps) {
   }, []);
 
   return (
-    <p className={'input-blink'}>{displayText.join('')}</p>
+    <p
+      className={'input-blink'}
+      style={{
+        justifyContent: alignType
+      }}
+    >{displayText.join('')}</p>
   )
 }

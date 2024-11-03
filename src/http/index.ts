@@ -69,6 +69,8 @@ export function axiosErrorToNetworkError(error: AxiosError) {
 
   const newError = new NetworkError(message, status, bizMessage, extraData, error);
 
+  if (error.config?.headers?.['x-ignore-error']) throw newError;
+
   switch (status) {
     case 401:
       notification.error({

@@ -15,4 +15,4 @@ export const register = async (data: RegisterData): Promise<{
 
 export const getUser = async (id: string) => http.get(`/user/${id}`);
 
-export const getUserByToken = async (): Promise<UserInfo> => http.get('/user');
+export const getUserByToken = async (): Promise<UserInfo> => http.get('/user', {headers: {'x-ignore-error': 'true'}});

@@ -35,7 +35,7 @@ export const someEmoji = [
   "🦡", "🐨", "🐯", "🦁", "🐮", "🐷", "🐽", "🐗", "🦓", "🦒",
   "🐴", "🦄", "🐸", "🐲", "🦔", "🐔", "🐧", "🐦", "🐤", "🐣",
   "🐥", "🦆", "🦢", "🦉", "🦚", "🦜", "🐺", "🦊", "🦝", "🐗",
-   "🐝", "🐛", "🦋", "🐌", "🐞", "🐜",
+  "🐝", "🐛", "🦋", "🐌", "🐞", "🐜",
   "🕸️", "🐢", "🐍", "🦎", "🦖", "🦕", "🐙",
   // 植物
   "🌵", "🎄", "🌲", "🌳", "🌴", "🌱", "🌿", "☘️", "🍀", "🎍",
@@ -211,5 +211,59 @@ export const sayings = [
   ...JapaneseSayings,
   ...EnglishSayings,
   // ...KoreanSayings
-
 ]
+
+// 客套话
+export const politeWordsTemplate = [
+  "欢迎访问",
+  "里边请",
+  "您来啦",
+  "您好",
+  "欢迎光临!",
+  // 来点不一样的
+  "您吃了吗？",
+  "来看点啥？",
+  "祝您愉快",
+  "祝您一天愉快",
+  "祝您周末愉快",
+  "祝您旅途愉快",
+  "祝您用餐愉快",
+  "祝您购物愉快",
+  "祝您玩得开心",
+  "祝您身体健康",
+  "祝您心情愉快",
+  "祝您好运",
+  "祝您一切顺利",
+  "祝您成功",
+  "祝您幸福",
+  "祝您平安",
+  "祝您快乐",
+  "祝您生活愉快",
+  "祝您工作顺利",
+  "祝您学习进步",
+  "祝您事业有成",
+  "祝您家庭幸福",
+  "祝您万事如意",
+  "祝您梦想成真",
+  "祝您天天开心",
+  "祝您笑口常开",
+  "祝您吉祥如意",
+
+];
+
+export const generatePoliteWords = () => {
+  const returnWords = [...politeWordsTemplate];
+  const DateNow = new Date();
+  const hour = DateNow.getHours();
+  if (hour < 12) {
+    returnWords.push('早上好');
+  } else if (hour < 18) {
+    returnWords.push('下午好');
+  } else {
+    returnWords.push('晚上好');
+  }
+
+  return returnWords;
+};
+
+export const politeWords2 = generatePoliteWords();

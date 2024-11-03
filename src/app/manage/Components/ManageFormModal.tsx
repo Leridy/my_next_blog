@@ -82,6 +82,7 @@ function ManageFormModal<T>(props: ManageFormModalProps, ref: Ref<ManageFormModa
         onSubmit={handleFormSubmit}
         onCancel={handleFormCancel}
         initialValues={initialValues}
+        size={'large'}
       >
         {children}
       </ManageForm>

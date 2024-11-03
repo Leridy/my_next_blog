@@ -31,7 +31,7 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
   } else if (userId) {
     data = await userDao.getUserById(Number(userId));
   } else {
-    throw new MyNRError('No Permission', 403);
+    throw new MyNRError('需要登录，才能调用此接口哦', 403);
   }
 
   if (!data) throw new MyNRError('User Not Found', 404, {

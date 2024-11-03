@@ -52,14 +52,14 @@ export default function ManageForm<T>(props: ManageFormProps<T>) {
     <Form
       form={form}
       layout={'horizontal'}
-      wrapperCol={{span: size === 'small' ? 16 : 20}}
-      labelCol={{span: size === 'small' ? 8 : 4}}
+      wrapperCol={{span: size === 'small' ? 8 : 20}}
+      labelCol={{span: size === 'small' ? 2 : 4}}
       initialValues={initialValues || {}}
     >
       {children}
 
       <FormItem
-        wrapperCol={{offset: size === 'small' ? 8 : 4}}
+        wrapperCol={{offset: size === 'small' ? 2 : 4}}
       >
         <Button
           type={"primary"}

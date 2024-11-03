@@ -39,7 +39,7 @@ export function validationAuthToken(req: NextRequest, options: AuthMiddlewareOpt
       // 由于边缘计算不支持 crypto 模块，所以无法 verify token. 目前只能 decode token
       user = jwt.decode(token) as { exp: number, iat: number } & User;
 
-      if (user.role < role) throw new MyNRError('No Permission', 403);
+      if (user.role < role) throw new MyNRError('没有权限，或者没有登录', 403);
       if (user.exp * 1000 < Date.now()) throw new MyNRError('token expired', 401);
 
     } catch (e) {
