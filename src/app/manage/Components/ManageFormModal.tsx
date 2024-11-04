@@ -2,7 +2,7 @@
 import {message, Modal} from "antd";
 import ManageForm from "@/app/manage/Components/ManageForm";
 import useEditCard from "@/app/manage/hooks/useEditCard";
-import {forwardRef, Ref, useCallback, useImperativeHandle, useRef, useState} from "react";
+import {forwardRef, Ref, useCallback, useEffect, useImperativeHandle, useRef, useState} from "react";
 
 
 interface ManageFormModalProps {
@@ -58,6 +58,7 @@ function ManageFormModal<T>(props: ManageFormModalProps, ref: Ref<ManageFormModa
     try {
       const result = await handleSubmit(data);
       resolveRef.current?.(result);
+      setId(undefined);
       setVisible(false);
     } catch (e) {
       console.error(e);
@@ -69,6 +70,13 @@ function ManageFormModal<T>(props: ManageFormModalProps, ref: Ref<ManageFormModa
   useImperativeHandle<ManageFormModalRef, ManageFormModalRef>(ref, () => ({
     open: handleOpen,
   }), [handleOpen]);
+
+  useEffect(() => {
+    return () => {
+      rejectRef.current = undefined;
+      resolveRef.current = undefined;
+    }
+  }, []);
 
   return (
     <Modal

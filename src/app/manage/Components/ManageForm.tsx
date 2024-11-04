@@ -34,19 +34,11 @@ export default function ManageForm<T>(props: ManageFormProps<T>) {
   }
 
   useEffect(() => {
-    if (initialValues) {
-      form.setFieldsValue(initialValues);
-    } else {
-        form.resetFields();
+      if (initialValues) {
+        form.setFieldsValue(initialValues);
+      }
     }
-  }, [form, initialValues])
-
-  useEffect(() => {
-    return () => {
-      console.log('form reset');
-      form.resetFields();
-    }
-  }, [form])
+    , [form, initialValues])
 
   return (
     <Form

@@ -1,9 +1,10 @@
 'use client'
 import {Button, Input} from "antd";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import './FakeMask.style.scss'
 import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
 import useSettingMap from "@/Components/hooks/useSettingMap";
+import InputtingText from "@/Components/InputtingText/InputtingText";
 
 const SITE_SETTING_KEY = 'FakeMask';
 
@@ -19,11 +20,13 @@ export default function FakeMask() {
 
   const {setting} = useSiteSettingContext();
 
-  const {enable} = useSettingMap({
+  const {enable, MaintainedMode, MaintainedContent} = useSettingMap({
     baseKey: SITE_SETTING_KEY,
     setting,
     subKeys: [
       'enable',
+      'MaintainedMode',
+      'MaintainedContent',
     ]
   })
 
@@ -67,27 +70,65 @@ export default function FakeMask() {
     }
   }, []);
 
+  const renderSearch = useMemo(() => {
+    return (
+      <>
+        <div
+          className={'mb-8 flex logo'}
+          onDoubleClick={toggleFakeMode}
+          style={{
+            animation: logoAnimation,
+          }}
+        >
+          <img
+            className={'w-60'}
+            src={'/icons/bing.svg'} alt={'bing'}
+            title={'双击 logo 关闭'}
+          />
+        </div>
+
+        <div>
+          <Input
+            placeholder={''}
+            style={{width: '400px'}}
+            onChange={(e) => setSearchValue(e.target.value)}
+            value={searchValue}
+            onPressEnter={handleSearch}
+          />
+          <Button
+            type={'primary'}
+            style={{marginLeft: '1rem'}}
+            onClick={handleSearch}
+          >必应搜索</Button>
+        </div>
+
+      </>
+    )
+  }, [handleSearch, logoAnimation, searchValue, toggleFakeMode])
+
   useEffect(() => {
-    // 当这个窗口（tab）切换到后台的时候，开启 fakeMode
-    window.addEventListener('blur', changeToFakeMode);
-    // while press esc key, enter fake mode
-    window.addEventListener('keydown', handlePressEsc);
+    if (MaintainedMode) {
+      setFakeMode(true);
+    } else {
+      // 当这个窗口（tab）切换到后台的时候，开启 fakeMode
+      window.addEventListener('blur', changeToFakeMode);
+      // while press esc key, enter fake mode
+      window.addEventListener('keydown', handlePressEsc);
+    }
 
     return () => {
       window.removeEventListener('blur', changeToFakeMode);
       window.removeEventListener('keydown', handlePressEsc);
     }
-  }, [changeToFakeMode, handlePressEsc]);
+  }, [MaintainedMode, changeToFakeMode, handlePressEsc]);
 
   return (
-    fakeMode && (
+    fakeMode && enable && (
       <div
         className={'fixed top-0 left-0 w-full h-full bg-white flex items-center justify-center fake-mask'}
         style={{
           zIndex: 9999,
           transition: 'all 0.5s',
-          // todo: 这里是为了让这个组件不显示，为了开发方便，你可以删除这个 style
-          display: enable ? 'flex' : 'none'
         }}
       >
         <div
@@ -96,34 +137,16 @@ export default function FakeMask() {
             transform: 'translateY(-220px)',
           }}
         >
-          <div
-            className={'mb-8 flex logo'}
-            onDoubleClick={toggleFakeMode}
-            style={{
-              animation: logoAnimation,
-            }}
-          >
-            <img
-              className={'w-60'}
-              src={'/icons/bing.svg'} alt={'bing'}
-              title={'双击 logo 关闭'}
-            />
-          </div>
 
-          <div>
-            <Input
-              placeholder={''}
-              style={{width: '400px'}}
-              onChange={(e) => setSearchValue(e.target.value)}
-              value={searchValue}
-              onPressEnter={handleSearch}
-            />
-            <Button
-              type={'primary'}
-              style={{marginLeft: '1rem'}}
-              onClick={handleSearch}
-            >必应搜索</Button>
-          </div>
+          {MaintainedMode ? (
+            <div className={'text-red-500 text-lg'}>
+              <InputtingText
+                text={String(MaintainedContent) ||'网站维护中，请稍后再试...'}
+                cursorBlinkSpeed={'fast'}
+                hideCursor={String(MaintainedContent).includes('<br/>')}
+              />
+            </div>
+          ) : renderSearch}
 
         </div>
 

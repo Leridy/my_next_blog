@@ -5,10 +5,15 @@ interface InputtingTextProps {
   text?: string,
   cursorBlinkSpeed?: 'slow' | 'fast'
   align?: 'left' | 'center' | 'right'
+  hideCursor?: boolean
 }
 
 export default function InputtingText(props: InputtingTextProps) {
-  const {text = '', cursorBlinkSpeed = 'slow', align = 'center'} = props;
+  const {
+    text = '',
+    cursorBlinkSpeed = 'slow', align = 'center',
+    hideCursor = false
+  } = props;
 
   const [curText, setCurText] = useState<string>('');
   const [displayText, setDisplayText] = useState<string[]>(['']);
@@ -90,10 +95,11 @@ export default function InputtingText(props: InputtingTextProps) {
 
   return (
     <p
-      className={'input-blink'}
+      className={`input-blink ${hideCursor ? 'hide-cursor' : ''}`}
       style={{
         justifyContent: alignType
       }}
-    >{displayText.join('')}</p>
+      dangerouslySetInnerHTML={{__html: displayText.join('')}}
+    />
   )
 }

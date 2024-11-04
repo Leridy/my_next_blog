@@ -51,10 +51,10 @@ export default function useEditCard<T>(props: EditCardProps): EditCardReturn<T> 
       if (isEditMode && itemId) {
         getOne(itemId)
       } else {
-        clearData()
+        clearData();
       }
       return () => {
-        clearData()
+        clearData();
       }
     }, [clearData, getOne, isEditMode, itemId]
   )

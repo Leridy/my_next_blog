@@ -84,7 +84,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
       // @ts-expect-error there must have ID
       router.push(`${pathname}/${record.id}`);
     }
-  }, [manageName, onEdit, router]);
+  }, [get, onEdit, pathname, queryData, router]);
 
   const handleCreate = useCallback(async () => {
     if (onCreate) {
@@ -157,6 +157,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
 
   useEffect(() => {
     get(queryData);
+    console.log('queryData', queryData);
   }, [get, queryData]);
 
   return (
