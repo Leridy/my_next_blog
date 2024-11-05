@@ -25,6 +25,7 @@ export default function HotList() {
       title: '栏目名称',
       dataIndex: 'name',
       key: 'name',
+      width: 200,
     },
     {
       title: '图标',
@@ -39,18 +40,6 @@ export default function HotList() {
       align: 'center'
     },
     {
-      title: '描述',
-      dataIndex: 'description',
-      key: 'description',
-      width: 200,
-    },
-    {
-      title: '链接',
-      dataIndex: 'url',
-      render: (url: string) => (<Button type={"link"} href={url}>{url}</Button>),
-      key: 'url',
-    },
-    {
       title: '关联爬虫',
       dataIndex: 'spiderId',
       key: 'spiderId',
@@ -60,7 +49,19 @@ export default function HotList() {
         const currentSpider = spiders?.find((item: HotSpider) => item.id === spiderId);
         return currentSpider?.name || '未知';
       }
-    }
+    },
+    {
+      title: '描述',
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
+      title: '链接',
+      dataIndex: 'url',
+      render: (url: string) => (<Button type={"link"} href={url}>{url}</Button>),
+      key: 'url',
+    },
+
   ], [spiders]);
 
   useEffect(() => {

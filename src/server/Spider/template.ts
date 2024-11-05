@@ -7,29 +7,15 @@ import {MyNRError} from "@/utils/MyNRError";
 import {mergeHeaderObj} from "@/utils/mergeObject";
 import NewsDao from "@/server/db/dao/news.dao";
 
-interface KrDataStructure {
-  itemId: number;
-  itemType: number;
-  route: string;
-  siteId: number;
-  publishTime: number;
-  templateMaterial: {
-    itemId: number;
-    templateType: number;
-    widgetImage: string;
-    widgetTitle: string;
-    publishTime: number;
-    authorName: string;
-    statRead: number;
-    statComment: number;
-    statPraise: number;
-    statFormat: string;
-  }
+// 数据结构
+interface TemplateDataStructure {
+
 }
 
+// 爬虫信息
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
-  name: '36kr',
-  description: '36kr 爬虫',
+  name: 'template',
+  description: 'template 爬虫',
 }
 
 const SITE_SETTING_KEY = 'Spider';
@@ -131,14 +117,14 @@ function genTagsForNews(data: KrDataStructure['templateMaterial']): string[] {
 function dataTransform(data: KrDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
-      title: item.templateMaterial.widgetTitle,
-      description: item.templateMaterial.widgetTitle,
-      image: item.templateMaterial.widgetImage,
-      url: `https://36kr.com/p/${item.itemId}`,
-      uniqueId: `36kr-${item.itemId}`,
-      spiderId,
-      hotCount: item.templateMaterial.statRead,
-      tags: genTagsForNews(item.templateMaterial)
+      // title: item.templateMaterial.widgetTitle,
+      // description: item.templateMaterial.widgetTitle,
+      // image: item.templateMaterial.widgetImage,
+      // url: `https://36kr.com/p/${item.itemId}`,
+      // uniqueId: `36kr-${item.itemId}`,
+      // spiderId,
+      // hotCount: item.templateMaterial.statRead,
+      // tags: genTagsForNews(item.templateMaterial)
     }
   });
 }

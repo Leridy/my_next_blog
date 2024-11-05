@@ -36,7 +36,6 @@ export default function MainBoard(props: MainBoardProps) {
         key={topic.id}
         keyword={keyword}
         {...topic}
-        newsList={[...mockedGithub, ...mockNews].sort(() => Math.random() - 0.5)}
         onOpenFrame={handleOpenLink}
       />)
     )

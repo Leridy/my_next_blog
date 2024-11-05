@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import {HotNews} from "@prisma/client";
 import NewsDao from "@/server/db/dao/news.dao";
 import {readableStreamToJSON} from "@/utils/readableStreamToJSON";
-import {Page} from "@/server/db/dao/type";
+import {OrderBy, OrderByApiQuery, Page, PageApiQuery, PageDataBaseQuery} from "@/server/db/dao/type";
 
 const schema = Yup.object().shape({
   title: Yup.string().required(),
@@ -19,14 +19,12 @@ const schema = Yup.object().shape({
  * @description 因为 news 是 Spider 自动创建的
  */
 async function get(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
-  const originQuery = Object.fromEntries(req.nextUrl.searchParams.entries()) as unknown as Pick<HotNews, 'title' | 'description' | 'spiderId'> & Partial<{
-    page: number,
-    pageSize: number
-  }>;
+  const originQuery = Object.fromEntries(req.nextUrl.searchParams.entries()) as unknown as Pick<HotNews, 'title' | 'description' | 'spiderId'> & Partial<PageApiQuery & OrderByApiQuery>;
   if (originQuery.spiderId) originQuery.spiderId = Number(originQuery.spiderId);
   const id = (await params).id
   let data: HotNews[] | HotNews | Page<HotNews> | null = null;
-  let pageQuery = undefined;
+  let pageQuery: PageDataBaseQuery | undefined = undefined;
+  let orderRule: OrderBy |undefined = undefined;
 
   if (originQuery?.page && originQuery?.pageSize) {
     pageQuery = {
@@ -37,10 +35,17 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
     delete originQuery.pageSize;
   }
 
+  if (originQuery.key && originQuery.order) {
+    orderRule = {};
+    orderRule[originQuery.key] = originQuery.order;
+    delete originQuery.key;
+    delete originQuery.order;
+  }
+
   const query = id ? Number(id) : {...originQuery};
 
 
-  data = await NewsDao.get(query, pageQuery);
+  data = await NewsDao.get(query, pageQuery, orderRule);
 
 
   if (!data) throw new MyNRError('你寻找的热门栏目不存在', 404, {

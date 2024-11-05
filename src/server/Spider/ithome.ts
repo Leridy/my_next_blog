@@ -7,57 +7,38 @@ import {MyNRError} from "@/utils/MyNRError";
 import {mergeHeaderObj} from "@/utils/mergeObject";
 import NewsDao from "@/server/db/dao/news.dao";
 
-interface KrDataStructure {
-  itemId: number;
-  itemType: number;
-  route: string;
-  siteId: number;
-  publishTime: number;
-  templateMaterial: {
-    itemId: number;
-    templateType: number;
-    widgetImage: string;
-    widgetTitle: string;
-    publishTime: number;
-    authorName: string;
-    statRead: number;
-    statComment: number;
-    statPraise: number;
-    statFormat: string;
-  }
+interface IthomeDataStructure {
 }
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
-  name: '36kr',
-  description: '36kr 爬虫',
+  name: 'ithome',
+  description: 'ithome 爬虫',
 }
 
 const SITE_SETTING_KEY = 'Spider';
 
-const URL_GENERATOR = (type: string) => `https://gateway.36kr.com/api/mis/nav/home/nav/rank/${type}`;
+const URL_GENERATOR =  'https://m.ithome.com/rankm/'
 
 
 const HTTP_CONFIG = {
-  method: 'POST',
+  method: 'get',
   headers: {
     'Content-Type': 'application/json'
   },
-  body: {
-    partner_id: 'wap',
-    param: {
-      siteId: 1,
-      platformId: 2,
-    },
-    timestamp: Date.now(),
-  }
 }
 
-enum ListType {
-  hot = 'hotRankList',
-  // video = 'videoList',
-  // comment = 'remarkList',
-  // collect = 'collectList',
-}
+// 链接处理
+const replaceLink = (url: string, getId: boolean = false) => {
+  const match = url.match(/[html|live]\/(\d+)\.htm/);
+  // 是否匹配成功
+  if (match && match[1]) {
+    return getId
+      ? match[1]
+      : `https://www.ithome.com/0/${match[1].slice(0, 3)}/${match[1].slice(3)}.htm`;
+  }
+  // 返回原始 URL
+  return url;
+};
 
 async function getSpiderSetting() {
   const settings = getSetting();
@@ -78,7 +59,7 @@ async function getSpiderSetting() {
 }
 
 /**
- * get spider id from 36kr;
+ * get spider id from ithome and update the time;
  */
 async function getSpiderIdAndUpdateTime(): Promise<Pick<HotSpider, 'updatedAt' | 'id'>> {
   // get spider id from database

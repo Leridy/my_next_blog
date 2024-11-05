@@ -30,6 +30,8 @@ export default function ManageSetting() {
       title: '可见范围',
       dataIndex: 'role',
       key: 'role',
+      width: 100,
+      align: 'center',
       render: (role: string) => {
         return {1: '公开', 2: '内部'}[role]
       }

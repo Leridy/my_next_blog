@@ -1,9 +1,11 @@
 import './NewsItem.styles.scss';
 import {useCallback, useMemo} from "react";
-import type {News} from "../../../../type/hot";
+import {HotNews} from "@prisma/client";
 
-export interface NewsItemProps extends News {
+export interface NewsItemProps extends HotNews {
   index: number;
+  keyword?: string;
+  onClick?: (url: string) => void;
 }
 
 /**
@@ -49,7 +51,7 @@ export default function NewsItem(props: NewsItemProps) {
     // if there is a keyword, use the keyword to highlight the title.
     if (keyword) {
       const reg = new RegExp(keyword, 'g');
-      return title.replace(reg, `<span class="bg-amber-200">${keyword}</span>`);
+      return title.replace(reg, `<span class="bg-amber-200 text-black font-bold">${keyword}</span>`);
     }
     return title;
   }, [keyword, title])

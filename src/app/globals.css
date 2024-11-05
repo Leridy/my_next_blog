@@ -22,10 +22,6 @@
     --color-border: #ccc;
     --color-border-dark: #333;
 
-    --color-link: #007bff;
-    --color-link-hover: #0056b3;
-    --color-link-visited: #4a628a;
-    --color-link-active: #0056b3;
 
     --color-success: #28a745;
     --color-success-hover: #218838;
@@ -61,11 +57,6 @@
         --color-border: #ccc;
         --color-border-dark: #333;
 
-        /* dark mode link colors should be deeper than light mode */
-        --color-link: rgba(0, 123, 255, 0.75);
-        --color-link-hover: rgba(0, 86, 179, 0.75);
-        --color-link-visited: rgba(74, 98, 138, 0.75);
-        --color-link-active: rgba(0, 86, 179, 0.75);
 
         /* dark mode success colors should be deeper than light mode */
         --color-success: rgba(40, 167, 69, 0.75);

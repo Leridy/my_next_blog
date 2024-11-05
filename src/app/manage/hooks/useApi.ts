@@ -1,10 +1,10 @@
 import http from '@/http';
 import {useCallback, useState} from "react";
-import {Page} from "@/server/db/dao/type";
+import {OrderByApiQuery, Page, PageApiQuery} from "@/server/db/dao/type";
 
 export type UseApiProps = {
   apiURL: string;
-  usePagination?: boolean;
+  usePagination?: boolean; // 需要后端接口支持，目前只有 news 支持
   // 例外情况
   exception?: {
     type: 'user'
@@ -16,7 +16,7 @@ export type UseApiReturn<T> = {
   pagedItems: Page<T>;
   loading: boolean;
   data: T | null;
-  get: (params?: Partial<T>) => Promise<T[] | Page<T>>;
+  get: (params?: Partial<T & PageApiQuery & OrderByApiQuery>) => Promise<T[] | Page<T>>;
   getOne: (id: string) => Promise<T>;
   create: (data: Partial<T>) => Promise<T>;
   edit: (id: string, data: Partial<T>) => Promise<T>;

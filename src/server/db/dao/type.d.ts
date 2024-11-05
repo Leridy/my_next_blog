@@ -12,6 +12,15 @@ export interface PageApiQuery {
   pageSize: number;
 }
 
+export interface OrderBy {
+  [key: string]: 'asc' | 'desc';
+}
+
+export interface OrderByApiQuery {
+  key: string;
+  order: 'asc' | 'desc';
+}
+
 export interface PageDataBaseQuery {
   take: number;
   skip: number;

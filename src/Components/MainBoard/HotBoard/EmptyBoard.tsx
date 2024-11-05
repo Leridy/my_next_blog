@@ -1,14 +1,16 @@
 import {ReactNode} from "react";
+import './EmptyBoard.styles.scss';
 
 interface EmptyBoardProps {
   text?: string;
   icon?: ReactNode;
+  loading?: boolean;
 }
 
 export default function EmptyBoard(props: EmptyBoardProps) {
-  const {text, icon} = props;
+  const {text, icon, loading} = props;
   return (
-    <div className={'h-full w-full flex align-middle justify-center flex-col'}>
+    <div className={` select-none h-full w-full flex align-middle justify-center flex-col ${loading ? 'empty-board-loading' : ''}` }>
       <div
         className={'flex justify-center items-center'}
       >

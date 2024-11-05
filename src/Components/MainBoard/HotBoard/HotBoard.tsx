@@ -2,16 +2,17 @@ import EmptyBoard from "./EmptyBoard";
 import BrandIcon from "./BrandIcon";
 import NewsItem from "./NewsItem";
 import "./HotBoard.styles.scss";
-import {useCallback, useMemo} from "react";
-import type {News} from "../../../../type/hot";
+import {useCallback, useEffect, useMemo} from "react";
+import useApi from "@/app/manage/hooks/useApi";
+import {HotNews} from "@prisma/client";
 
 
 interface HotBoardProps {
+  title: string;
+  spiderId: number;
   icon?: string;
-  title?: string;
   description?: string;
   url?: string;
-  newsList?: News[];
   rowSpan?: number;
   colSpan?: number;
   keyword?: string;
@@ -25,21 +26,36 @@ interface HotBoardProps {
  * @description 这个组件是用来展示热门内容的，你需要传入以下信息，然后这个组件会展示出来
  */
 export default function HotBoard(props: HotBoardProps) {
-  const {icon, title, newsList, rowSpan, colSpan, keyword, onOpenFrame, index} = props;
+  const {icon, title, rowSpan, colSpan, keyword, onOpenFrame, index, spiderId} = props;
+  const {items: news, get: getNewsList, loading} = useApi<HotNews>({
+    apiURL: 'news',
+  })
 
   const filterNews = useMemo(() => {
-    return newsList?.filter(ele => ele.title.includes(keyword || ''))
-  }, [newsList, keyword]);
+    return news?.filter(ele => ele.title.includes(keyword || ''))
+  }, [news, keyword]);
 
   const openFrame = useCallback((url: string) => {
     onOpenFrame?.(url);
-  }, [onOpenFrame])
+  }, [onOpenFrame]);
+
+  useEffect(() => {
+    getNewsList({
+      spiderId,
+      // get today's news
+      updatedAt: new Date(new Date().toISOString().split('T')[0]),
+      pageSize: 20,
+      page: 1,
+      key: 'hotCount',
+      order: 'desc'
+    });
+  }, [getNewsList, spiderId]);
 
   const renderNews = useMemo(() => {
       return (
-        filterNews?.map((news, i) => <NewsItem
+        filterNews?.map((newsInfo, i) => <NewsItem
           onClick={openFrame}
-          keyword={keyword} index={i} {...news} key={news.id}/>) || ''
+          keyword={keyword} index={i} {...newsInfo} key={newsInfo.id}/>) || ''
       )
     }, [filterNews, keyword, openFrame]
   )
@@ -51,7 +67,7 @@ export default function HotBoard(props: HotBoardProps) {
         background: 'var(--color-hot-border-background)',
         gridRow: `span ${rowSpan || 1}`,
         gridColumn: `span ${colSpan || 1}`,
-        animationDelay: `${(index||0) * 0.1}s`
+        animationDelay: `${(index || 0) * 0.1}s`
       }}
     >
       <div
@@ -74,9 +90,10 @@ export default function HotBoard(props: HotBoardProps) {
         }
       >
         {
-          filterNews?.length ? renderNews : <EmptyBoard/>
+          filterNews?.length ? renderNews : <EmptyBoard loading={loading}/>
         }
       </div>
+
 
     </div>
   )
