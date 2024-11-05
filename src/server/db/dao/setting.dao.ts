@@ -1,7 +1,7 @@
 import {Setting} from '../models/setting';
 import {setting} from "@prisma/client";
 
-export class SettingDao {
+class SettingDao {
   public async get(query: Partial<setting> | null): Promise<setting[] | setting | null> {
     /**
      * there following rules to get setting

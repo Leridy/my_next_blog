@@ -68,9 +68,8 @@ export default function NewsItem(props: NewsItemProps) {
         `}
       title={description || title}
     >
-      <p className={`w-1/12 ${IndexColor[index]}`}>{index + 1}.</p>
+      <p className={`w-1/12 text-right ${IndexColor[index]}`}>{index + 1}.</p>
       <span
-        rel={'noreferrer'}
         className={`
             overflow-hidden 
             whitespace-pre-wrap
@@ -78,11 +77,12 @@ export default function NewsItem(props: NewsItemProps) {
             height-8
             cursor-pointer
             news-title
+            inline-block
           `}
         dangerouslySetInnerHTML={{__html: renderTitleWithHighlight}}
         onClick={handleLinkClick}
-      >
-      </span>
+        data-title={title}
+      />
       <span
         style={{color: 'var(--color-text-secondary)'}}
       >

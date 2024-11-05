@@ -104,6 +104,9 @@ export async function APIErrorHandler(req: NextRequest, res: NextResponse, next:
       });
     }
     console.error(e);
+    if (e instanceof Error) {
+      return NextResponse.json({message: e.message}, {status: 500});
+    }
     return NextResponse.json(e, {status: 400});
   }
 }

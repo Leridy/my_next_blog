@@ -1,5 +1,5 @@
 'use client'
-import {Button, Input, message, Select, TableColumnProps} from "antd";
+import {Button, DatePicker, Input, message, Select, TableColumnProps} from "antd";
 import {useCallback, useEffect, useMemo, useRef} from "react";
 import ManageList from "@/app/manage/Components/ManageList";
 import FormItem from "antd/es/form/FormItem";
@@ -19,12 +19,18 @@ export default function HotList() {
       title: '新闻标题',
       dataIndex: 'title',
       key: 'title',
-      width: 200,
+      width: 250,
     },
     {
       title: '描述',
       dataIndex: 'description',
       key: 'description',
+    },
+    {
+      title: '热度',
+      dataIndex: 'hotCount',
+      key: 'hotCount',
+      width: 80,
     },
     {
       title: '链接',
@@ -46,6 +52,8 @@ export default function HotList() {
       title: '更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
+      width: 200,
+      sorter: (a: HotNews, b: HotNews) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
       render: (updatedAt: string) => new Date(updatedAt).toLocaleString(),
     }
   ], [spiders]);
@@ -82,7 +90,7 @@ export default function HotList() {
         onEdit={handleEdit}
       >
         <FormItem
-          label={"新闻名称"}
+          label={"新闻标题"}
           name={"title"}
         >
           <Input/>
@@ -93,12 +101,26 @@ export default function HotList() {
         >
           <Input/>
         </FormItem>
+
+        <FormItem
+          label={"更新时间"}
+          name={"updatedAt"}
+        >
+          <DatePicker
+            //  ISO-8601 DateTime.
+            allowClear
+            datatype={"date"}
+            showNow
+            showTime
+          />
+        </FormItem>
         <FormItem
           label={"关联爬虫"}
           name={"spiderId"}
         >
-          <Select>
-            <Select.Option>全部</Select.Option>
+          <Select
+            allowClear
+          >
             {spiders?.map((item: HotSpider) => (
               <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
             ))}

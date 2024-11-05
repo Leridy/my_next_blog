@@ -24,12 +24,12 @@ export default function HotList() {
     },
     {
       title: '图标',
-      dataIndex: 'icon',
-      key: 'icon',
+      dataIndex: 'name',
+      key: 'name',
       width: 100,
-      render: (icon: string) =>
+      render: (name: string) =>
         <div className={'flex justify-center'}>
-          <BrandIcon src={icon}/>
+          <BrandIcon src={name}/>
         </div>
       ,
       align: 'center'
@@ -54,6 +54,7 @@ export default function HotList() {
       apiURL={'spider'}
       columns={columns}
       showCreate={false}
+      showOperation={false}
     >
       <FormItem
         label={"爬虫名称"}

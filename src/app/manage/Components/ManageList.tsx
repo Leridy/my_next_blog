@@ -4,7 +4,7 @@ import FilterForm from "@/app/manage/Components/FilterForm";
 import useApi from "@/app/manage/hooks/useApi";
 import {ReactNode, useCallback, useEffect, useMemo, useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
-import {PageApiQuery} from "@/server/db/dao/type";
+import {OrderByApiQuery, PageApiQuery} from "@/server/db/dao/type";
 
 interface ManageListProps<T> {
   title: ReactNode;
@@ -48,7 +48,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
   });
 
   // @ts-expect-error T won't have page and pageSize property
-  const [queryData, setQueryData] = useState<Partial<T & PageApiQuery>>(usePagination ? {
+  const [queryData, setQueryData] = useState<Partial<T & PageApiQuery & OrderByApiQuery>>(usePagination ? {
     page: 1,
     pageSize: 15
   } : {});
@@ -188,7 +188,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
       {
         children && (
           <div className={'mb-4'}>
-            <FilterForm onSearch={setQueryData}>
+            <FilterForm onSearch={(newState) => setQueryData(prev => ({...prev, ...newState, page:1}))}>
               {children}
             </FilterForm>
           </div>
@@ -201,6 +201,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
         pagination={{
           defaultPageSize: 15,
           total: usePagination ? pagedItems.page.total : items.length,
+          showTotal: (total) => `共 ${total} 条`,
           pageSizeOptions: ['10', '15', '20', '50', '100'],
           showSizeChanger: true,
           onChange: (page, pageSize) => {

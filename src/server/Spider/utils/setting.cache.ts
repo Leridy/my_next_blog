@@ -10,7 +10,7 @@ if (!global.innerSpiderSetting) {
   global.innerSpiderSetting = null;
 }
 
-export const updateSetting = (settings: Map<string, setting>) => {
+export const updateSetting = (settings: Map<string, setting> | null) => {
   // @ts-expect-error – Prisma Client Type
   global.innerSpiderSetting = settings;
 }

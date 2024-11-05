@@ -14,6 +14,12 @@ export default function FilterForm<T>(props: FilterFormProps<T>) {
 
   const handleSearch = useCallback(async () => {
     const result = await form.validateFields();
+    Object.keys(result).forEach(key => {
+      if (key === 'updatedAt' || key === 'createdAt') {
+        // @ts-expect-error may their have
+        result[key] = result[key]?.toISOString()|| undefined;
+      }
+    });
     onSearch?.(result);
   }, [form, onSearch]);
 

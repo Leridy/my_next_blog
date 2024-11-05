@@ -20,11 +20,17 @@
     transform-origin: 0;
   }
 
-  &:hover{
+
+  &:hover {
     transform: translateX(1%);
+
     &:after {
       // apply hover effect , a line under the title when hover
-      transform: scaleX(1);
+      transform: scaleX(1.1);
+    }
+
+    &:before {
+      opacity: 1;
     }
   }
 }

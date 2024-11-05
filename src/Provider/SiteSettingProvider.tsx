@@ -20,6 +20,12 @@ export const SiteSettingProvider = ({children}: {
   initialState?: setting[] | null
 }) => {
   const {get, items} = useApi<setting>({apiURL: 'setting'});
+  const {get: triggerSpiderRefresh} = useApi({
+    apiURL: 'spider/trigger',
+    headers: {
+      'x-ignore-error': 'true'
+    }
+  })
 
   const settingMap = useMemo(() => {
     if (!items || items.length === 0) {
@@ -50,6 +56,10 @@ export const SiteSettingProvider = ({children}: {
       clearInterval(handler);
     }
   }, [get, getSettingInterval]);
+
+  useEffect(() => {
+    triggerSpiderRefresh();
+  }, [triggerSpiderRefresh]);
 
 
   return (

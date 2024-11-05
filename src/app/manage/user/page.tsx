@@ -17,6 +17,18 @@ export default function ManageUser() {
       dataIndex: 'email',
       key: 'email',
     },
+    {
+      title: '权限',
+      dataIndex: 'role',
+        key: 'role',
+      render: (role: string) => role === '2' ? '管理员' : '普通用户',
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (createdAt: string) => new Date(createdAt).toLocaleString(),
+    }
   ], []);
 
   return (

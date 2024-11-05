@@ -5,7 +5,10 @@ import "./HotBoard.styles.scss";
 import {useCallback, useEffect, useMemo} from "react";
 import useApi from "@/app/manage/hooks/useApi";
 import {HotNews} from "@prisma/client";
+import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
+import useSettingMap from "@/Components/hooks/useSettingMap";
 
+const SITE_SETTING_KEY = 'HotBoard';
 
 interface HotBoardProps {
   title: string;
@@ -29,6 +32,12 @@ export default function HotBoard(props: HotBoardProps) {
   const {icon, title, rowSpan, colSpan, keyword, onOpenFrame, index, spiderId} = props;
   const {items: news, get: getNewsList, loading} = useApi<HotNews>({
     apiURL: 'news',
+  });
+  const {setting} = useSiteSettingContext();
+  const {pageSize} = useSettingMap<{ pageSize: number }>({
+    setting,
+    baseKey: SITE_SETTING_KEY,
+    subKeys: {pageSize: 20}
   })
 
   const filterNews = useMemo(() => {
@@ -44,12 +53,12 @@ export default function HotBoard(props: HotBoardProps) {
       spiderId,
       // get today's news
       updatedAt: new Date(new Date().toISOString().split('T')[0]),
-      pageSize: 20,
+      pageSize: Number(pageSize),
       page: 1,
       key: 'hotCount',
       order: 'desc'
     });
-  }, [getNewsList, spiderId]);
+  }, [getNewsList, pageSize, spiderId]);
 
   const renderNews = useMemo(() => {
       return (

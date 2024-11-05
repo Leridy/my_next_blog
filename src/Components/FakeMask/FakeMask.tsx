@@ -20,19 +20,25 @@ export default function FakeMask() {
 
   const {setting} = useSiteSettingContext();
 
-  const {enable, MaintainedMode, MaintainedContent} = useSettingMap({
+  const {enable, MaintainedMode, MaintainedContent} = useSettingMap<{
+    enable: boolean;
+    MaintainedMode: boolean;
+    MaintainedContent: string;
+  }>({
     baseKey: SITE_SETTING_KEY,
     setting,
-    subKeys: [
-      'enable',
-      'MaintainedMode',
-      'MaintainedContent',
-    ]
+    subKeys: {
+      enable: true,
+      MaintainedMode: false,
+      MaintainedContent: '网站维护中，请稍后再试...',
+    }
   })
 
   const toggleFakeMode = useCallback(() => {
-    setFakeMode((prev) => !prev);
-  }, [])
+    if (!MaintainedMode) {
+      setFakeMode((prev) => !prev);
+    }
+  }, [MaintainedMode])
 
   const changeToFakeMode = useCallback(() => {
     setFakeMode(true);
@@ -45,8 +51,13 @@ export default function FakeMask() {
   }, [toggleFakeMode]);
 
   useEffect(() => {
-    document.title = fakeMode ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
-  }, [fakeMode]);
+    if (MaintainedMode && fakeMode) {
+      document.title = String(MaintainedContent);
+    } else {
+      document.title = fakeMode ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
+    }
+
+  }, [MaintainedContent, MaintainedMode, fakeMode]);
 
 
   const handleSearch = () => {
@@ -109,18 +120,18 @@ export default function FakeMask() {
   useEffect(() => {
     if (MaintainedMode) {
       setFakeMode(true);
-    } else {
-      // 当这个窗口（tab）切换到后台的时候，开启 fakeMode
-      window.addEventListener('blur', changeToFakeMode);
-      // while press esc key, enter fake mode
-      window.addEventListener('keydown', handlePressEsc);
     }
+    // 当这个窗口（tab）切换到后台的时候，开启 fakeMode
+    window.addEventListener('blur', changeToFakeMode);
+    // while press esc key, enter fake mode
+    window.addEventListener('keydown', handlePressEsc);
+
 
     return () => {
       window.removeEventListener('blur', changeToFakeMode);
       window.removeEventListener('keydown', handlePressEsc);
     }
-  }, [MaintainedMode, changeToFakeMode, handlePressEsc]);
+  }, [MaintainedContent, MaintainedMode, changeToFakeMode, handlePressEsc]);
 
   return (
     fakeMode && enable && (
@@ -141,7 +152,7 @@ export default function FakeMask() {
           {MaintainedMode ? (
             <div className={'text-red-500 text-lg'}>
               <InputtingText
-                text={String(MaintainedContent) ||'网站维护中，请稍后再试...'}
+                text={String(MaintainedContent)}
                 cursorBlinkSpeed={'fast'}
                 hideCursor={String(MaintainedContent).includes('<br/>')}
               />

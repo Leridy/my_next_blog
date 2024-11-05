@@ -50,8 +50,9 @@ export default function MainBoard(props: MainBoardProps) {
         className={
           'grid grid-cols-1 col-span-5 md:col-span-4 gap-6 p-4  ' +
           'sm:grid-cols-2 ' +
-          'md:grid-cols-3 ' +
-          'lg:grid-cols-5 ' +
+          'md:grid-cols-2 ' +
+          'lg:grid-cols-3 ' +
+          'xl:grid-cols-5 ' +
           'h-full ' +
           'overflow-y-auto'
         }

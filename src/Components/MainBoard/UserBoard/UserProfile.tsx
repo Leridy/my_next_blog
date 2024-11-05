@@ -21,7 +21,7 @@ export default function UserProfile() {
   const router = useRouter();
   const {setting} = useSiteSettingContext();
 
-  const {setting: settingEntry} = useSettingMap({
+  const {setting: settingEntry} = useSettingMap<{setting: boolean}>({
     baseKey: SITE_SETTING_KEY,
     setting,
     subKeys: [
@@ -108,7 +108,7 @@ export default function UserProfile() {
         }
       </Space>
     )
-  }, [requestLogout, name]);
+  }, [settingEntry, name, role, requestLogout, router]);
 
   useEffect(() => {
     const handler = setInterval(() => {

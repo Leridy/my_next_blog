@@ -8,7 +8,8 @@ export type UseApiProps = {
   // 例外情况
   exception?: {
     type: 'user'
-  }
+  };
+  headers?: Record<string, string>;
 }
 
 export type UseApiReturn<T> = {
@@ -25,7 +26,7 @@ export type UseApiReturn<T> = {
 }
 
 export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
-  const {apiURL, exception} = props;
+  const {apiURL, exception, headers = {}, usePagination} = props;
   const [items, setItems] = useState<T[]>([]);
   const [pagedItems, setPagedItems] = useState<Page<T>>({
     data: [],
@@ -45,7 +46,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
 
     try {
       setLoading(true);
-      const res = await http.get(finalURL, {params}) as T[] | Page<T>;
+      const res = await http.get(finalURL, {params, headers}) as T[] | Page<T>;
       if (Array.isArray(res)) {
         setItems(res);
       } else {
@@ -72,7 +73,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
   const create = async (data: Partial<T>) => {
     try {
       setLoading(true);
-      return await http.post(apiURL, data) as T;
+      return await http.post(apiURL, data, {headers}) as T;
     } finally {
       setLoading(false);
     }
@@ -81,7 +82,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
   const edit = useCallback(async (id: string, data: Partial<T>): Promise<T> => {
     try {
       setLoading(true);
-      return await http.put(`${apiURL}/${id}`, data);
+      return await http.put(`${apiURL}/${id}`, data, {headers}) as T;
     } finally {
       setLoading(false);
     }
@@ -90,7 +91,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
   const del = useCallback(async (id: string): Promise<void> => {
     try {
       setLoading(true);
-      return await http.delete(`${apiURL}/${id}`);
+      return await http.delete(`${apiURL}/${id}`, {headers});
     } finally {
       setLoading(false);
     }
