@@ -17,13 +17,37 @@ datasource db {
 
 model HotTopic {
   id          Int      @id @default(autoincrement())
+  spiderId    Int      @default(0) // 因为所有的 news 是跟 spider 关联的，所以这里是 spider 的 id
   name        String   @unique
   icon        String   @default("")
   description String   @default("")
   url         String   @unique
   image       String   @default("")
-  // newsList is the JSON string of the news list
-  newsList    Json     @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model HotNews {
+  id          Int      @id @default(autoincrement())
+  spiderId    Int      @default(0)
+  title       String   @default("")
+  description String   @default("")
+  url         String   @unique
+  image       String   @default("")
+  uniqueId    String   @unique
+  tags        String[]
+  hotCount    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// HotSpider: means the mainly website info for hot news origin
+// 因为 Spider 的逻辑是硬编码的，所以这里是一个固定的表，数据由 Spider 代码自动插入
+// 一个 Spider 可以对应一个 HotTopic
+model HotSpider {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String   @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

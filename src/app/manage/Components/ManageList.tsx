@@ -4,11 +4,15 @@ import FilterForm from "@/app/manage/Components/FilterForm";
 import useApi from "@/app/manage/hooks/useApi";
 import {ReactNode, useCallback, useEffect, useMemo, useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
+import {PageApiQuery} from "@/server/db/dao/type";
 
 interface ManageListProps<T> {
   title: ReactNode;
   apiURL: string;
   columns: ColumnProps<T>[];
+  usePagination?: boolean;
+  showOperation?: boolean; // 是否显示操作列
+  showCreate?: boolean; // 是否显示创建按钮
   manageName?: string; // 目前正在管理的模块的名称
   cardProps?: CardProps
   onEdit?: (record: T) => Promise<void> | void;
@@ -23,6 +27,9 @@ export default function ManageList<T>(props: ManageListProps<T>) {
     title,
     apiURL,
     columns,
+    usePagination = false,
+    showOperation = true,
+    showCreate = true,
     cardProps = {},
     manageName,
     onEdit,
@@ -35,12 +42,16 @@ export default function ManageList<T>(props: ManageListProps<T>) {
   const router = useRouter();
   const pathname = usePathname() || '';
 
-  const {get, del, items, loading} = useApi<T>({
+  const {get, del, items, pagedItems, loading} = useApi<T>({
     apiURL,
     exception: manageName === 'user' ? {type: 'user'} : undefined
   });
 
-  const [queryData, setQueryData] = useState<Partial<T>>({});
+  // @ts-expect-error T won't have page and pageSize property
+  const [queryData, setQueryData] = useState<Partial<T & PageApiQuery>>(usePagination ? {
+    page: 1,
+    pageSize: 15
+  } : {});
 
   const handleDelete = useCallback(async (record: T) => {
     // if onDelete is not provided, use default delete function
@@ -66,6 +77,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
         onDelete(record);
         await get(queryData);
       } catch (e) {
+        console.error(e);
         message.error('操作失败');
       }
 
@@ -78,6 +90,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
         await onEdit(record);
         get(queryData);
       } catch (e) {
+        console.error(e);
         message.error('操作失败');
       }
     } else {
@@ -92,6 +105,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
         await onCreate();
         get(queryData);
       } catch (e) {
+        console.error(e);
         message.error('操作失败');
       }
     } else {
@@ -111,7 +125,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
       align: 'center'
     },
     ...columns,
-    {
+    showOperation ? {
       title: '操作',
       key: 'action',
       render: (record: T) => {
@@ -137,8 +151,8 @@ export default function ManageList<T>(props: ManageListProps<T>) {
           </Space>
         )
       }
-    }
-  ], [columns, handleDelete, handleEdit]);
+    } : {},
+  ], [columns, handleDelete, handleEdit, showOperation]);
 
   const renderTitle = useMemo(() => {
     return (
@@ -146,18 +160,22 @@ export default function ManageList<T>(props: ManageListProps<T>) {
         style={{display: 'flex', justifyContent: 'space-between'}}
       >
         <h3>{title}</h3>
-        <Button
-          size={'small'}
-          type={"primary"}
-          onClick={handleCreate}
-        >+</Button>
+        {
+          showCreate && (
+            <Button
+              size={'small'}
+              type={"primary"}
+              onClick={handleCreate}
+            >+</Button>
+          )
+        }
+
       </div>
     )
   }, [handleCreate]);
 
   useEffect(() => {
     get(queryData);
-    console.log('queryData', queryData);
   }, [get, queryData]);
 
   return (
@@ -182,10 +200,20 @@ export default function ManageList<T>(props: ManageListProps<T>) {
         scroll={{y: 'calc(100vh - 350px)'}}
         pagination={{
           defaultPageSize: 15,
+          total: usePagination ? pagedItems.page.total : items.length,
           pageSizeOptions: ['10', '15', '20', '50', '100'],
           showSizeChanger: true,
+          onChange: (page, pageSize) => {
+            if (usePagination) {
+              setQueryData((prev) => ({
+                ...prev,
+                page,
+                pageSize
+              }));
+            }
+          }
         }}
-        dataSource={items}
+        dataSource={usePagination ? pagedItems.data : items}
         columns={columnsConfig}
         loading={loading}
         rowKey={'id'}

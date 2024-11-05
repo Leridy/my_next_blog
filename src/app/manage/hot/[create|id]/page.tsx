@@ -1,9 +1,11 @@
 'use client'
-import {Card, Input} from "antd";
+import {Card, Input, Select} from "antd";
 import ManageForm from "@/app/manage/Components/ManageForm";
 import useEditCard from "@/app/manage/hooks/useEditCard";
-import {HotTopic} from "@prisma/client";
+import {HotSpider, HotTopic} from "@prisma/client";
 import FormItem from "antd/es/form/FormItem";
+import useApi from "@/app/manage/hooks/useApi";
+import {useEffect} from "react";
 
 
 export default function HotEditor() {
@@ -18,8 +20,16 @@ export default function HotEditor() {
       edit: '编辑热搜'
     },
     fallbackPath: '/manage/hot',
-    apiURL: '/hot'
+    apiURL: 'hot'
   })
+
+  const {items: spiders, get} = useApi<HotSpider>({
+    apiURL: 'spider',
+  });
+
+  useEffect(() => {
+    get({});
+  }, []);
 
   return (
     <Card
@@ -66,6 +76,23 @@ export default function HotEditor() {
           name={"image"}
         >
           <Input/>
+        </FormItem>
+        <FormItem
+          label={"爬虫"}
+          name={"spiderId"}
+        >
+          <Select>
+            {
+              spiders.map(spider => (
+                <Select.Option
+                  key={spider.id}
+                  value={spider.id}
+                >
+                  {spider.name}
+                </Select.Option>
+              ))
+            }
+          </Select>
         </FormItem>
       </ManageForm>
     </Card>

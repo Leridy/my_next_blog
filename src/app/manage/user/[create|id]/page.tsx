@@ -19,7 +19,7 @@ export default function UserCreate() {
       edit: '编辑用户'
     },
     fallbackPath: '/manage/user',
-    apiURL: '/user'
+    apiURL: 'user'
   })
 
   return (

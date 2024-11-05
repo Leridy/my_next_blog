@@ -29,11 +29,12 @@ export class UserDao {
     });
   }
 
-  public async login(data: Pick<User, 'email'>): Promise<User | null> {
+  public async login(data: Pick<User, 'email' | 'password'>): Promise<User | null> {
     // some logic to login user
     return UserModel.findUnique({
       where: {
         email: data.email,
+        password: data.password
       },
     });
   }

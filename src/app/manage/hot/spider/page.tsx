@@ -1,17 +1,12 @@
 'use client'
-import {Button, Input, TableColumnProps} from "antd";
-import {useEffect, useMemo} from "react";
+import {Input, TableColumnProps} from "antd";
+import {useMemo} from "react";
 import BrandIcon from "@/Components/MainBoard/HotBoard/BrandIcon";
 import ManageList from "@/app/manage/Components/ManageList";
 import FormItem from "antd/es/form/FormItem";
-import useApi from "@/app/manage/hooks/useApi";
-import {HotSpider} from "@prisma/client";
 
 
 export default function HotList() {
-  const {items: spiders, get: getSpider} = useApi<HotSpider>({
-    apiURL: 'spider',
-  })
   /**
    *   id          Int      @id @default(autoincrement())
    *   name        String   @unique
@@ -22,9 +17,10 @@ export default function HotList() {
    */
   const columns = useMemo<TableColumnProps[]>(() => [
     {
-      title: '栏目名称',
+      title: '爬虫名称',
       dataIndex: 'name',
       key: 'name',
+      width: 200,
     },
     {
       title: '图标',
@@ -42,46 +38,31 @@ export default function HotList() {
       title: '描述',
       dataIndex: 'description',
       key: 'description',
-      width: 200,
     },
     {
-      title: '链接',
-      dataIndex: 'url',
-      render: (url: string) => (<Button type={"link"} href={url}>{url}</Button>),
-      key: 'url',
-    },
-    {
-      title: '关联爬虫',
-      dataIndex: 'spiderId',
-      key: 'spiderId',
-      width: 100,
-      align: 'center',
-      render: (spiderId: number) => {
-        const currentSpider = spiders?.find((item: HotSpider) => item.id === spiderId);
-        return currentSpider?.name || '未知';
-      }
+      title: '更新时间',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
+      render: (updatedAt: string) => new Date(updatedAt).toLocaleString(),
     }
-  ], [spiders]);
-
-  useEffect(() => {
-    getSpider({})
-  }, [getSpider]);
+  ], []);
 
 
   return (
     <ManageList
-      title={'热门栏目管理'}
-      apiURL={'hot'}
+      title={'爬虫管理'}
+      apiURL={'spider'}
       columns={columns}
+      showCreate={false}
     >
       <FormItem
-        label={"栏目名称"}
+        label={"爬虫名称"}
         name={"name"}
       >
         <Input/>
       </FormItem>
       <FormItem
-        label={"栏目描述"}
+        label={"爬虫描述"}
         name={"description"}
       >
         <Input/>

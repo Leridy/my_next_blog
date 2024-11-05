@@ -18,6 +18,14 @@ export const sideMenuData: SideMenuItem = {
       key: 'hot/create',
       label: '创建热榜信息',
     },
+    {
+      key: 'hot/spider',
+      label: '爬虫管理',
+    },
+    {
+      key: 'hot/news',
+      label: '新闻管理',
+    }
   ],
   user: [
     {

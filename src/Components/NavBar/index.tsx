@@ -1,14 +1,15 @@
 'use client'
 import UserBox from "./UserBox/UserBox";
 import {Input} from "antd";
-import {useMemo} from "react";
 import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
 import InputtingText from "@/Components/InputtingText/InputtingText";
+import useSettingMap from "@/Components/hooks/useSettingMap";
 
 interface NavBarProps {
   onSearch?: (value: string) => void;
 }
 
+const SITE_SETTING_KEY = 'NavBar';
 
 export default function NavBar(props: NavBarProps) {
   const {onSearch} = props;
@@ -19,9 +20,13 @@ export default function NavBar(props: NavBarProps) {
 
   const {setting} = useSiteSettingContext();
 
-  const name = useMemo(() => {
-    return setting?.get('basic_sitename')?.value
-  }, [setting])
+  const {name} = useSettingMap({
+    setting,
+    baseKey: SITE_SETTING_KEY,
+    subKeys: [
+      'name',
+    ]
+  })
 
   return (
     // 分成一行四列
@@ -34,9 +39,9 @@ export default function NavBar(props: NavBarProps) {
         {
           name ?
             <InputtingText
-              key={name}
+              key={String(name)}
               align={'left'}
-              text={name}
+              text={String(name)}
             /> :
             <InputtingText
               key={'default'}

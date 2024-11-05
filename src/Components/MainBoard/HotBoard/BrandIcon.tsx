@@ -43,15 +43,15 @@ export default function BrandIcon(props: BrandIconProps) {
           case 'ithome':
           case 'juejin':
           case 'v2ex':
-          case 'toutiao':
-          case 'zol':
-          case '36kr':
+          case 'toutiao': // https://www.toutiao.com/
+          case 'zol': // https://www.zol.com.cn/
+          case '36kr': // https://36kr.com/
           case 'hupu':
           case 'sina':
-          case 'huxiu':
-          case 'smzdm':
-          case 'douban':
-          case 'bilibili':
+          case 'huxiu': // https://www.huxiu.com/
+          case 'smzdm': // https://www.smzdm.com/
+          case 'douban': // https://www.douban.com/
+          case 'bilibili': // https://www.bilibili.com/
             return <Image src={`/icons/${src}.svg`} alt={src} width={size} height={size}/>;
           default:
             return <FileTextOutlined size={size}/>

@@ -19,7 +19,7 @@ const updateLastLoginData = async (data: Pick<User, 'id'>) => {
   return userDao.updateLastLoginData(data);
 }
 
-export async function post(req: NextRequest) {
+async function post(req: NextRequest) {
   // the refactor logic code above into this function you should remember the req is a NextRequest object,
   // and you should return a NextResponse object.
 
@@ -38,7 +38,10 @@ export async function post(req: NextRequest) {
   await schema.validate(data);
   const validateResult = await checkValidationCode(data.validateCode, sessionId);
   const result = await login(data);
-  if (!result) throw new MyNRError('User not found or password incorrect', 401);
+  console.log(result, data);
+  if (!result) throw new MyNRError('用户不存在或密码错误', 401);
+
+  console.log(result, data);
 
   const returnResult = {...result} as Partial<User>
   delete returnResult.password;

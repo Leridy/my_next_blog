@@ -1,8 +1,10 @@
 import http from '@/http';
 import {useCallback, useState} from "react";
+import {Page} from "@/server/db/dao/type";
 
 export type UseApiProps = {
   apiURL: string;
+  usePagination?: boolean;
   // 例外情况
   exception?: {
     type: 'user'
@@ -11,9 +13,10 @@ export type UseApiProps = {
 
 export type UseApiReturn<T> = {
   items: T[];
+  pagedItems: Page<T>;
   loading: boolean;
   data: T | null;
-  get: (params?: Partial<T>) => Promise<T[]>;
+  get: (params?: Partial<T>) => Promise<T[] | Page<T>>;
   getOne: (id: string) => Promise<T>;
   create: (data: Partial<T>) => Promise<T>;
   edit: (id: string, data: Partial<T>) => Promise<T>;
@@ -24,6 +27,14 @@ export type UseApiReturn<T> = {
 export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
   const {apiURL, exception} = props;
   const [items, setItems] = useState<T[]>([]);
+  const [pagedItems, setPagedItems] = useState<Page<T>>({
+    data: [],
+    page: {
+      page: 0,
+      pageSize: 10,
+      total: 0
+    }
+  });
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<T | null>(null);
 
@@ -34,8 +45,13 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
 
     try {
       setLoading(true);
-      const res = await http.get(finalURL, {params}) as T[];
-      setItems(res);
+      const res = await http.get(finalURL, {params}) as T[] | Page<T>;
+      if (Array.isArray(res)) {
+        setItems(res);
+      } else {
+        setPagedItems(res);
+        setItems(res.data);
+      }
       return res;
     } finally {
       setLoading(false);
@@ -86,6 +102,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
 
   return {
     items,
+    pagedItems,
     loading,
     data,
     get,

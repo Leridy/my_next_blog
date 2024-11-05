@@ -18,7 +18,7 @@ export default function MainBoard(props: MainBoardProps) {
   const {keyword} = props;
   const [openedLink, setOpenedLink] = useState<string>('');
 
-  const {get, items} = useApi<HotTopic>({apiURL: '/hot'});
+  const {get, items} = useApi<HotTopic>({apiURL: 'hot'});
 
   const handleOpenLink = useCallback((url: string) => {
     window.open(url, '_blank');

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "HotNews" ADD COLUMN     "hotCount" INTEGER NOT NULL DEFAULT 0;
