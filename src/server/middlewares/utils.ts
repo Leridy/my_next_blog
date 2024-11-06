@@ -3,7 +3,6 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {MiddlewareHandler, Role} from "@/server/middlewares";
 import {NextRequest, NextResponse} from "next/server";
 import * as jose from 'jose';
-import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
 import {User} from "@prisma/client";
 
 type LogLevel = 'info' | 'warn' | 'error' | { method?: boolean, url?: boolean, headers?: boolean, payload?: boolean }
