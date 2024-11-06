@@ -78,10 +78,12 @@ export default function HotEditor() {
           <Input/>
         </FormItem>
         <FormItem
-          label={"爬虫"}
+          label={"绑定爬虫"}
           name={"spiderId"}
         >
-          <Select>
+          <Select
+            allowClear
+          >
             {
               spiders.map(spider => (
                 <Select.Option

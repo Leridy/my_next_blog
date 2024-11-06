@@ -51,6 +51,7 @@ export default function FakeMask() {
   }, [toggleFakeMode]);
 
   useEffect(() => {
+    console.log('fakeMode', fakeMode && MaintainedMode);
     if (MaintainedMode && fakeMode) {
       document.title = String(MaintainedContent);
     } else {
@@ -118,7 +119,7 @@ export default function FakeMask() {
   }, [handleSearch, logoAnimation, searchValue, toggleFakeMode])
 
   useEffect(() => {
-    if (MaintainedMode) {
+    if (MaintainedMode && enable) {
       setFakeMode(true);
     }
     // 当这个窗口（tab）切换到后台的时候，开启 fakeMode
