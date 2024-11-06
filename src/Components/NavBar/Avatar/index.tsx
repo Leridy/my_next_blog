@@ -1,7 +1,8 @@
 // client component
 'use client'
-import {useEffect, useMemo, useState} from "react";
+import {useMemo} from "react";
 import './index.style.scss';
+import dynamic from "next/dynamic";
 
 interface AvatarProps {
   name: string;
@@ -62,21 +63,24 @@ const avatarFontStyle = () => {
  * and the content of the avatar should be the first letter of the user name
  *
  */
-export default function Avatar(props: AvatarProps) {
+function Avatar(props: AvatarProps) {
   const {name, src, size, onClick} = props;
-  const [avatarSrc, setAvatarSrc] = useState<string | undefined>(src);
 
   const avatarSize = useMemo(() => {
     return AvatarSize[size || 'small'];
   }, [size]);
 
-  useEffect(() => {
-    if (!src) return;
+  const avatarSrc = useMemo(() => {
+    if (src || !document) {
+      return src;
+    }
+
     // generate a base64 image from the user name
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-
-    if (!context) return;
+    if (!context) {
+      return '';
+    }
 
     canvas.width = avatarSize * 8;
     canvas.height = avatarSize * 8;
@@ -88,9 +92,8 @@ export default function Avatar(props: AvatarProps) {
     context.textAlign = 'center';
 
     context.fillText((name || '客')[0].toUpperCase(), avatarSize * 4, avatarSize * 6.1);
-    setAvatarSrc(canvas.toDataURL());
-
-  }, [avatarSize, name, src]);
+    return canvas.toDataURL();
+  }, [name, src, avatarSize]);
 
   return (
     <div
@@ -104,3 +107,7 @@ export default function Avatar(props: AvatarProps) {
     </div>
   );
 }
+
+export default dynamic(() => Promise.resolve(Avatar), {
+  ssr: false,
+})

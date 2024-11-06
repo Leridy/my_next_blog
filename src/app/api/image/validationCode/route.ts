@@ -19,7 +19,8 @@ import {APIErrorHandler} from "@/utils/MyNRError";
 const backgroundColors = ['#1A3636', '#2C7873', '#4A628A', '#EE6C4D', '#1A3636', '#40534C', '#677D6A', '#D6BD98'];
 const lineColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
 const codeColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
-const fonts: string[] = ['Arial', 'Helvetica', 'sans-serif', 'monospace', 'cursive'];
+// const fonts: string[] =
+const fonts: string[] = process.env.CURRENT_ENV !== "development" ?['Times New Roman', 'sans-serif'] : ['Arial', 'Helvetica', 'sans-serif', 'monospace', 'cursive'];
 const transforms = (height: number, width: number): string => {
   const rotate = Math.random() * 10;
   const translateX = Math.random() * width / 5;
