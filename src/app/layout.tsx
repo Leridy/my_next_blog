@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import {AntdRegistry} from "@ant-design/nextjs-registry";
 import {SpeedInsights} from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react"
 
 export const runtime = "nodejs";
 
@@ -36,6 +37,7 @@ export default async function RootLayout({children}: Readonly<{
       {children}
     </AntdRegistry>
     <SpeedInsights />
+    <Analytics />
     </body>
     </html>
   );
