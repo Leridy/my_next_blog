@@ -131,7 +131,7 @@ export default function FakeMask() {
       window.removeEventListener('blur', changeToFakeMode);
       window.removeEventListener('keydown', handlePressEsc);
     }
-  }, [MaintainedContent, MaintainedMode, changeToFakeMode, handlePressEsc]);
+  }, [MaintainedContent, MaintainedMode, changeToFakeMode, enable, handlePressEsc]);
 
   return (
     fakeMode && enable && (
