@@ -20,7 +20,8 @@ const backgroundColors = ['#1A3636', '#2C7873', '#4A628A', '#EE6C4D', '#1A3636',
 const lineColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
 const codeColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
 // const fonts: string[] =
-const fonts: string[] = process.env.CURRENT_ENV !== "development" ?['Times New Roman', 'sans-serif'] : ['Arial', 'Helvetica', 'sans-serif', 'monospace', 'cursive'];
+const fonts: string[] = process.env.CURRENT_ENV !== "development" ? ['Nimbus Sans Narrow', 'Noto Sans', 'DejaVu Sans Mono', 'Nimbus Roman']
+  : ['Arial', 'Helvetica', 'sans-serif', 'monospace', 'cursive'];
 const transforms = (height: number, width: number): string => {
   const rotate = Math.random() * 10;
   const translateX = Math.random() * width / 5;
@@ -35,7 +36,7 @@ const ONE_MINUTE = 1000 * 60;
 const FIVE_MINUTES = ONE_MINUTE * 5;
 
 const generateValidateCodeImage = (code: string) => {
-  const levels = [3, 8, 12];
+  const levels = [3, 4, 7];
   const width = 200;
   const height = 60;
   const backgroundColor = code === 'exceeded limit' ? '#FF0000' : backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
@@ -100,56 +101,56 @@ async function get(req: NextRequest) {
   let isReachRequestLimit = false;
   let isCodeOutdated = false;
 
-    await validateCodeDao.clearTimeoutValidateCode();
-    if (!sessionId) {
-      // if request does not have sessionId, create a new one
-      // get some user agent and ip address and timestamp to generate a fingerprint
-      // you should know that type of req is NextRequest.
-      const userFingerprint = req.headers.get('user-agent') || '' + req.headers.get('remoteAddress') || '' + Date.now() as string;
-      const salt= process.env.SESSION_SECRET || '';
-      sessionId = hashPassword(userFingerprint, salt);
-      isNewSession = true;
-    } else {
-      // if sessionId exists, check if it reaches the request limit and expired
-      data = await validateCodeDao.getValidateCodeBySessionId(sessionId);
-      if (data) {
-        if (Date.now() - data.createdAt.getTime() < FIVE_MINUTES && data.requestTime >= requestLimit) {
-          isReachRequestLimit = true;
-        } else if (Date.now() - data.createdAt.getTime() > FIVE_MINUTES) {
-          // if the code is outdated, delete it
-          await validateCodeDao.deleteValidateCode(String(data.id));
-          isCodeOutdated = true;
-        }
+  await validateCodeDao.clearTimeoutValidateCode();
+  if (!sessionId) {
+    // if request does not have sessionId, create a new one
+    // get some user agent and ip address and timestamp to generate a fingerprint
+    // you should know that type of req is NextRequest.
+    const userFingerprint = req.headers.get('user-agent') || '' + req.headers.get('remoteAddress') || '' + Date.now() as string;
+    const salt = process.env.SESSION_SECRET || '';
+    sessionId = hashPassword(userFingerprint, salt);
+    isNewSession = true;
+  } else {
+    // if sessionId exists, check if it reaches the request limit and expired
+    data = await validateCodeDao.getValidateCodeBySessionId(sessionId);
+    if (data) {
+      if (Date.now() - data.createdAt.getTime() < FIVE_MINUTES && data.requestTime >= requestLimit) {
+        isReachRequestLimit = true;
+      } else if (Date.now() - data.createdAt.getTime() > FIVE_MINUTES) {
+        // if the code is outdated, delete it
+        await validateCodeDao.deleteValidateCode(String(data.id));
+        isCodeOutdated = true;
       }
     }
+  }
 
-    const code = isReachRequestLimit ? 'exceeded limit' : validateCodeGen(6, false);
-    const buffer = await generateValidateCodeImage(code);
+  const code = isReachRequestLimit ? 'exceeded limit' : validateCodeGen(6, false);
+  const buffer = await generateValidateCodeImage(code);
 
-    if (!isReachRequestLimit) { // once the request reaches the limit, do not create a new code
-      // if the code is outdated, or it is a new session, create a new code.
-      if (isCodeOutdated || isNewSession || !data) {
-        await validateCodeDao.createValidateCode({
-          sessionId,
-          validate: code,
-          requestTime: 1,
-        });
-      } else if (data) {
-        // if the code is not outdated, update the code and request time.
-        data.validate = code;
-        data.requestTime++;
-        await validateCodeDao.updateValidateCode(data);
-      }
+  if (!isReachRequestLimit) { // once the request reaches the limit, do not create a new code
+    // if the code is outdated, or it is a new session, create a new code.
+    if (isCodeOutdated || isNewSession || !data) {
+      await validateCodeDao.createValidateCode({
+        sessionId,
+        validate: code,
+        requestTime: 1,
+      });
+    } else if (data) {
+      // if the code is not outdated, update the code and request time.
+      data.validate = code;
+      data.requestTime++;
+      await validateCodeDao.updateValidateCode(data);
     }
+  }
 
-    return new NextResponse(buffer, {
-      status: 200,
-      headers: {
-        'Content-Type': 'image/png',
-        'Set-Cookie': `sessionId=${sessionId}; Path=/; HttpOnly; SameSite=Strict;`,
-        'Cache-Control': 'no-store, max-age=0',
-      }
-    })
+  return new NextResponse(buffer, {
+    status: 200,
+    headers: {
+      'Content-Type': 'image/png',
+      'Set-Cookie': `sessionId=${sessionId}; Path=/; HttpOnly; SameSite=Strict;`,
+      'Cache-Control': 'no-store, max-age=0',
+    }
+  })
 }
 
 export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);
