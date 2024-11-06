@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import {AntdRegistry} from "@ant-design/nextjs-registry";
+import {SpeedInsights} from "@vercel/speed-insights/next";
 
 export const runtime = "nodejs";
 
@@ -34,6 +35,7 @@ export default async function RootLayout({children}: Readonly<{
     <AntdRegistry>
       {children}
     </AntdRegistry>
+    <SpeedInsights />
     </body>
     </html>
   );

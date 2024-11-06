@@ -9,9 +9,7 @@ export const login = async (data: { email: string, password: string }): Promise<
 
 export const logout = async () => http.post('/auth/logout');
 
-export const register = async (data: RegisterData): Promise<{
-  access_token: string
-}> => http.post('/auth/register', data);
+export const register = async (data: RegisterData): Promise<UserInfo> => http.post('/auth/register', data);
 
 export const getUser = async (id: string) => http.get(`/user/${id}`);
 

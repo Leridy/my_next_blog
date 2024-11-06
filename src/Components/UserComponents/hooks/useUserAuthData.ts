@@ -9,6 +9,7 @@ export type UserInfo = Omit<User, 'password'>;
 export default function useUserAuthData() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  console.log(jose.decodeJwt)
 
   /**
    * send a request to get user info, using token in cookie, checking user's status
@@ -17,7 +18,7 @@ export default function useUserAuthData() {
   const requestUserInfo = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await getUserByToken()
+      const result = await getUserByToken();
       setUser(result);
       return result;
     } finally {
@@ -48,9 +49,8 @@ export default function useUserAuthData() {
     setLoading(true);
     try {
       const result = await register(data);
-      const userData = jose.decodeJwt<UserInfo>(result.access_token);
-      setUser(userData)
-      return userData
+      setUser(result)
+      return result
     } finally {
       setLoading(false);
     }
