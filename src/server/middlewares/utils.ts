@@ -2,8 +2,9 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {MiddlewareHandler, Role} from "@/server/middlewares";
 import {NextRequest, NextResponse} from "next/server";
-import jwt from "jsonwebtoken";
+import * as jose from 'jose';
 import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
+import {User} from "@prisma/client";
 
 type LogLevel = 'info' | 'warn' | 'error' | { method?: boolean, url?: boolean, headers?: boolean, payload?: boolean }
 
@@ -36,13 +37,13 @@ export function logger(handler: MiddlewareHandler, level?: LogLevel) {
   }
 }
 
-export function checkTokenRole(req: NextRequest) {
+export async function checkTokenRole(req: NextRequest) {
   try {
     // getToken from cookie
     const token = req.cookies.get('token')?.value || '';
-    const secret = process.env.JWT_TOKEN_SECRET || '';
-    // 对 token 进行 JWT 校验
-    const result = jwt.verify(token, secret) as UserInfo;
+    const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET || '');
+    // const user = jwt.verify(token, secret) as { exp: number, iat: number };
+    const {payload: result} = await jose.jwtVerify<User>(token, secret);
 
     if (result.role >= Role.ADMIN) {
       NextResponse.next();

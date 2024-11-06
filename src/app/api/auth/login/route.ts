@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {User} from "@prisma/client";
 import * as Yup from 'yup';
-import jwt from 'jsonwebtoken';
+import * as jose from 'jose'
 import userDao from "@/server/db/dao/user.dao";
 import {checkValidationCode} from "@/server/ApiUtils/auth";
 import {SetHeaderOperation} from "@/server/middlewares";
@@ -45,8 +45,10 @@ async function post(req: NextRequest) {
   const returnResult = {...result} as Partial<User>
   delete returnResult.password;
 
-  const secret = process.env.JWT_TOKEN_SECRET || '';
-  const token = jwt.sign(returnResult, secret, {expiresIn: '30d'});
+  const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET || '');
+  const alg = 'HS256';
+
+  const token = await new jose.SignJWT(returnResult).setProtectedHeader({alg}).setIssuedAt().setExpirationTime('30d').sign(secret);
   resHeaderOperation['Set-Cookie'] = `token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60};`;
 
 

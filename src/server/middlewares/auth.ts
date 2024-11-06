@@ -1,8 +1,9 @@
 import {NextRequest, NextResponse} from "next/server";
 import {User} from "@prisma/client";
-import jwt from "jsonwebtoken";
+import * as jose from 'jose';
 import {NextApiRequest} from "next";
 import {MyNRError} from "@/utils/MyNRError";
+import {JWTPayload} from "jose";
 
 const defaultValidateMethod = ['POST', 'PUT', 'DELETE'];
 
@@ -31,16 +32,16 @@ export function validationAuthToken(req: NextRequest, options: AuthMiddlewareOpt
   if (validateMethod.includes(req.method)) {
     const token = req.cookies.get('token')?.value;
 
-    let user: { exp: number, iat: number } & User | null = null
+    let user: User & JWTPayload | null = null
     // 从 token 中解析出用户信息
     try {
       if (!token) throw new MyNRError('No Token', 401);
 
       // 由于边缘计算不支持 crypto 模块，所以无法 verify token. 目前只能 decode token
-      user = jwt.decode(token) as { exp: number, iat: number } & User;
+      user = jose.decodeJwt<User>(token);
 
       if (user.role < role) throw new MyNRError('没有权限，或者没有登录', 403);
-      if (user.exp * 1000 < Date.now()) throw new MyNRError('token expired', 401);
+      if ((user?.exp || 1) * 1000 < Date.now()) throw new MyNRError('token expired', 401);
 
     } catch (e) {
       // catch error is meanness, just for type check
@@ -53,15 +54,15 @@ export function validationAuthToken(req: NextRequest, options: AuthMiddlewareOpt
 export function getUserIdAndRoleToHeaders(req: NextRequest): Headers | NextResponse<unknown> {
   const token = req.cookies.get('token')?.value
 
-  let user: { exp: number, iat: number } & User | null = null
+  let user: User & JWTPayload | null = null
   // 从 token 中解析出用户信息
   try {
     if (!token) throw new MyNRError('no token', 401);
 
     // 由于边缘计算不支持 crypto 模块，所以无法 verify token. 目前只能 decode token
-    user = jwt.decode(token) as { exp: number, iat: number } & User;
+    user = jose.decodeJwt<User>(token)
 
-    if (user.exp * 1000 < Date.now()) throw new MyNRError('token expired', 401);
+    if ((user?.exp || 1) * 1000 < Date.now()) throw new MyNRError('token expired', 401);
 
     const newHeaders = new Headers(req.headers);
 

@@ -2,7 +2,7 @@ import {useCallback, useState} from "react";
 import {User} from "@prisma/client";
 import {login, register, logout, getUserByToken} from "./api";
 import {RegisterData} from "../type";
-import jwt from "jsonwebtoken";
+import * as jose from 'jose';
 
 export type UserInfo = Omit<User, 'password'>;
 
@@ -29,7 +29,7 @@ export default function useUserAuthData() {
     setLoading(true);
     try {
       const result = await login(data);
-      const userData = jwt.decode(result.access_token) as typeof user;
+      const userData = jose.decodeJwt<UserInfo>(result.access_token)
       setUser(userData);
       return userData;
     } finally {
@@ -48,7 +48,7 @@ export default function useUserAuthData() {
     setLoading(true);
     try {
       const result = await register(data);
-      const userData = jwt.decode(result.access_token) as typeof user;
+      const userData = jose.decodeJwt<UserInfo>(result.access_token);
       setUser(userData)
       return userData
     } finally {
