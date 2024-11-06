@@ -6,6 +6,7 @@ import {hashPassword} from "@/server/ApiUtils/encryption";
 import {validateCodeGen} from "@/utils/randomStringGen";
 
 import type {NextRequest} from "next/server";
+import {APIErrorHandler} from "@/utils/MyNRError";
 
 
 // I need some color to generate the image
@@ -90,7 +91,7 @@ const generateValidateCodeImage = (code: string) => {
   return Sharp(Buffer.from(svgText)).png().toBuffer();
 }
 
-export async function GET(req: NextRequest) {
+async function get(req: NextRequest) {
   let sessionId = req.cookies.get('sessionId')?.value;
   let data: validateCode | null = null;
   const requestLimit = 10;
@@ -98,7 +99,6 @@ export async function GET(req: NextRequest) {
   let isReachRequestLimit = false;
   let isCodeOutdated = false;
 
-  try {
     await validateCodeDao.clearTimeoutValidateCode();
     if (!sessionId) {
       // if request does not have sessionId, create a new one
@@ -149,8 +149,6 @@ export async function GET(req: NextRequest) {
         'Cache-Control': 'no-store, max-age=0',
       }
     })
-
-  } catch (e) {
-    return NextResponse.json({message: 'Internal Server Error ', error: (e as Error).message}, {status: 500});
-  }
 }
+
+export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);

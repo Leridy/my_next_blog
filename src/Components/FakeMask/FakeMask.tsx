@@ -61,9 +61,9 @@ export default function FakeMask() {
   }, [MaintainedContent, MaintainedMode, fakeMode]);
 
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     if (searchValue) window.open(`https://cn.bing.com/search?q=${searchValue}`);
-  }
+  }, [searchValue]);
 
   useEffect(() => {
     const handler = setInterval(() => {
