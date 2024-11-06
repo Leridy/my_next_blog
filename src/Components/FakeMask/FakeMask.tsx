@@ -51,7 +51,6 @@ export default function FakeMask() {
   }, [toggleFakeMode]);
 
   useEffect(() => {
-    console.log('fakeMode', fakeMode && MaintainedMode);
     if (MaintainedMode && fakeMode) {
       document.title = String(MaintainedContent);
     } else {

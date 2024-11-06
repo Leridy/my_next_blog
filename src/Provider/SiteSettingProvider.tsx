@@ -3,7 +3,7 @@
  * 这是用来共享网站设置的Provider
  */
 
-import React, {createContext, useContext, ReactNode, useEffect, useMemo} from 'react';
+import React, {createContext, useContext, ReactNode, useEffect, useMemo, useRef} from 'react';
 import {setting} from '@prisma/client';
 import useApi from "@/app/manage/hooks/useApi";
 import useSettingMap from "@/Components/hooks/useSettingMap";
@@ -19,6 +19,7 @@ export const SiteSettingProvider = ({children}: {
   children: ReactNode,
   initialState?: setting[] | null
 }) => {
+  const requestLimit = useRef(false);
   const {get, items} = useApi<setting>({apiURL: 'setting'});
   const {get: triggerSpiderRefresh} = useApi({
     apiURL: 'spider/trigger',
@@ -34,7 +35,7 @@ export const SiteSettingProvider = ({children}: {
     return new Map(items.map(item => [item.key, item]));
   }, [items]);
 
-  const {interval} = useSettingMap<{interval: number}>({
+  const {interval} = useSettingMap<{ interval: number }>({
     baseKey: SITE_SETTING_KEY,
     setting: settingMap,
     subKeys: [
@@ -58,7 +59,11 @@ export const SiteSettingProvider = ({children}: {
   }, [get, getSettingInterval]);
 
   useEffect(() => {
-    triggerSpiderRefresh();
+    if (!requestLimit.current) {
+      triggerSpiderRefresh();
+      requestLimit.current = true;
+    }
+
   }, [triggerSpiderRefresh]);
 
 

@@ -1,4 +1,5 @@
 import {setting} from "@prisma/client";
+import {useMemo} from "react";
 
 interface UseSettingMapProps<T> {
   setting: Map<string, setting>;
@@ -11,32 +12,35 @@ type UseSettingMapReturn<T> = Record<keyof T, boolean | string | number | null |
 export default function useSettingMap<T>(props: UseSettingMapProps<T>): UseSettingMapReturn<T> {
   const {setting, baseKey, subKeys} = props;
 
-  const result: UseSettingMapReturn<T> | null = {} as UseSettingMapReturn<T>;
-  const subKeysArray = Array.isArray(subKeys) ? subKeys : Object.keys(subKeys);
+
+  return useMemo(() => {
+    const res: UseSettingMapReturn<T> | null = {} as UseSettingMapReturn<T>;
+    const subKeysArray = Array.isArray(subKeys) ? subKeys : Object.keys(subKeys);
 
 
-  // every key is make up of baseKey + '.' + subKey
+    // every key is make up of baseKey + '.' + subKey
 
-  subKeysArray.map((subKey) => {
-    const key = `${baseKey}.${String(subKey)}`;
-    const tmp = setting.get(key)?.value
+    subKeysArray.map((subKey) => {
+      const key = `${baseKey}.${String(subKey)}`;
+      const tmp = setting.get(key)?.value
 
-    if (tmp === 'false') {
-      result[subKey as keyof T] = false;
-    } else if (tmp === 'true') {
-      result[subKey as keyof T] = true;
-    } else if (tmp === 'null') {
-      result[subKey as keyof T] = null;
-    } else if (tmp === 'undefined') {
-      result[subKey as keyof T] = undefined;
-    } else if (!isNaN(Number(tmp))) {
-      result[subKey as keyof T] = Number(tmp);
-    } else if (!tmp && !Array.isArray(subKeys)) {
-      result[subKey as keyof T] = subKeys[subKey as keyof T];
-    } else {
-      result[subKey as keyof T] = tmp
-    }
-  })
+      if (tmp === 'false') {
+        res[subKey as keyof T] = false;
+      } else if (tmp === 'true') {
+        res[subKey as keyof T] = true;
+      } else if (tmp === 'null') {
+        res[subKey as keyof T] = null;
+      } else if (tmp === 'undefined') {
+        res[subKey as keyof T] = undefined;
+      } else if (!isNaN(Number(tmp))) {
+        res[subKey as keyof T] = Number(tmp);
+      } else if (!tmp && !Array.isArray(subKeys)) {
+        res[subKey as keyof T] = subKeys[subKey as keyof T];
+      } else {
+        res[subKey as keyof T] = tmp
+      }
+    })
 
-  return result;
+    return res;
+  }, [baseKey, setting, subKeys]);
 }

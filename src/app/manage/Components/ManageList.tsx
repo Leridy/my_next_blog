@@ -44,7 +44,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
 
   const {get, del, items, pagedItems, loading} = useApi<T>({
     apiURL,
-    exception: manageName === 'user' ? {type: 'user'} : undefined
+    exception: manageName === 'user' ? true : undefined
   });
 
   // @ts-expect-error T won't have page and pageSize property
@@ -188,7 +188,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
       {
         children && (
           <div className={'mb-4'}>
-            <FilterForm onSearch={(newState) => setQueryData(prev => ({...prev, ...newState, page:1}))}>
+            <FilterForm onSearch={(newState) => setQueryData(prev => ({...prev, ...newState, page: prev.page ? 1 : undefined}))}>
               {children}
             </FilterForm>
           </div>

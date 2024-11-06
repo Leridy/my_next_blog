@@ -6,9 +6,7 @@ export type UseApiProps = {
   apiURL: string;
   usePagination?: boolean; // 需要后端接口支持，目前只有 news 支持
   // 例外情况
-  exception?: {
-    type: 'user'
-  };
+  exception?: boolean;
   headers?: Record<string, string>;
 }
 
@@ -26,7 +24,7 @@ export type UseApiReturn<T> = {
 }
 
 export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
-  const {apiURL, exception, headers = {}} = props;
+  const {apiURL, exception, headers} = props;
   const [items, setItems] = useState<T[]>([]);
   const [pagedItems, setPagedItems] = useState<Page<T>>({
     data: [],
@@ -42,7 +40,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
   const get = useCallback(async (params?: Partial<T>) => {
     let finalURL = apiURL;
 
-    if (exception?.type === 'user') finalURL = apiURL + '/all'; // 任何时候都会有个例外情况
+    if (exception) finalURL = apiURL + '/all'; // 任何时候都会有个例外情况
 
     try {
       setLoading(true);
@@ -57,7 +55,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
     } finally {
       setLoading(false);
     }
-  }, [apiURL, exception?.type, headers]);
+  }, [apiURL, exception, headers]);
 
   const getOne = useCallback(async (id: string): Promise<T> => {
     try {

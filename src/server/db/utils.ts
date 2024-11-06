@@ -10,7 +10,7 @@ import ws from 'ws'
 
 dotenv.config()
 
-const currentEnv = process.env.NODE_ENV
+const currentEnv = process.env.CURRENT_ENV || 'development'
 
 if (currentEnv === 'development') {
   // @ts-expect-error – Prisma Client Type
@@ -33,4 +33,4 @@ if (currentEnv === 'development') {
 
 
 // @ts-expect-error – Prisma Client Type
-export const db = global.db
+export const db = global.db as PrismaClient

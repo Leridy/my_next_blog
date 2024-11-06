@@ -25,7 +25,7 @@ export default function MainBoard(props: MainBoardProps) {
 
   useEffect(() => {
     get();
-  }, [get]);
+  }, []);
 
   const renderHotBoard = useMemo(() => {
     return (
