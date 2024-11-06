@@ -5,6 +5,7 @@ import {readableStreamToJSON} from "@/utils/readableStreamToJSON";
 import {encryptPwdWithSalt} from "@/server/ApiUtils/encryption";
 import {APIErrorHandler, MyNRError} from "@/utils/MyNRError";
 import {Role} from "@/server/middlewares";
+import * as Yup from "yup";
 
 async function get(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
   let id: string | undefined = undefined;
@@ -44,11 +45,25 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
 
 
 async function post(req: NextRequest) {
+  const schema = Yup.object().shape({
+    email: Yup.string().email().required(),
+    password: Yup.string().required(),
+    // role 的取值范围是 Role 枚举中的值 1：USER 2：ADMIN 默认值是 1, 如果不传递则默认为 1
+    role: Yup.string().oneOf([Role.USER, Role.ADMIN]).default(Role.USER),
+    password2: Yup.string().required().equals([Yup.ref('password')]),
+  });
 
   const data = await encryptPwdWithSalt(req) as Pick<User, 'name' | 'password' | 'email'> & {
     password2: string,
     validateCode: string
   };
+
+  await schema.validate(data);
+
+  // @ts-expect-error remove double-check data
+  delete data.password2;
+  // @ts-expect-error remove double-check data
+  delete data.validateCode;
 
   const result = await userDao.createUser(data);
   return NextResponse.json(result, {status: 200});
