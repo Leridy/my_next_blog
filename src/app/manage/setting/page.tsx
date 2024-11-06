@@ -5,8 +5,12 @@ import {Input, message, Select, TableColumnProps} from "antd";
 import {useCallback, useMemo, useRef} from "react";
 import ManageFormModal, {ManageFormModalRef} from "@/app/manage/Components/ManageFormModal";
 import {setting} from "@prisma/client";
-import MonacoEditor from "react-monaco-editor/lib/editor";
+import dynamic from "next/dynamic";
 
+const MonacoEditorNoSSR = dynamic(
+  () => import('react-monaco-editor/lib/editor'),
+  {ssr: false}
+)
 export default function ManageSetting() {
   const modalRef = useRef<ManageFormModalRef>(null);
   const columns = useMemo<TableColumnProps<setting>[]>(() => [
@@ -137,7 +141,7 @@ export default function ManageSetting() {
           required
           rules={[{required: true, message: '请输入值'}]}
         >
-          <MonacoEditor
+          <MonacoEditorNoSSR
             height="300"
             language="JSON"
             theme="vs-dark"

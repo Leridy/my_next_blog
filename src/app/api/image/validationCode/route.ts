@@ -92,7 +92,7 @@ const generateValidateCodeImage = (code: string) => {
 }
 
 async function get(req: NextRequest) {
-  let sessionId = req.cookies.get('sessionId')?.value;
+  let sessionId = req.cookies.get('sessionId')?.value || '';
   let data: validateCode | null = null;
   const requestLimit = 10;
   let isNewSession = false;
