@@ -7,7 +7,6 @@ import {checkValidationCode} from "@/server/ApiUtils/auth";
 import {SetHeaderOperation} from "@/server/middlewares";
 import {encryptPwdWithSalt} from "@/server/ApiUtils/encryption";
 import {mergeHeaderObj} from "@/utils/mergeObject";
-import env from "../../../../../.project.json";
 import {APIErrorHandler, MyNRError} from "@/utils/MyNRError";
 
 
@@ -46,7 +45,8 @@ async function post(req: NextRequest) {
   const returnResult = {...result} as Partial<User>
   delete returnResult.password;
 
-  const token = jwt.sign(returnResult, env.JWT_TOKEN_SECRET, {expiresIn: '30d'});
+  const secret = process.env.JWT_TOKEN_SECRET || '';
+  const token = jwt.sign(returnResult, secret, {expiresIn: '30d'});
   resHeaderOperation['Set-Cookie'] = `token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60};`;
 
 

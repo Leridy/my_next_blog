@@ -1,6 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
 import jwt from "jsonwebtoken";
-import env from "../../.project.json";
 
 
 /**
@@ -86,9 +85,9 @@ export async function APIErrorHandler(req: NextRequest, res: NextResponse, next:
       const token = req.cookies.get('token')?.value
       if (token) {
         // verify token
-        const user = jwt.verify(token, env.JWT_TOKEN_SECRET) as { exp: number, iat: number };
+        const secret = process.env.JWT_TOKEN_SECRET || '';
+        const user = jwt.verify(token, secret) as { exp: number, iat: number };
         if (user.exp * 1000 < Date.now()) throw new Error('token expired');
-
       }
     } catch (e) {
       console.error(e);

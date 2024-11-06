@@ -4,7 +4,6 @@ import {NextResponse} from "next/server";
 import validateCodeDao from "@/server/db/dao/validateCode.dao";
 import {hashPassword} from "@/server/ApiUtils/encryption";
 import {validateCodeGen} from "@/utils/randomStringGen";
-import env from "../../../../../.project.json";
 
 import type {NextRequest} from "next/server";
 
@@ -106,7 +105,8 @@ export async function GET(req: NextRequest) {
       // get some user agent and ip address and timestamp to generate a fingerprint
       // you should know that type of req is NextRequest.
       const userFingerprint = req.headers.get('user-agent') || '' + req.headers.get('remoteAddress') || '' + Date.now() as string;
-      sessionId = hashPassword(userFingerprint, env.SESSION_SECRET);
+      const salt= process.env.SESSION_SECRET || '';
+      sessionId = hashPassword(userFingerprint, salt);
       isNewSession = true;
     } else {
       // if sessionId exists, check if it reaches the request limit and expired

@@ -3,7 +3,6 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {MiddlewareHandler, Role} from "@/server/middlewares";
 import {NextRequest, NextResponse} from "next/server";
 import jwt from "jsonwebtoken";
-import env from "../../../.project.json";
 import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
 
 type LogLevel = 'info' | 'warn' | 'error' | { method?: boolean, url?: boolean, headers?: boolean, payload?: boolean }
@@ -41,8 +40,9 @@ export function checkTokenRole(req: NextRequest) {
   try {
     // getToken from cookie
     const token = req.cookies.get('token')?.value || '';
+    const secret = process.env.JWT_TOKEN_SECRET || '';
     // 对 token 进行 JWT 校验
-    const result = jwt.verify(token, env.JWT_TOKEN_SECRET) as UserInfo;
+    const result = jwt.verify(token, secret) as UserInfo;
 
     if (result.role >= Role.ADMIN) {
       NextResponse.next();

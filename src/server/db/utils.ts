@@ -2,15 +2,35 @@
  * @module db/utils
  * @desc This module provides utility functions for the database.
  */
+import {neonConfig, Pool} from '@neondatabase/serverless'
+import {PrismaNeon} from '@prisma/adapter-neon'
+import {PrismaClient} from '@prisma/client'
+import dotenv from 'dotenv'
+import ws from 'ws'
 
-import {PrismaClient} from '@prisma/client/index';
+dotenv.config()
 
-// @ts-expect-error – Avoid reinitializing Prisma Client
-if (!global.db) {
+const currentEnv = process.env.NODE_ENV
+
+if (currentEnv === 'development') {
   // @ts-expect-error – Prisma Client Type
-  global.db = new PrismaClient();
+  if (!global.db) {
+    // @ts-expect-error – Prisma Client Type
+    global.db = new PrismaClient()
+  }
+} else {
+  neonConfig.webSocketConstructor = ws
+  const connectionString = `${process.env.DATABASE_URL}`
+
+// @ts-expect-error – Prisma Client Type
+  if (!global.db) {
+    const pool = new Pool({connectionString})
+    const adapter = new PrismaNeon(pool);
+    // @ts-expect-error – Prisma Client Type
+    global.db = new PrismaClient({adapter})
+  }
 }
 
 
 // @ts-expect-error – Prisma Client Type
-export const db = global.db as PrismaClient;
+export const db = global.db
