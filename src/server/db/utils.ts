@@ -32,8 +32,5 @@ if (currentEnv === 'development') {
   }
 }
 
-console.log('db', DB);
-// console.log('env Info',process.env);
-
 // @ts-expect-error – Prisma Client Type
 export const db =  DB || global.db

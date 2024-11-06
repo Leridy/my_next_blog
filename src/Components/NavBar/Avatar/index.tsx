@@ -1,6 +1,6 @@
 // client component
 'use client'
-import {useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import './index.style.scss';
 
 interface AvatarProps {
@@ -64,22 +64,19 @@ const avatarFontStyle = () => {
  */
 export default function Avatar(props: AvatarProps) {
   const {name, src, size, onClick} = props;
+  const [avatarSrc, setAvatarSrc] = useState<string>(src);
 
   const avatarSize = useMemo(() => {
     return AvatarSize[size || 'small'];
   }, [size]);
 
-  const avatarSrc = useMemo(() => {
-    if (src || !document) {
-      return src;
-    }
-
+  useEffect(() => {
+    if (!src) return;
     // generate a base64 image from the user name
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    if (!context) {
-      return '';
-    }
+
+    if (!context) return;
 
     canvas.width = avatarSize * 8;
     canvas.height = avatarSize * 8;
@@ -91,8 +88,9 @@ export default function Avatar(props: AvatarProps) {
     context.textAlign = 'center';
 
     context.fillText((name || '客')[0].toUpperCase(), avatarSize * 4, avatarSize * 6.1);
-    return canvas.toDataURL();
-  }, [name, src, avatarSize]);
+    setAvatarSrc(canvas.toDataURL());
+
+  }, [avatarSize, name, src]);
 
   return (
     <div
