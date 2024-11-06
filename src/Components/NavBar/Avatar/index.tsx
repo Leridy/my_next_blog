@@ -64,7 +64,7 @@ const avatarFontStyle = () => {
  */
 export default function Avatar(props: AvatarProps) {
   const {name, src, size, onClick} = props;
-  const [avatarSrc, setAvatarSrc] = useState<string>(src);
+  const [avatarSrc, setAvatarSrc] = useState<string | undefined>(src);
 
   const avatarSize = useMemo(() => {
     return AvatarSize[size || 'small'];
