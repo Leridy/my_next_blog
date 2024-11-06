@@ -12,6 +12,8 @@ dotenv.config()
 
 const currentEnv = process.env.CURRENT_ENV || 'development'
 
+let DB = null;
+
 if (currentEnv === 'development') {
   // @ts-expect-error – Prisma Client Type
   if (!global.db) {
@@ -26,13 +28,13 @@ if (currentEnv === 'development') {
   if (!global.db) {
     const pool = new Pool({connectionString})
     const adapter = new PrismaNeon(pool);
-    // @ts-expect-error – Prisma Client Type
-    global.db = new PrismaClient({adapter})
+    DB = new PrismaClient({adapter})
   }
 }
 
+// @ts-expect-error – Prisma Client Type
 console.log('db', global.db);
 console.log('env Info',process.env);
 
 // @ts-expect-error – Prisma Client Type
-export const db = global.db as PrismaClient
+export const db =  DB || global.db
