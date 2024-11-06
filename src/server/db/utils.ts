@@ -24,8 +24,7 @@ if (currentEnv === 'development') {
   neonConfig.webSocketConstructor = ws
   const connectionString = `${process.env.DATABASE_URL}`
 
-// @ts-expect-error – Prisma Client Type
-  if (!global.db) {
+  if (DB) {
     const pool = new Pool({connectionString})
     const adapter = new PrismaNeon(pool);
     DB = new PrismaClient({adapter})
