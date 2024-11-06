@@ -1,6 +1,5 @@
 import HotBoard from "./HotBoard/HotBoard";
 import UserBoard from "@/Components/MainBoard/UserBoard/UserBoard";
-import {mockedGithub, mockNews} from "@/mock";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import LinkFrame from "@/Components/LinkFrame/LinkFrame";
 import useApi from "@/app/manage/hooks/useApi";

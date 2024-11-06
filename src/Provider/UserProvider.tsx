@@ -21,6 +21,7 @@ export const UserProvider = ({children}: {
     try {
       await requestLogout();
     } catch (e) {
+      console.error(e);
       message.error('登出失败');
     }
 

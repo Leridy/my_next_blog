@@ -3,7 +3,7 @@ import Card from "../../Card";
 import UserProfile from "@/Components/MainBoard/UserBoard/UserProfile";
 import TipsAndNotification from "@/Components/MainBoard/UserBoard/TipsAndNotification/TipsAndNotification";
 // 用来获取配置信息的东西
-const SITE_SETTING_KEY = 'UserBoard';
+// const SITE_SETTING_KEY = 'UserBoard';
 /**
  * UserBoard
  * @constructor

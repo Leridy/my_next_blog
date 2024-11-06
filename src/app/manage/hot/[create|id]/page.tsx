@@ -29,7 +29,7 @@ export default function HotEditor() {
 
   useEffect(() => {
     get({});
-  }, []);
+  }, [get]);
 
   return (
     <Card

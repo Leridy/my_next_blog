@@ -1,18 +1,21 @@
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios, {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
 import {notification} from "antd";
 
-const requestHandler = (request: any) => {
+const requestHandler = (request: InternalAxiosRequestConfig) => {
   // add jwt token to request header
   const token = localStorage.getItem('token');
-  if (token) request.headers['Authorization'] = `${token}`;
+  if (token) {
+    request.headers['Authorization'] = `${token}`;
+  }
   return request;
 }
 
 const responseHandler = (response: AxiosResponse): AxiosResponse["data"] => {
   // add response handler
   /**
-   * if response status code starts with 2, return response.data
-   * else throw an error with it's status code and message
+   * if response status code starts with 2, return response.
+   * Data
+   * else throws an error with its status code and message.
    */
   if (response.status.toString().startsWith('2')) {
     return response.data;
@@ -47,10 +50,10 @@ export default instance;
 export class NetworkError extends Error {
   status: number;
   bizMessage: string;
-  extraData: any;
-  originError: AxiosError;
+  extraData: unknown;
+  originError: AxiosError | undefined;
 
-  constructor(message: string, status: number, bizMessage: string, extraData: any, originError?: any) {
+  constructor(message: string, status: number, bizMessage: string, extraData: unknown, originError?: AxiosError) {
     super(message);
     this.status = status;
     this.bizMessage = bizMessage;

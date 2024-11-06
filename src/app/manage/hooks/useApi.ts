@@ -26,7 +26,7 @@ export type UseApiReturn<T> = {
 }
 
 export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
-  const {apiURL, exception, headers = {}, usePagination} = props;
+  const {apiURL, exception, headers = {}} = props;
   const [items, setItems] = useState<T[]>([]);
   const [pagedItems, setPagedItems] = useState<Page<T>>({
     data: [],
@@ -57,7 +57,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
     } finally {
       setLoading(false);
     }
-  }, [apiURL]);
+  }, [apiURL, exception?.type, headers]);
 
   const getOne = useCallback(async (id: string): Promise<T> => {
     try {
@@ -86,7 +86,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
     } finally {
       setLoading(false);
     }
-  }, [apiURL]);
+  }, [apiURL, headers]);
 
   const del = useCallback(async (id: string): Promise<void> => {
     try {
@@ -95,7 +95,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
     } finally {
       setLoading(false);
     }
-  }, [apiURL]);
+  }, [apiURL, headers]);
 
   const clearData = useCallback(() => {
     setData(null);

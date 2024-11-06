@@ -3,6 +3,7 @@ import {Menu, MenuProps} from "antd";
 import {useMemo} from "react";
 import {usePathname, useRouter} from "next/navigation";
 import Sider from "antd/es/layout/Sider";
+import {MenuInfo} from "rc-menu/lib/interface";
 
 type SideMenuType = 'hot' | 'user' | 'setting';
 
@@ -67,7 +68,7 @@ export default function SideMenu() {
     return [[parentPath, childPath].filter(Boolean).join('/')];
   }, [parentPath, childPath]);
 
-  function handleClick(e: any) {
+  function handleClick(e: MenuInfo) {
     // use router to navigate
     router.push(`/manage/${e.key}`);
 

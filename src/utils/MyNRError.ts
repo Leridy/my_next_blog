@@ -23,21 +23,22 @@ export class MyNRError extends Error {
    * The custom data of the error.
    * @type {any}
    */
-  data: any;
+  data: unknown;
 
   /**
    * The custom headers of the error.
    * @type {Record<string, string | string[]>}
    */
-  headers: HeadersInit | undefined;
+  headers: unknown;
+
 
   /**
    * Creates an instance of MyNRError.
    * @param {string} message The error message.
    * @param {number} [statusCode=500] The status code of the error.
-   * @param {any} [data] The custom data of the error.
+   * @param optional
    */
-  constructor(message: string, statusCode: number = 500, optional?: Record<string, any>) {
+  constructor(message: string, statusCode: number = 500, optional?: Record<string, unknown>) {
     super(message);
     this.statusCode = statusCode;
     this.headers = optional?.headers;
@@ -65,15 +66,16 @@ export class MyNRError extends Error {
    * Returns the custom data.
    * @returns {any} The custom data.
    */
-  getData(): any {
+  getData(): unknown {
     return this.data || Error.captureStackTrace(this, this.constructor);
   }
 
   getHeaders(): HeadersInit | undefined {
-    return this.headers
+    return this.headers as HeadersInit;
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export async function APIErrorHandler(req: NextRequest, res: NextResponse, next: Function) {
   try {
 

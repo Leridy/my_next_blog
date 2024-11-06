@@ -20,7 +20,7 @@ export default function NavBar(props: NavBarProps) {
 
   const {setting} = useSiteSettingContext();
 
-  const {name} = useSettingMap({
+  const {name} = useSettingMap<{name: string}>({
     setting,
     baseKey: SITE_SETTING_KEY,
     subKeys: [

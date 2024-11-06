@@ -172,7 +172,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
 
       </div>
     )
-  }, [handleCreate]);
+  }, [handleCreate, showCreate, title]);
 
   useEffect(() => {
     get(queryData);

@@ -55,4 +55,5 @@ class SpiderDao {
   }
 }
 
-export default new SpiderDao();
+const spiderDao = new SpiderDao();
+export default spiderDao;

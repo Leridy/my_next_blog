@@ -50,7 +50,7 @@ export default function ManageSetting() {
     try {
       await modalRef.current?.open();
     } catch (e) {
-      message.error('操作失败');
+      message.error(`操作失败 ${(e as Error).message}`);
     }
   }, []);
 
@@ -58,7 +58,7 @@ export default function ManageSetting() {
     try {
       await modalRef.current?.open(String(record.id));
     } catch (e) {
-      message.error('操作失败');
+      message.error(`操作失败 ${(e as Error).message}`);
     }
   }, []);
 

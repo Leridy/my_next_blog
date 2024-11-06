@@ -59,4 +59,5 @@ class HotDao {
   }
 }
 
-export default new HotDao();
+const hotDao = new HotDao();
+export default hotDao;

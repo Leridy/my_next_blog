@@ -58,7 +58,7 @@ export default function BrandIcon(props: BrandIconProps) {
         }
       }
     },
-    [src]
+    [size, src]
   )
 
 

@@ -55,4 +55,5 @@ export class ValidateCodeDao {
   }
 }
 
-export default new ValidateCodeDao();
+const validateCodeDao = new ValidateCodeDao();
+export default validateCodeDao;

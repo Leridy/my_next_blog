@@ -62,4 +62,5 @@ class SettingDao {
   }
 }
 
-export default new SettingDao();
+const settingDao = new SettingDao();
+export default settingDao;

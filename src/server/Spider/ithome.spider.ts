@@ -36,7 +36,7 @@ function genTagsForNews(title: string): string[] {
 /**
  * main logic of getData from 36kr
  */
-export default async function () {
+export default async function main() {
   const {id} = await spiderPublicLogic(SPIDER_INFO);
 
 

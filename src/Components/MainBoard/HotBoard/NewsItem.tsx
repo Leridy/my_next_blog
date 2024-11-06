@@ -30,7 +30,7 @@ export default function NewsItem(props: NewsItemProps) {
     if (url && onClick) {
       onClick(url);
     }
-  }, [url])
+  }, [onClick, url])
 
   const renderExtraData = useMemo(() => {
     // make number as a number with number unit like 10000 -> 1万， 12000 -> 1.2万, and if the number is less than 1000, just show the number.

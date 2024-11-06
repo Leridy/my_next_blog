@@ -7,7 +7,7 @@ import {checkValidationCode, encryptPwdWithSalt} from "@/server/ApiUtils";
 import {mergeHeaderObj} from "@/utils/mergeObject";
 import {APIErrorHandler} from "@/utils/MyNRError";
 
-export async function post(req: NextRequest) {
+async function post(req: NextRequest) {
   let resHeaderOperation: SetHeaderOperation = {};
 
   const schema = Yup.object().shape({

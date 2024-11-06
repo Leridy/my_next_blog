@@ -8,7 +8,7 @@ const SITE_SETTING_KEY = 'UserBoard.Notification';
 export default function TipsAndNotification() {
   const {setting} = useSiteSettingContext();
 
-  const {enable, content} = useSettingMap({
+  const {enable, content} = useSettingMap<{enable: boolean, content: 'string'}>({
     baseKey: SITE_SETTING_KEY,
     setting,
     subKeys: [

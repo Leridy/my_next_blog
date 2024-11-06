@@ -82,4 +82,5 @@ class NewsDao {
   }
 }
 
-export default new NewsDao();
+const newsDao = new NewsDao();
+export default newsDao;

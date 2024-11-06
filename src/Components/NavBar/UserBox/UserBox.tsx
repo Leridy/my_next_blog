@@ -2,7 +2,6 @@
 import Avatar from "@/Components/NavBar/Avatar";
 import LoginBox from "../LoginBox/LoginBox";
 import {useUserContext} from "@/Provider/UserProvider";
-import {useEffect} from "react";
 
 export default function UserBox() {
   const {user} = useUserContext();

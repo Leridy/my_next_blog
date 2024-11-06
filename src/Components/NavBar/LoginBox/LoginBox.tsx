@@ -1,7 +1,6 @@
 import {useState} from "react";
 import {Button, Space} from "antd";
 import UserModal from "@/Components/UserComponents/UserModal";
-import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
 import {useUserContext} from "@/Provider/UserProvider";
 
 export default function LoginBox() {
@@ -15,7 +14,7 @@ export default function LoginBox() {
     setType(isLogin ? 'login' : 'register');
   }
 
-  const handleSuccess = async (user: UserInfo | null) => {
+  const handleSuccess = async () => {
     setVisible(false);
     requestUserInfo()
   }

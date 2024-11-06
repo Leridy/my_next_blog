@@ -34,7 +34,7 @@ export const SiteSettingProvider = ({children}: {
     return new Map(items.map(item => [item.key, item]));
   }, [items]);
 
-  const {interval} = useSettingMap({
+  const {interval} = useSettingMap<{interval: number}>({
     baseKey: SITE_SETTING_KEY,
     setting: settingMap,
     subKeys: [
