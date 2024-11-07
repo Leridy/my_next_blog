@@ -43,7 +43,7 @@ class SpiderDao {
   }
 
 
-  public update(id: number) {
+  public async update(id: number) {
     return HS.update({
       where: {
         id: id,

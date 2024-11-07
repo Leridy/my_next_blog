@@ -105,7 +105,7 @@ export async function checkAndOperateNews(data: Pick<HotNews, 'title' | 'uniqueI
     const news = await NewsDao.get({uniqueId: item.uniqueId});
 
     if (Array.isArray(news) && news.length > 0) {
-      return NewsDao.update(news[0].id, item);
+      return await NewsDao.update(news[0].id, item);
     } else {
       return await NewsDao.create(item);
     }

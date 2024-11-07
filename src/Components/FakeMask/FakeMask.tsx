@@ -51,13 +51,13 @@ export default function FakeMask() {
   }, [toggleFakeMode]);
 
   useEffect(() => {
-    if (MaintainedMode && fakeMode) {
+    if (MaintainedMode && fakeMode && enable) {
       document.title = String(MaintainedContent);
     } else {
       document.title = fakeMode ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
     }
 
-  }, [MaintainedContent, MaintainedMode, fakeMode]);
+  }, [MaintainedContent, MaintainedMode, enable, fakeMode]);
 
 
   const handleSearch = useCallback(() => {

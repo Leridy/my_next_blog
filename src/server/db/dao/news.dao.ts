@@ -62,7 +62,7 @@ class NewsDao {
     });
   }
 
-  public update(id: number, data: Pick<HotNews, | 'title' | 'description' | 'url'>) {
+  public async update(id: number, data: Pick<HotNews, | 'title' | 'description' | 'url'>) {
     return HN.update({
       where: {
         id: id
@@ -73,7 +73,7 @@ class NewsDao {
     })
   }
 
-  public delete(query: Pick<HotNews, 'id'>) {
+  public async delete(query: Pick<HotNews, 'id'>) {
     return HN.delete({
       where: {
         id: query.id
