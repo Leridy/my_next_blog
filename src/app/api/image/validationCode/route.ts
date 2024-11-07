@@ -20,8 +20,8 @@ const backgroundColors = ['#1A3636', '#2C7873', '#4A628A', '#EE6C4D', '#1A3636',
 const lineColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
 const codeColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
 // const fonts: string[] =
-const fonts: string[] = process.env.CURRENT_ENV !== "development" ? ['Nimbus Sans Narrow', 'Noto Sans', 'DejaVu Sans Mono', 'Nimbus Roman']
-  : ['Arial', 'Helvetica', 'sans-serif', 'monospace', 'cursive'];
+// const fonts: string[] = process.env.CURRENT_ENV !== "development" ? ['Nimbus Sans Narrow', 'Noto Sans', 'DejaVu Sans Mono', 'Nimbus Roman']
+//   : ['Arial', 'Helvetica', 'sans-serif', 'monospace', 'cursive'];
 const transforms = (height: number, width: number): string => {
   const rotate = Math.random() * 10;
   const translateX = Math.random() * width / 5;
@@ -40,7 +40,7 @@ const generateValidateCodeImage = (code: string) => {
   const width = 200;
   const height = 60;
   const backgroundColor = code === 'exceeded limit' ? '#FF0000' : backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
-  const font = fonts[Math.floor(Math.random() * fonts.length)];
+  // const font = fonts[Math.floor(Math.random() * fonts.length)];
   const fontSize = 30;
   const codeColor = codeColors[Math.floor(Math.random() * codeColors.length)];
   const transform = transforms(height, width);
@@ -81,7 +81,7 @@ const generateValidateCodeImage = (code: string) => {
         x="${width / 2}"
         y="${height / 2}"
         transform="${transform}"
-       dominant-baseline="middle" text-anchor="middle" font-family="${font}" font-size="${fontSize}" fill="${codeColor}">${code}</text>
+       dominant-baseline="middle" text-anchor="middle" font-size="${fontSize}" fill="${codeColor}">${code}</text>
         ${randomLine(width, height)}
         
         
