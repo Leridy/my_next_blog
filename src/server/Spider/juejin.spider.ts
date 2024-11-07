@@ -53,8 +53,8 @@ interface JuejinResponse<T>{
 }
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
-  name: 'hupu',
-  description: 'hupu 爬虫',
+  name: 'juejin',
+  description: 'juejin 爬虫',
 }
 
 const URL_GENERATOR = () => `https://api.juejin.cn/content_api/v1/content/article_rank?category_id=1&type=hot`
