@@ -101,6 +101,8 @@ const generateValidateCodeImage = (code: string) => {
     </svg>
   `;
 
+  console.log(styleText)
+
   return Sharp(Buffer.from(svgText)).png().toBuffer();
 }
 
