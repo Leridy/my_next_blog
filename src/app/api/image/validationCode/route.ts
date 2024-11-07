@@ -81,7 +81,7 @@ const generateValidateCodeImage = (code: string) => {
   <style>
       /* latin */
       @font-face {
-        font-family: 'Noto Sans';
+        font-family: 'GeistSans';
         font-style: normal;
         font-weight: 100 900;
         font-stretch: 100%;
