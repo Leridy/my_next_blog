@@ -91,7 +91,6 @@ export async function APIErrorHandler(req: NextRequest, res: NextResponse, next:
         const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET || '');
         // const user = jwt.verify(token, secret) as { exp: number, iat: number };
         const {payload: user} = await jose.jwtVerify<User>(token, secret);
-        console.log(user);
         if ((user?.exp || 1) * 1000 < Date.now()) throw new Error('token expired');
       }
     } catch (e) {
