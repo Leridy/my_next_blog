@@ -77,11 +77,11 @@ const generateValidateCodeImage = (code: string) => {
   const styleText = `
   <style>
       @font-face {
-        font-family: 'NotoSans';
-        src: url('/usr/share/fonts/google-noto-vf/NotoSans-VF.ttf');
+        font-family: 'Sour Gummy';
+        src: url('https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
       }
       .text {
-        font-family: 'NotoSans';
+        font-family: 'Sour Gummy';
       }
     </style>
   `
