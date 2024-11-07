@@ -1,11 +1,12 @@
 'use client'
-import {Card, Input, Select} from "antd";
+import {Card, Input, Select, Space} from "antd";
 import ManageForm from "@/app/manage/Components/ManageForm";
 import useEditCard from "@/app/manage/hooks/useEditCard";
 import {HotSpider, HotTopic} from "@prisma/client";
 import FormItem from "antd/es/form/FormItem";
 import useApi from "@/app/manage/hooks/useApi";
 import {useEffect} from "react";
+import BrandIcon from "@/Components/MainBoard/HotBoard/BrandIcon";
 
 
 export default function HotEditor() {
@@ -90,7 +91,9 @@ export default function HotEditor() {
                   key={spider.id}
                   value={spider.id}
                 >
-                  {spider.name}
+                  <Space className={'flex justify-start align-middle'}>
+                    <BrandIcon src={spider.name}/> {spider.name}
+                  </Space>
                 </Select.Option>
               ))
             }

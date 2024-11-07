@@ -1,11 +1,12 @@
 'use client'
-import {Button, DatePicker, Input, message, Select, TableColumnProps} from "antd";
+import {Button, DatePicker, Input, message, Select, Space, TableColumnProps} from "antd";
 import {useCallback, useEffect, useMemo, useRef} from "react";
 import ManageList from "@/app/manage/Components/ManageList";
 import FormItem from "antd/es/form/FormItem";
 import useApi from "@/app/manage/hooks/useApi";
 import {HotNews, HotSpider} from "@prisma/client";
 import ManageFormModal, {ManageFormModalRef} from "@/app/manage/Components/ManageFormModal";
+import BrandIcon from "@/Components/MainBoard/HotBoard/BrandIcon";
 
 
 export default function HotList() {
@@ -122,7 +123,11 @@ export default function HotList() {
             allowClear
           >
             {spiders?.map((item: HotSpider) => (
-              <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              <Select.Option key={item.id} value={item.id}>
+                <Space className={'flex justify-start align-middle'}>
+                  <BrandIcon src={item.name}/> {item.name}
+                </Space>
+              </Select.Option>
             ))}
           </Select>
         </FormItem>
@@ -170,7 +175,11 @@ export default function HotList() {
         >
           <Select>
             {spiders?.map((item: HotSpider) => (
-              <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              <Select.Option key={item.id} value={item.id}>
+                <Space className={'flex justify-start align-middle'}>
+                  <BrandIcon src={item.name}/> {item.name}
+                </Space>
+              </Select.Option>
             ))}
           </Select>
         </FormItem>
