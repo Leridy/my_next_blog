@@ -1,6 +1,5 @@
 import http from "./http";
 import {HotNews, HotSpider} from "@prisma/client";
-import {mergeHeaderObj} from "@/utils/mergeObject";
 import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
 import getBiliWbi from "@/server/Spider/utils/getToken/bilibili";
 import {AxiosResponse} from "axios";
