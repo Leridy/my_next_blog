@@ -4,6 +4,7 @@ import "./globals.css";
 import {AntdRegistry} from "@ant-design/nextjs-registry";
 import {SpeedInsights} from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react"
+import WebSiteAnalyze from "@/Components/WebSiteAnalyze";
 
 export const runtime = "nodejs";
 
@@ -39,6 +40,7 @@ export default async function RootLayout({children}: Readonly<{
     <SpeedInsights />
     <Analytics />
     </body>
+    <WebSiteAnalyze />
     </html>
   );
 }

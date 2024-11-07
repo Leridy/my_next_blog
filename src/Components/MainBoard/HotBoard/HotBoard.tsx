@@ -71,11 +71,18 @@ export default function HotBoard(props: HotBoardProps) {
 
   return (
     <div
-      className={'p-4 rounded-lg shadow-md hotBoard flex-col hover:shadow-xl'}
+      className={'p-4 ' +
+        'rounded-lg ' +
+        'shadow-md ' +
+        'hotBoard ' +
+        'flex-col ' +
+        'hover:shadow-xl ' +
+        'sm:h-full '
+      }
       style={{
         background: 'var(--color-hot-border-background)',
-        gridRow: `span ${rowSpan || 1}`,
-        gridColumn: `span ${colSpan || 1}`,
+        gridRow: rowSpan ? `span ${rowSpan}` : undefined,
+        gridColumn: colSpan ? `span ${colSpan}` : undefined,
         animationDelay: `${(index || 0) * 0.1}s`
       }}
     >
