@@ -9,7 +9,6 @@ import type {NextRequest} from "next/server";
 import {APIErrorHandler} from "@/utils/MyNRError";
 
 import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
 
 
 
