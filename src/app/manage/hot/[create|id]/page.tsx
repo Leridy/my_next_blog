@@ -96,6 +96,15 @@ export default function HotEditor() {
             }
           </Select>
         </FormItem>
+        <FormItem
+          label={"状态"}
+          name={"enable"}
+        >
+          <Select>
+            <Select.Option value={true}>启用</Select.Option>
+            <Select.Option value={false}>禁用</Select.Option>
+          </Select>
+        </FormItem>
       </ManageForm>
     </Card>
   );

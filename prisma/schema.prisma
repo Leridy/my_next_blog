@@ -25,6 +25,7 @@ model HotTopic {
   description String   @default("")
   url         String   @unique
   image       String   @default("")
+  enable      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

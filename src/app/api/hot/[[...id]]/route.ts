@@ -10,7 +10,12 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
   const originQuery = Object.fromEntries(req.nextUrl.searchParams.entries());
   const id = (await params).id
   let data: HotTopic[] | HotTopic | null = null;
-  const query = id ? {id: Number(id)} : originQuery;
+  const query: Partial<HotTopic> = id ? {id: Number(id)} : originQuery;
+
+  if ('enable' in query) {
+    query.enable = originQuery.enable === 'true';
+  }
+
   data = await hotDao.get(query);
 
   if (!data) throw new MyNRError('你寻找的热门栏目不存在', 404, {

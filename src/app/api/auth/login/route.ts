@@ -37,10 +37,7 @@ async function post(req: NextRequest) {
   await schema.validate(data);
   const validateResult = await checkValidationCode(data.validateCode, sessionId);
   const result = await login(data);
-  console.log(result, data);
   if (!result) throw new MyNRError('用户不存在或密码错误', 401);
-
-  console.log(result, data);
 
   const returnResult = {...result} as Partial<User>
   delete returnResult.password;

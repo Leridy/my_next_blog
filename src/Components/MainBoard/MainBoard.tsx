@@ -29,7 +29,7 @@ export default function MainBoard(props: MainBoardProps) {
 
   const renderHotBoard = useMemo(() => {
     return (
-      items.map((topic, i) => <HotBoard
+      items.filter(topic => topic.enable).map((topic, i) => <HotBoard
         index={i}
         title={topic.name}
         key={topic.id}

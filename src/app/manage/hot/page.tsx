@@ -1,5 +1,5 @@
 'use client'
-import {Button, Input, TableColumnProps} from "antd";
+import {Button, Input, Select, TableColumnProps} from "antd";
 import {useEffect, useMemo} from "react";
 import BrandIcon from "@/Components/MainBoard/HotBoard/BrandIcon";
 import ManageList from "@/app/manage/Components/ManageList";
@@ -38,6 +38,13 @@ export default function HotList() {
         </div>
       ,
       align: 'center'
+    },
+    {
+      title: '状态',
+      dataIndex: 'enable',
+      key: 'enable',
+      width: 100,
+      render: (enable: boolean) => enable ? '启用' : '禁用',
     },
     {
       title: '关联爬虫',
@@ -86,6 +93,20 @@ export default function HotList() {
         name={"description"}
       >
         <Input/>
+      </FormItem>
+      <FormItem
+        label={"使用状态"}
+        name={"enable"}
+      >
+        <Select
+          allowClear
+          style={{
+            width: '100px'
+          }}
+        >
+          <Select.Option value={true}>启用</Select.Option>
+          <Select.Option value={false}>禁用</Select.Option>
+        </Select>
       </FormItem>
     </ManageList>
   );

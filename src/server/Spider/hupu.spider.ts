@@ -44,7 +44,7 @@ function dataTransformer(data: HupuDataStructure[], spiderId: number): Pick<HotN
       url: `https://bbs.hupu.com/${item.tid}.html`,
       uniqueId: `hupu-${item.tid}`,
       spiderId,
-      hotCount: item.replies + item.recommendNum,
+      hotCount: (item.replies + item.recommendNum) || 0,
       tags: [item.username.length < 6 ? item.username : item.username.slice(0, 3) + '...']
     }
   });
@@ -67,7 +67,6 @@ export default async function main() {
 
   const tasks = Object.keys(ListType).map(async (key) => {
     const type = ListType[key as keyof typeof ListType];
-    console.log('type', type);
     return await getData(type);
   });
 
