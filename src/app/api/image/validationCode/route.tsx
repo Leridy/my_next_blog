@@ -1,15 +1,11 @@
-import Sharp from 'sharp';
 import type {validateCode} from "@prisma/client";
+import type {NextRequest} from "next/server";
 import {NextResponse} from "next/server";
 import validateCodeDao from "@/server/db/dao/validateCode.dao";
 import {hashPassword} from "@/server/ApiUtils/encryption";
 import {validateCodeGen} from "@/utils/randomStringGen";
-
-import type {NextRequest} from "next/server";
 import {APIErrorHandler} from "@/utils/MyNRError";
-
-import { GeistSans } from 'geist/font/sans';
-
+import {ImageResponse} from "@vercel/og";
 
 
 // I need some color to generate the image
@@ -22,17 +18,16 @@ import { GeistSans } from 'geist/font/sans';
 const backgroundColors = ['#1A3636', '#2C7873', '#4A628A', '#EE6C4D', '#1A3636', '#40534C', '#677D6A', '#D6BD98'];
 const lineColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
 const codeColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
-// const fonts: string[] =
-// const fonts: string[] = process.env.CURRENT_ENV !== "development" ? ['Nimbus Sans Narrow', 'Noto Sans', 'DejaVu Sans Mono', 'Nimbus Roman']
-//   : ['Arial', 'Helvetica', 'sans-serif', 'monospace', 'cursive'];
+const fonts: string[] = ['Arial', 'Helvetica', 'sans-serif', 'monospace', 'cursive'];
 const transforms = (height: number, width: number): string => {
   const rotate = Math.random() * 10;
   const translateX = Math.random() * width / 5;
   const translateY = Math.random() * height / 5;
+  const skew = `-${Math.random() * 20}deg, ${Math.random() * 20}deg`
 
   // any more transform can be added here
   const scale = Math.random() * 0.1 + 0.9;
-  return `rotate(${rotate} ${translateX} ${translateY}) scale(${scale})`;
+  return `rotate(${rotate}deg) translateX(${translateX}px) translateY(${translateY}px) scale(${scale}) skew(${skew}) `;
 }
 
 const ONE_MINUTE = 1000 * 60;
@@ -40,77 +35,59 @@ const FIVE_MINUTES = ONE_MINUTE * 5;
 
 const generateValidateCodeImage = (code: string) => {
   const levels = [3, 4, 7];
-  const width = 200;
-  const height = 60;
+  const width = 400;
+  const height = 120;
   const backgroundColor = code === 'exceeded limit' ? '#FF0000' : backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
-  // const font = fonts[Math.floor(Math.random() * fonts.length)];
-  const fontSize = 30;
+  const font = fonts[Math.floor(Math.random() * fonts.length)];
+  const fontSize = 50;
   const codeColor = codeColors[Math.floor(Math.random() * codeColors.length)];
   const transform = transforms(height, width);
   const level = levels[Math.floor(Math.random() * levels.length)];
 
 
   const randomLine = (width: number, height: number) => {
-    let svgText = '';
+    const svgText = [];
     for (let i = 0; i < 2 * level; i++) {
       const x1 = Math.random() * width;
       const y1 = Math.random() * height;
       const x2 = Math.random() * width;
       const y2 = Math.random() * height;
       const fill = lineColors[Math.floor(Math.random() * lineColors.length)]
-      svgText += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${fill}" />`;
+      svgText.push(<line x1={x1} y1={y1} x2={x2} y2={y2} stroke={fill}/>);
     }
 
     return svgText;
   }
   const randomDot = (width: number, height: number) => {
-    let svgText = '';
+    const svgText = [];
     for (let i = 0; i < 10 * level; i++) {
       const x = Math.random() * width;
       const y = Math.random() * height;
       const r = Math.random() * 3;
       const fill = lineColors[Math.floor(Math.random() * lineColors.length)];
-      svgText += `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" />`;
+      svgText.push(<circle cx={x} cy={y} r={r} fill={fill}/>);
     }
 
 
     return svgText;
   }
 
-  const styleText = `
-  <style>
-      /* latin */
-      @font-face {
-        font-family: 'GeistSans';
-        font-style: normal;
-        font-weight: 100 900;
-        font-stretch: 100%;
-        font-display: swap;
-        src: local(${GeistSans});
-        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-      }
-      .text {
-        font-family: 'GeistSans';
-      }
-    </style>
-  `
-
-  const svgText = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
-      ${styleText}
-      <rect width="${width}" height="${height}" fill="${backgroundColor}" />
-      <text
-        class="text"
-        x="${width / 2}"
-        y="${height / 2}"
-        transform="${transform}"
-       dominant-baseline="middle" text-anchor="middle" font-size="${fontSize}" fill="${codeColor}">${code}</text>
-        ${randomLine(width, height)}
-        ${randomDot(width, height)}    
-    </svg>
-  `;
-
-  return Sharp(Buffer.from(svgText)).png().toBuffer();
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height}>
+      <rect width={width} height={height} fill={backgroundColor}/>
+      <path
+        style={{
+          transform,
+          fontSize,
+          textAlign: 'center',
+          color: codeColor,
+          fontFamily: font,
+          zIndex: -1,
+        }}
+      >{code}</path>
+      {randomLine(width, height)}
+      {randomDot(width, height)}
+    </svg>);
 }
 
 async function get(req: NextRequest) {
@@ -145,7 +122,7 @@ async function get(req: NextRequest) {
   }
 
   const code = isReachRequestLimit ? 'exceeded limit' : validateCodeGen(6, false);
-  const buffer = await generateValidateCodeImage(code);
+  const svgText = generateValidateCodeImage(code);
 
   if (!isReachRequestLimit) { // once the request reaches the limit, do not create a new code
     // if the code is outdated, or it is a new session, create a new code.
@@ -163,14 +140,19 @@ async function get(req: NextRequest) {
     }
   }
 
-  return new NextResponse(buffer, {
-    status: 200,
-    headers: {
-      'Content-Type': 'image/png',
-      'Set-Cookie': `sessionId=${sessionId}; Path=/; HttpOnly; SameSite=Strict;`,
-      'Cache-Control': 'no-store, max-age=0',
-    }
-  })
+  return new ImageResponse(
+    svgText
+
+    , {
+      width: 400,
+      height: 120,
+      status: 200,
+      headers: {
+        'Content-Type': 'image/png',
+        'Set-Cookie': `sessionId=${sessionId}; Path=/; HttpOnly; SameSite=Strict;`,
+        'Cache-Control': 'no-store, max-age=0',
+      }
+    })
 }
 
 export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);
