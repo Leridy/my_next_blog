@@ -49,15 +49,17 @@ export default function HotBoard(props: HotBoardProps) {
   }, [onOpenFrame]);
 
   useEffect(() => {
-    getNewsList({
-      spiderId,
-      // get today's news
-      updatedAt: new Date(new Date().toISOString().split('T')[0]),
-      pageSize: Number(pageSize),
-      page: 1,
-      key: 'hotCount',
-      order: 'desc'
-    });
+    if (spiderId) {
+      getNewsList({
+        spiderId,
+        // get today's news
+        updatedAt: new Date(new Date().toISOString().split('T')[0]),
+        pageSize: Number(pageSize),
+        page: 1,
+        key: 'hotCount',
+        order: 'desc'
+      });
+    }
   }, [getNewsList, pageSize, spiderId]);
 
   const renderNews = useMemo(() => {
