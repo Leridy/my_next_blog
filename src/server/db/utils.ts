@@ -12,7 +12,6 @@ dotenv.config()
 
 const currentEnv = process.env.CURRENT_ENV || 'development'
 
-let DB = undefined;
 
 if (currentEnv === 'development') {
   // @ts-expect-error – Prisma Client Type
@@ -24,14 +23,16 @@ if (currentEnv === 'development') {
   neonConfig.webSocketConstructor = ws
   const connectionString = `${process.env.DATABASE_URL}`
 
-  if (!DB) {
+  // @ts-expect-error – Prisma Client Type
+  if (!globalThis.db) {
     const pool = new Pool({connectionString})
     const adapter = new PrismaNeon(pool);
-    DB = new PrismaClient({adapter})
+    // @ts-expect-error – Prisma Client Type
+    globalThis.db = new PrismaClient({adapter})
   }
 }
 
 
 
 // @ts-expect-error – Prisma Client Type
-export const db =  DB || global.db
+export const db =  globalThis?.db || global.db
