@@ -78,7 +78,7 @@ const generateValidateCodeImage = (code: string) => {
   <style>
       @font-face {
         font-family: 'NotoSans';
-        src: url('file:///usr/share/fonts/google-noto-vf/NotoSans-VF.ttf');
+        src: url('/usr/share/fonts/google-noto-vf/NotoSans-VF.ttf');
       }
       .text {
         font-family: 'NotoSans';
@@ -101,7 +101,7 @@ const generateValidateCodeImage = (code: string) => {
     </svg>
   `;
 
-  console.log(styleText)
+  console.log(svgText)
 
   return Sharp(Buffer.from(svgText)).png().toBuffer();
 }
