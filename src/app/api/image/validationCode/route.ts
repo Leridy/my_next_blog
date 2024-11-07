@@ -8,6 +8,10 @@ import {validateCodeGen} from "@/utils/randomStringGen";
 import type {NextRequest} from "next/server";
 import {APIErrorHandler} from "@/utils/MyNRError";
 
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+
+
 
 // I need some color to generate the image
 /**
@@ -78,16 +82,16 @@ const generateValidateCodeImage = (code: string) => {
   <style>
       /* latin */
       @font-face {
-        font-family: 'Sour Gummy';
+        font-family: 'Noto Sans';
         font-style: normal;
         font-weight: 100 900;
         font-stretch: 100%;
         font-display: swap;
-        src: local("Noto Sans");
+        src: local(${GeistSans});
         unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
       }
       .text {
-        font-family: 'Noto Sans';
+        font-family: 'GeistSans';
       }
     </style>
   `
@@ -106,8 +110,6 @@ const generateValidateCodeImage = (code: string) => {
         ${randomDot(width, height)}    
     </svg>
   `;
-
-  console.log(svgText)
 
   return Sharp(Buffer.from(svgText)).png().toBuffer();
 }
