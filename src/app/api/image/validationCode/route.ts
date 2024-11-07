@@ -74,19 +74,30 @@ const generateValidateCodeImage = (code: string) => {
     return svgText;
   }
 
+  const styleText = `
+  <style>
+      @font-face {
+        font-family: 'NotoSans';
+        src: url('file:///usr/share/fonts/google-noto-vf/NotoSans-VF.ttf');
+      }
+      .text {
+        font-family: 'NotoSans';
+      }
+    </style>
+  `
+
   const svgText = `
     <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+     ${process.env.CURRENT_ENV === "production" ? styleText : ''}
       <rect width="${width}" height="${height}" fill="${backgroundColor}" />
       <text
+        class="text"
         x="${width / 2}"
         y="${height / 2}"
         transform="${transform}"
        dominant-baseline="middle" text-anchor="middle" font-size="${fontSize}" fill="${codeColor}">${code}</text>
         ${randomLine(width, height)}
-        
-        
         ${randomDot(width, height)}    
-     
     </svg>
   `;
 
