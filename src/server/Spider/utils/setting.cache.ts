@@ -4,18 +4,42 @@
 
 import {setting} from "@prisma/client";
 
-// @ts-expect-error – Prisma Client Type
-if (!global.innerSpiderSetting) {
+const isProd = process.env.CURRENT_ENV === 'production';
+
+
+
+// in edge function, global is not defined, there is a globalThis to replace it
+
+if (isProd) {
   // @ts-expect-error – Prisma Client Type
-  global.innerSpiderSetting = null;
+  if (!globalThis.innerSpiderSetting) {
+    // @ts-expect-error – Prisma Client Type
+    globalThis.innerSpiderSetting = null;
+  }
+} else {
+  // @ts-expect-error – Prisma Client Type
+  if (!global.innerSpiderSetting) {
+    // @ts-expect-error – Prisma Client Type
+    global.innerSpiderSetting = null;
+  }
 }
 
 export const updateSetting = (settings: Map<string, setting> | null) => {
-  // @ts-expect-error – Prisma Client Type
-  global.innerSpiderSetting = settings;
+  if (isProd) {
+    // @ts-expect-error – Prisma Client Type
+    globalThis.innerSpiderSetting = settings;
+  } else {
+    // @ts-expect-error – Prisma Client Type
+    global.innerSpiderSetting = settings;
+  }
 }
 
 export const getSetting = (): Map<string, setting> | null | undefined => {
-  // @ts-expect-error – Prisma Client Type
-  return global.innerSpiderSetting as (Map<string, setting> | null | undefined)
+  if (isProd) {
+    // @ts-expect-error – Prisma Client Type
+    return globalThis.innerSpiderSetting as (Map<string, setting> | null | undefined)
+  } else {
+    // @ts-expect-error – Prisma Client Type
+    return global.innerSpiderSetting as (Map<string, setting> | null | undefined)
+  }
 }
