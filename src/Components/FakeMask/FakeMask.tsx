@@ -54,7 +54,7 @@ export default function FakeMask() {
     if (MaintainedMode && fakeMode && enable) {
       document.title = String(MaintainedContent);
     } else {
-      document.title = fakeMode ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
+      document.title = fakeMode && enable ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
     }
 
   }, [MaintainedContent, MaintainedMode, enable, fakeMode]);
