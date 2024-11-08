@@ -215,7 +215,7 @@ export default async function main() {
   await updateSpiderUpdateTime(id);
 
 
-  return {transformedData};
+  return transformedData;
 }
 
 
