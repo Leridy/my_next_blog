@@ -14,7 +14,7 @@ export default async function Spider() {
     // 边缘计算性能较差，所以我们需要担心并发过高的问题，所以我们需要一个一个任务的执行
     for (let i = 0; i < tasks.length; i++) {
       try {
-        const result = await tasks[i]();
+        const result =  tasks[i]();
         updateResult.push(result);
       } catch (e) {
         if (e instanceof MyNRError) throw e;
@@ -22,7 +22,7 @@ export default async function Spider() {
           throw new MyNRError(`爬虫出错 ${e.message}`, 500, {originError: e});
       }
     }
-    return updateResult;
+    return {state: 'success', data: updateResult};
   } catch (e) {
     if (e instanceof MyNRError) throw e;
     if (e instanceof Error) {
