@@ -65,7 +65,7 @@ export default function NewsItem(props: NewsItemProps) {
             title
             hover:font-bold
             ease-in-out
-            mt-2
+            mb-2
         `}
       title={description || title}
     >
