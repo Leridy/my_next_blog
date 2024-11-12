@@ -57,18 +57,6 @@ async function getData(type: keyof typeof ListType = 'all') {
   return await http.get(url);
 }
 
-function genTagsForNews(data: SinaDataStructure): string[] {
-  // 遍历 templateMaterial ， 保存中长度小于五的字符串为 tag
-  return Object.keys(data).reduce((acc, cur) => {
-    const curData = data[cur as keyof SinaDataStructure];
-
-    if (curData === 'string' && curData.length < 6) {
-      acc.push(curData)
-    }
-    return acc;
-  }, [] as string[]);
-}
-
 function dataTransformer(data: SinaDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     const {info, base} = item;
