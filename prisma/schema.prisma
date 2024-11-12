@@ -35,7 +35,7 @@ model HotNews {
   spiderId    Int      @default(0)
   title       String   @default("")
   description String   @default("")
-  url         String   @unique
+  url         String   @default("")
   image       String   @default("")
   uniqueId    String   @unique
   tags        String[]

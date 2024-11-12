@@ -5,6 +5,8 @@ import {getSetting, updateSetting} from "@/server/Spider/utils/setting.cache";
 import SettingDao from "@/server/db/dao/setting.dao";
 import NewsDao from "@/server/db/dao/news.dao";
 
+const isProd = process.env.CURRENT_ENV === 'production';
+
 const SITE_SETTING_KEY = 'Spider';
 
 const settings = await getSpiderSetting();
@@ -71,13 +73,12 @@ export async function spiderPublicLogic(SPIDER_INFO: Pick<HotSpider, 'name' | 'd
 
 
   // 检查刷新间隔是否满足 interval
-  if (Date.now() - new Date(updatedAt).getTime() < interval) {
+  if (Date.now() - new Date(updatedAt).getTime() < interval && isProd) {
     throw new MyNRError('刷新间隔未到', 403, {
       interval,
       updatedAt: new Date(updatedAt).getTime(),
       now: Date.now()
     })
-
   } else {
     updateSetting(null);
   }
@@ -103,12 +104,19 @@ export async function checkAndOperateNews(data: Pick<HotNews, 'title' | 'uniqueI
   // check if the news is already in database update or create
   const tasks = data.map(async (item) => {
     const news = await NewsDao.get({uniqueId: item.uniqueId});
-
-    if (Array.isArray(news) && news.length > 0) {
-      return await NewsDao.update(news[0].id, item);
-    } else {
-      return await NewsDao.create(item);
+    try {
+      if (Array.isArray(news) && news.length > 0) {
+        return await NewsDao.update(news[0].id, item);
+      } else {
+        return await NewsDao.create(item);
+      }
+    } catch (e) {
+      throw new MyNRError('数据更新/创建失败', 500, {
+        data: item,
+        originError: e
+      });
     }
+
   });
 
   return await Promise.all(tasks);

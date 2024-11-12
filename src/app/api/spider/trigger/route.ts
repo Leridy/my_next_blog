@@ -6,10 +6,16 @@ import Spider from "@/server/Spider";
  * handle GET /api/spider route
  * @description 因为 Spider 的注册是由代码自动完成的，所以不需要提供创建、更新、删除的接口，这里只需要提供列表和详情接口
  */
-async function get() {
+async function get(req: NextRequest) {
+  const originQuery = Object.fromEntries(req.nextUrl.searchParams.entries());
 
+  console.log('originQuery', originQuery);
 
-  const result = await Spider();
+  const {name} = originQuery
+
+  const spiderNames = name ? [name] : [];
+
+  const result = await Spider({spiderNames});
 
   return NextResponse.json(result, {status: 200});
 }
