@@ -52,6 +52,7 @@ export default function BrandIcon(props: BrandIconProps) {
           case 'smzdm': // https://www.smzdm.com/
           case 'douban': // https://www.douban.com/
           case 'bilibili': // https://www.bilibili.com/
+          case 'pengpai': // https://www.thepaper.cn/
             return <Image src={`/icons/${src}.svg`} alt={src} width={size} height={size}/>;
           default:
             return <FileTextOutlined size={size}/>

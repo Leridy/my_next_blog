@@ -100,7 +100,7 @@ function dataTransformer(data: HuxiuDataStructure[], spiderId: number): Pick<Hot
 }
 
 /**
- * main logic of getData from 36kr
+ * main logic of getData from huxiu
  */
 export default async function main() {
   const {id} = await spiderPublicLogic(SPIDER_INFO);
@@ -116,15 +116,10 @@ export default async function main() {
   const transformedData = dataTransformer(result, id);
 
 
-  try {
-    // data transform to your own format
-    await checkAndOperateNews(transformedData);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    // update spider update time
-    await updateSpiderUpdateTime(id);
-  }
+  // data transform to your own format
+  await checkAndOperateNews(transformedData);
+  // update spider update time
+  await updateSpiderUpdateTime(id);
 
 
   return transformedData;
