@@ -45,7 +45,7 @@ export default async function Spider(props?: SpiderProps) {
             return huxiu;
           case 'sina':
             return sina;
-          case 'thepaper':
+          case 'pengpai':
             return thepaper;
           default:
             return () => {
