@@ -6,8 +6,10 @@ const responseHandler = (response: AxiosResponse): AxiosResponse["data"] => {
    * if response status code starts with 2, return response.data
    * else throw an error with it's status code and message
    */
-  if (response.status.toString().startsWith('2')) {
+  if (response.status.toString().startsWith('2') && !response.config.headers['return-raw']) {
     return response.data;
+  } else if (response.status.toString().startsWith('2') && response.config.headers['return-raw']) {
+    return response;
   }
 
 }
