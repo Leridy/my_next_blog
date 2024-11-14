@@ -19,6 +19,8 @@ export default function UserBoard() {
 
       <UserProfile/>
 
+      <LinksBoard />
+
       <Card
         header={<h1>What to Eat</h1>}
       >
@@ -35,8 +37,6 @@ export default function UserBoard() {
       <Card header={'Tool'}>
         todo 做一个 todo list
       </Card>
-
-      <LinksBoard />
     </div>
 
   )
