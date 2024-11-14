@@ -10,6 +10,7 @@ import huxiu from "@/server/Spider/huxiu.spider";
 import sina from "@/server/Spider/sina.spider";
 import thepaper from "@/server/Spider/thepaper.spider";
 import tiktok from "@/server/Spider/tiktok.spider";
+import ifanr from "@/server/Spider/ifanr.spider";
 import {MyNRError} from "@/utils/MyNRError";
 
 interface SpiderProps {
@@ -22,7 +23,7 @@ export default async function Spider(props?: SpiderProps) {
     const updateResult = [];
     let tasks = [];
     if (spiderNames.length === 0) {
-      tasks = [kr, ithome, hupu, bilibili, juejin, v2ex, toutiao, zhihu, huxiu, sina, thepaper, tiktok];
+      tasks = [kr, ithome, hupu, bilibili, juejin, v2ex, toutiao, zhihu, huxiu, sina, thepaper, tiktok, ifanr];
     } else {
       tasks = spiderNames.map((name) => {
         switch (name) {
@@ -50,6 +51,8 @@ export default async function Spider(props?: SpiderProps) {
             return thepaper;
           case 'tiktok':
             return tiktok;
+          case 'ifanr':
+            return ifanr;
           default:
             return () => {
               throw new MyNRError(`爬虫 ${name} 不存在`, 404);

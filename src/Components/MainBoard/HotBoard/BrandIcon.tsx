@@ -53,6 +53,7 @@ export default function BrandIcon(props: BrandIconProps) {
           case 'douban': // https://www.douban.com/
           case 'bilibili': // https://www.bilibili.com/
           case 'pengpai': // https://www.thepaper.cn/
+          case 'ifanr': // https://www.ifanr.com/
             return <Image src={`/icons/${src}.svg`} alt={src} width={size} height={size}/>;
           default:
             return <FileTextOutlined size={size}/>
