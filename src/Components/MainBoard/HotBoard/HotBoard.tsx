@@ -28,7 +28,7 @@ export interface HotBoardProps {
   index: number;
   // user setting config
   show?: boolean;
-  onMoveItem?: (from: number, to: number, itemProps: HotBoardProps) => void;
+  onMoveItem?: (from: number, to: number) => void;
   onToggleShow?: (id: number) => void;
 }
 
@@ -85,12 +85,12 @@ export default function HotBoard(props: HotBoardProps) {
       accept: 'HotBoard',
       hover: (draggedItem: { id: number; index: number }) => {
         if (draggedItem.index !== index) {
-          onMoveItem?.(draggedItem.index, index, props);
+          onMoveItem?.(draggedItem.index, index);
           draggedItem.index = index;
         }
       },
     })
-    , [onMoveItem, index, props]);
+    , [onMoveItem, index]);
 
   const handleToggle = useCallback(() => {
     onToggleShow?.(id);
@@ -163,7 +163,7 @@ export default function HotBoard(props: HotBoardProps) {
         'flex-col ' +
         'hover:shadow-xl ' +
         'sm:h-full ' +
-        `${show ? '' : 'hide'} `+
+        `${show ? '' : 'hide'} ` +
         `${topicSettingMode ? 'edit-mode' : 'normal'}`
       }
       style={{
@@ -198,7 +198,8 @@ export default function HotBoard(props: HotBoardProps) {
         }
       >
         {
-          filterNews?.length && !topicSettingMode ? renderNews : <EmptyBoard loading={loading} text={topicSettingMode ? '拖动卡片来排序' : undefined}/>
+          filterNews?.length && !topicSettingMode ? renderNews :
+            <EmptyBoard loading={loading} text={topicSettingMode ? '拖动卡片来排序' : undefined}/>
         }
       </div>
 

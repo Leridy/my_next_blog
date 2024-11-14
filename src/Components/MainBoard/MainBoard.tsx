@@ -1,4 +1,4 @@
-import HotBoard, {HotBoardProps} from "./HotBoard/HotBoard";
+import HotBoard from "./HotBoard/HotBoard";
 import UserBoard from "@/Components/MainBoard/UserBoard/UserBoard";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import LinkFrame from "@/Components/LinkFrame/LinkFrame";
@@ -57,7 +57,7 @@ export default function MainBoard(props: MainBoardProps) {
   }, [items, order]);
 
 
-  const handleItemMove = useCallback((from: number, to: number, itemProps: HotBoardProps) => {
+  const handleItemMove = useCallback((from: number, to: number) => {
     // 做一个对 TopicItemsToRender 的深拷贝
     const newTopicItems = [...TopicItemsToRender];
     // 交换 from 和 to 的位置
