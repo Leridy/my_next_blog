@@ -7,10 +7,15 @@ import useApi from "@/app/manage/hooks/useApi";
 import {HotNews} from "@prisma/client";
 import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
 import useSettingMap from "@/Components/hooks/useSettingMap";
+import {EyeInvisibleOutlined, EyeOutlined, MenuOutlined} from "@ant-design/icons";
+import {useUserSettingContext} from "@/Provider/UserSettingProvider";
+import {Tooltip} from "antd";
+import {useDrag, useDrop} from "react-dnd";
 
 const SITE_SETTING_KEY = 'HotBoard';
 
-interface HotBoardProps {
+export interface HotBoardProps {
+  id: number;
   title: string;
   spiderId: number;
   icon?: string;
@@ -20,7 +25,11 @@ interface HotBoardProps {
   colSpan?: number;
   keyword?: string;
   onOpenFrame?: (url: string) => void;
-  index?: number;
+  index: number;
+  // user setting config
+  show?: boolean;
+  onMoveItem?: (from: number, to: number, itemProps: HotBoardProps) => void;
+  onToggleShow?: (id: number) => void;
 }
 
 /**
@@ -29,11 +38,25 @@ interface HotBoardProps {
  * @description 这个组件是用来展示热门内容的，你需要传入以下信息，然后这个组件会展示出来
  */
 export default function HotBoard(props: HotBoardProps) {
-  const {icon, title, rowSpan, colSpan, keyword, onOpenFrame, index, spiderId} = props;
+  const {
+    id,
+    icon,
+    title,
+    rowSpan,
+    colSpan,
+    keyword,
+    onOpenFrame,
+    index,
+    spiderId,
+    show = false,
+    onMoveItem,
+    onToggleShow
+  } = props;
   const {items: news, get: getNewsList, loading} = useApi<HotNews>({
     apiURL: 'news',
   });
   const {setting} = useSiteSettingContext();
+  const {topicSettingMode,} = useUserSettingContext();
   const {pageSize} = useSettingMap<{ pageSize: number }>({
     setting,
     baseKey: SITE_SETTING_KEY,
@@ -48,8 +71,34 @@ export default function HotBoard(props: HotBoardProps) {
     onOpenFrame?.(url);
   }, [onOpenFrame]);
 
+  const [{isDragging}, ref] = useDrag(
+    () => ({
+      type: 'HotBoard',
+      item: {id, index},
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }), [id, index]
+  );
+  const [, drop] = useDrop(
+    () => ({
+      accept: 'HotBoard',
+      hover: (draggedItem: { id: number; index: number }) => {
+        if (draggedItem.index !== index) {
+          onMoveItem?.(draggedItem.index, index, props);
+          draggedItem.index = index;
+        }
+      },
+    })
+    , [onMoveItem, index, props]);
+
+  const handleToggle = useCallback(() => {
+    onToggleShow?.(id);
+  }, [id, onToggleShow]);
+
   useEffect(() => {
-    if (spiderId) {
+    // 暂时停止触发
+    if (spiderId && show) {
       getNewsList({
         spiderId,
         // get today's news
@@ -60,7 +109,38 @@ export default function HotBoard(props: HotBoardProps) {
         order: 'desc'
       });
     }
-  }, [getNewsList, pageSize, spiderId]);
+  }, [show, getNewsList, pageSize, spiderId]);
+
+
+  const showBoard = useMemo<boolean | undefined>(() => {
+    if (topicSettingMode) {
+      return true
+    }
+    return show
+  }, [show, topicSettingMode])
+
+  const renderOptionBar = useMemo(() => {
+    return (
+      <div className={'user-settings'}>
+        <Tooltip title={'拖拽我来排序'}>
+          <div
+            className={'drag-button'}
+          >
+            <MenuOutlined/>
+          </div>
+        </Tooltip>
+        <Tooltip
+          title={show ? '不看它' : '看它'}
+        >
+          <div
+            className={`toggle-button ${show ? '' : 'hide'}`}
+            onClick={handleToggle}>
+            {show ? <EyeInvisibleOutlined/> : <EyeOutlined/>}
+          </div>
+        </Tooltip>
+      </div>
+    )
+  }, [show, handleToggle])
 
   const renderNews = useMemo(() => {
       return (
@@ -71,23 +151,33 @@ export default function HotBoard(props: HotBoardProps) {
     }, [filterNews, keyword, openFrame]
   )
 
+
   return (
     <div
+      // @ts-expect-error ref is required here
+      ref={topicSettingMode ? (node) => ref(drop(node)) : null}
       className={'p-4 ' +
         'rounded-lg ' +
         'shadow-md ' +
         'hotBoard ' +
         'flex-col ' +
         'hover:shadow-xl ' +
-        'sm:h-full '
+        'sm:h-full ' +
+        `${show ? '' : 'hide'} `+
+        `${topicSettingMode ? 'edit-mode' : 'normal'}`
       }
       style={{
         background: 'var(--color-hot-border-background)',
         gridRow: rowSpan ? `span ${rowSpan}` : undefined,
         gridColumn: colSpan ? `span ${colSpan}` : undefined,
-        animationDelay: `${(index || 0) * 0.1}s`
+        animationDelay: `${(index || 0) * 0.1}s`,
+        opacity: isDragging ? 0.5 : undefined,
+        display: showBoard ? undefined : 'none',
       }}
     >
+      {
+        topicSettingMode && renderOptionBar
+      }
       <div
         className={'flex items-center space-x-2'}
       >
@@ -108,7 +198,7 @@ export default function HotBoard(props: HotBoardProps) {
         }
       >
         {
-          filterNews?.length ? renderNews : <EmptyBoard loading={loading}/>
+          filterNews?.length && !topicSettingMode ? renderNews : <EmptyBoard loading={loading} text={topicSettingMode ? '拖动卡片来排序' : undefined}/>
         }
       </div>
 

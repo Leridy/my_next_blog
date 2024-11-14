@@ -1,9 +1,10 @@
-import HotBoard from "./HotBoard/HotBoard";
+import HotBoard, {HotBoardProps} from "./HotBoard/HotBoard";
 import UserBoard from "@/Components/MainBoard/UserBoard/UserBoard";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import LinkFrame from "@/Components/LinkFrame/LinkFrame";
 import useApi from "@/app/manage/hooks/useApi";
 import {HotTopic} from "@prisma/client";
+import {useUserSettingContext} from "@/Provider/UserSettingProvider";
 
 interface MainBoardProps {
   keyword: string;
@@ -19,26 +20,101 @@ export default function MainBoard(props: MainBoardProps) {
 
   const {get, items} = useApi<HotTopic>({apiURL: 'hot'});
 
+  const {topicSetting, updateTopicSetting} = useUserSettingContext();
+  const {order, exclude} = useMemo(() => topicSetting, [topicSetting]);
+
   const handleOpenLink = useCallback((url: string) => {
     window.open(url, '_blank');
   }, []);
 
-  useEffect(() => {
-    get();
-  }, [get]);
+  const handleToggleShow = useCallback((id: number) => {
+    const newSetting = {
+      ...topicSetting,
+      exclude: exclude.includes(id) ? exclude.filter(ele => ele !== id) : [...exclude, id]
+    }
+    updateTopicSetting(newSetting);
+  }, [exclude, topicSetting, updateTopicSetting]);
+
+
+  const TopicItemsToRender = useMemo<HotTopic[]>(() => {
+    // 声明一个空数组 newOrderedItems
+    const newOrderedItems: HotTopic[] = [];
+    // 遍历 items, 首先排除enable 为 false 的项
+    const filteredItems = items.filter(item => item.enable);
+
+    // 遍历 filteredItems
+    filteredItems.forEach(item => {
+      if (order[item.id] !== undefined) {
+        newOrderedItems[order[item.id]] = item;
+      } else {
+        newOrderedItems.push(item);
+      }
+    });
+
+    return newOrderedItems.filter(ele => ele !== undefined);
+
+
+  }, [items, order]);
+
+
+  const handleItemMove = useCallback((from: number, to: number, itemProps: HotBoardProps) => {
+    // 做一个对 TopicItemsToRender 的深拷贝
+    const newTopicItems = [...TopicItemsToRender];
+    // 交换 from 和 to 的位置
+    const [removed] = newTopicItems.splice(from, 1);
+    newTopicItems.splice(to, 0, removed);
+
+    // 通过 newTopicItems 生成新的 order
+    const newOrder = {} as Record<number, number>;
+    newTopicItems.forEach((topic, index) => {
+      newOrder[topic.id] = index;
+    });
+
+    // 更新 topicSetting
+    const newSetting = {
+      ...topicSetting,
+      order: newOrder,
+    }
+
+    updateTopicSetting(newSetting);
+  }, [TopicItemsToRender, topicSetting, updateTopicSetting]);
+
 
   const renderHotBoard = useMemo(() => {
     return (
-      items.filter(topic => topic.enable).map((topic, i) => <HotBoard
+      TopicItemsToRender.filter(topic => topic.enable).map((topic, i) => <HotBoard
         index={i}
         title={topic.name}
         key={topic.id}
         keyword={keyword}
         {...topic}
         onOpenFrame={handleOpenLink}
+
+        show={!exclude.includes(topic.id)}
+        onMoveItem={handleItemMove}
+        onToggleShow={handleToggleShow}
       />)
     )
-  }, [items, keyword, handleOpenLink])
+  }, [TopicItemsToRender, keyword, handleOpenLink, exclude, handleItemMove, handleToggleShow])
+
+
+  useEffect(() => {
+    get();
+  }, [get]);
+
+  useEffect(() => {
+    if (!topicSetting || Object.keys(topicSetting.order).length === 0) {
+      const newOrder = {} as Record<number, number>;
+      TopicItemsToRender.forEach((topic, index) => {
+        newOrder[topic.id] = index;
+      });
+      const newSetting = {
+        ...topicSetting,
+        order: newOrder,
+      }
+      updateTopicSetting(newSetting);
+    }
+  }, [TopicItemsToRender, items, topicSetting, updateTopicSetting]);
 
   return (
     // 使用 grid 布局将 HotBoard 和 UserBoard 放在一起

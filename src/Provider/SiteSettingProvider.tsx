@@ -60,7 +60,7 @@ export const SiteSettingProvider = ({children}: {
 
   useEffect(() => {
     if (!requestLimit.current) {
-      triggerSpiderRefresh();
+      // triggerSpiderRefresh(); // 暂时停止触发爬虫
       requestLimit.current = true;
     }
 

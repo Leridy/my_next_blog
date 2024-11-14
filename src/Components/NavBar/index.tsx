@@ -13,20 +13,20 @@ const SITE_SETTING_KEY = 'NavBar';
 
 export default function NavBar(props: NavBarProps) {
   const {onSearch} = props;
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearch?.(e.target.value.split(' ').join(''));
-  }
-
   const {setting} = useSiteSettingContext();
 
-  const {name} = useSettingMap<{name: string}>({
+
+  const {name} = useSettingMap<{ name: string }>({
     setting,
     baseKey: SITE_SETTING_KEY,
     subKeys: [
       'name',
     ]
   })
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onSearch?.(e.target.value.split(' ').join(''));
+  }
 
   return (
     // 分成一行四列
@@ -56,7 +56,9 @@ export default function NavBar(props: NavBarProps) {
         placeholder="在本页筛选..."
         onChange={handleSearch}
       />
+
       <UserBox/>
+
     </nav>
   )
 }
