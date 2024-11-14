@@ -1,7 +1,6 @@
 import http from "./http";
 import {HotNews, HotSpider} from "@prisma/client";
 import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
-import {mergeHeaderObj} from "@/utils/mergeObject";
 
 interface SspaiDataStructure {
   id: number;
