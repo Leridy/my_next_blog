@@ -92,7 +92,17 @@ async function getData(type: string): Promise<{ data: SspaiDataStructure[] }> {
 }
 
 function dataTransformer(data: SspaiDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
-  return data.map((item) => {
+  const idSet = new Set<number>();
+  return data.filter(
+    ({id}) => {
+      // filter duplicate id
+      if (idSet.has(id)) {
+        return false;
+      }
+      idSet.add(id);
+      return true;
+    }
+  ).map((item) => {
     const {title, banner, summary, id, like_count, comment_count, view_count, tags, author} = item;
     return {
       title: title,
