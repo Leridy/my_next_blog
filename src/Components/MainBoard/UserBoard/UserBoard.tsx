@@ -2,6 +2,7 @@
 import Card from "../../Card";
 import UserProfile from "@/Components/MainBoard/UserBoard/UserProfile";
 import TipsAndNotification from "@/Components/MainBoard/UserBoard/TipsAndNotification/TipsAndNotification";
+import LinksBoard from "@/Components/MainBoard/UserBoard/LinksBoard/LinksBoard";
 // 用来获取配置信息的东西
 // const SITE_SETTING_KEY = 'UserBoard';
 /**
@@ -34,6 +35,8 @@ export default function UserBoard() {
       <Card header={'Tool'}>
         todo 做一个 todo list
       </Card>
+
+      <LinksBoard />
     </div>
 
   )
