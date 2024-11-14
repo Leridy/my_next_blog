@@ -44,6 +44,8 @@ export const UserSettingProvider = (props: UserSettingProviderProps) => {
   )
 }
 
+export default UserSettingProvider
+
 export function useUserSettingContext() {
   const context = React.useContext(UserSettingContext);
   if (context === undefined) {
