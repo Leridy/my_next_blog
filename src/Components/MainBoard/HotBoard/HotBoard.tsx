@@ -1,7 +1,6 @@
 import EmptyBoard from "./EmptyBoard";
 import BrandIcon from "./BrandIcon";
 import NewsItem from "./NewsItem";
-import "./HotBoard.styles.scss";
 import {useCallback, useEffect, useMemo} from "react";
 import useApi from "@/app/manage/hooks/useApi";
 import {HotNews} from "@prisma/client";
@@ -17,6 +16,7 @@ import {
 import {useUserSettingContext} from "@/Provider/UserSettingProvider";
 import {Button, Tooltip} from "antd";
 import {useDrag, useDrop} from "react-dnd";
+import "./HotBoard.styles.scss";
 
 const SITE_SETTING_KEY = 'HotBoard';
 
@@ -209,7 +209,7 @@ export default function HotBoard(props: HotBoardProps) {
         <div
           className={`flex-1 flex justify-end ${topicSettingMode ? 'hidden' : ''}`}
         >
-          <Tooltip title={isFocus ? '放大' : '恢复大小'}>
+          <Tooltip title={isFocus ? '恢复大小' : '放大面版'}>
             <Button
               size={"small"}
               type={'link'}
@@ -218,7 +218,7 @@ export default function HotBoard(props: HotBoardProps) {
                 alignSelf: 'flex-end',
               }}
             >
-              {colSpan && rowSpan ? <FullscreenExitOutlined/> : <FullscreenOutlined/>}
+              {isFocus ? <FullscreenExitOutlined/> : <FullscreenOutlined/>}
             </Button>
           </Tooltip>
         </div>
