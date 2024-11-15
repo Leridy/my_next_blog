@@ -3,6 +3,7 @@ import Card from "../../Card";
 import UserProfile from "@/Components/MainBoard/UserBoard/UserProfile";
 import TipsAndNotification from "@/Components/MainBoard/UserBoard/TipsAndNotification/TipsAndNotification";
 import LinksBoard from "@/Components/MainBoard/UserBoard/LinksBoard/LinksBoard";
+import CopyrightBoard from "@/Components/MainBoard/UserBoard/CopyrightBoard/CopyrightBoard";
 // 用来获取配置信息的东西
 // const SITE_SETTING_KEY = 'UserBoard';
 /**
@@ -20,6 +21,8 @@ export default function UserBoard() {
       <UserProfile/>
 
       <LinksBoard />
+
+      <CopyrightBoard />
 
       <Card
         header={<h1>What to Eat</h1>}
