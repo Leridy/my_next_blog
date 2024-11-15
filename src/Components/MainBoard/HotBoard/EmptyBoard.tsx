@@ -12,7 +12,7 @@ export default function EmptyBoard(props: EmptyBoardProps) {
   return (
     <div className={` select-none h-full w-full flex align-middle justify-center flex-col ${loading ? 'empty-board-loading' : ''}` }>
       <div
-        className={'flex justify-center items-center'}
+        className={'flex justify-center items-center mb-2'}
       >
         {icon || <img src={'/icons/empty.svg'} alt={'empty'}
                       style={{

@@ -199,7 +199,10 @@ export default function HotBoard(props: HotBoardProps) {
       >
         {
           filterNews?.length && !topicSettingMode ? renderNews :
-            <EmptyBoard loading={loading} text={topicSettingMode ? '拖动卡片来排序' : undefined}/>
+            <EmptyBoard loading={loading}
+                        text={topicSettingMode ? '拖动卡片来排序' : undefined}
+                        icon={topicSettingMode ? <BrandIcon src={icon} size={100}/> : undefined}
+            />
         }
       </div>
 
