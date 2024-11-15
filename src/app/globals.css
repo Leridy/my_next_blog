@@ -80,3 +80,25 @@ body {
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, sans-serif;
     font-size: var(--text-size);
 }
+
+
+/**
+定制化的 scroll bar 的样式，
+颜色为 var(--color-primary)
+ */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    display: none;
+    transition:all  .5s;
+}
+
+

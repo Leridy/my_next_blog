@@ -31,7 +31,13 @@
 .hotBoardNewsList {
   height: calc(100% - 35px);
   margin-bottom: 16px;
-  overflow: scroll;
+  overflow: auto;
+
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      display: block;
+    }
+  }
 }
 
 .fade-in {

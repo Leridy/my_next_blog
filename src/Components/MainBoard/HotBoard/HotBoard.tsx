@@ -193,7 +193,6 @@ export default function HotBoard(props: HotBoardProps) {
       <div
         className={
           'hotBoardNewsList mt-4 mb-4 ' +
-          'overflow-y-scroll' +
           `${filterNews?.length ? 'fade-in' : ''}`
         }
       >
