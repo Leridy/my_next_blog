@@ -62,6 +62,7 @@ async function getSpiderIdAndUpdateTime(SPIDER_INFO: Pick<HotSpider, 'name' | 'd
 
 export async function spiderPublicLogic(SPIDER_INFO: Pick<HotSpider, 'name' | 'description'>) {
   const {updatedAt, id} = await getSpiderIdAndUpdateTime(SPIDER_INFO);
+  console.log(`spider ${SPIDER_INFO.name} with id ${id} start to working`);
 
   // check settings
   if (!settings) {
@@ -92,6 +93,7 @@ export async function spiderPublicLogic(SPIDER_INFO: Pick<HotSpider, 'name' | 'd
 
 
 export async function updateSpiderUpdateTime(id: number) {
+  console.log(`spider ${id} update time and work ends`);
   return SpiderDao.update(id);
 }
 
