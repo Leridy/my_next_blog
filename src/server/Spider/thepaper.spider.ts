@@ -116,7 +116,7 @@ function dataTransformer(data: ThePaperDataStructure[], spiderId: number): Pick<
       uniqueId: `thepepar-${item.contId}`,
       spiderId,
       hotCount: Number(item.interactionNum) || 0,
-      tags: item.tagList.map(tag => tag.tag)
+      tags: Array.isArray(item.tagList) ? item.tagList.map(tag => tag.tag) : [item.name.slice(0, 4)]
     }
   });
 }
