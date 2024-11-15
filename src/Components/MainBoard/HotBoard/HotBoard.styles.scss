@@ -4,7 +4,7 @@
 .hotBoard {
   position: relative;
   min-height: 40vh;
-  transition: all 0.2s;
+  transition: all 0.5s;
 
   &.hide {
     opacity: .5 !important;

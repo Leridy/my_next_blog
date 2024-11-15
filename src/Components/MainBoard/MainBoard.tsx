@@ -17,6 +17,7 @@ interface MainBoardProps {
 export default function MainBoard(props: MainBoardProps) {
   const {keyword} = props;
   const [openedLink, setOpenedLink] = useState<string>('');
+  const [focus, setFocus] = useState<number | null>(null);
 
   const {get, items} = useApi<HotTopic>({apiURL: 'hot'});
 
@@ -90,12 +91,17 @@ export default function MainBoard(props: MainBoardProps) {
         {...topic}
         onOpenFrame={handleOpenLink}
 
+        onFocus={setFocus}
+        isFocus={focus === topic.id}
+        colSpan={focus === topic.id ? 2 : undefined}
+        rowSpan={focus === topic.id ? 2 : undefined}
+
         show={!exclude.includes(topic.id)}
         onMoveItem={handleItemMove}
         onToggleShow={handleToggleShow}
       />)
     )
-  }, [TopicItemsToRender, keyword, handleOpenLink, exclude, handleItemMove, handleToggleShow])
+  }, [TopicItemsToRender, keyword, handleOpenLink, focus, exclude, handleItemMove, handleToggleShow])
 
 
   useEffect(() => {

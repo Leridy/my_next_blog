@@ -7,9 +7,15 @@ import useApi from "@/app/manage/hooks/useApi";
 import {HotNews} from "@prisma/client";
 import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
 import useSettingMap from "@/Components/hooks/useSettingMap";
-import {EyeInvisibleOutlined, EyeOutlined, MenuOutlined} from "@ant-design/icons";
+import {
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  FullscreenExitOutlined,
+  FullscreenOutlined,
+  MenuOutlined,
+} from "@ant-design/icons";
 import {useUserSettingContext} from "@/Provider/UserSettingProvider";
-import {Tooltip} from "antd";
+import {Button, Tooltip} from "antd";
 import {useDrag, useDrop} from "react-dnd";
 
 const SITE_SETTING_KEY = 'HotBoard';
@@ -23,6 +29,8 @@ export interface HotBoardProps {
   url?: string;
   rowSpan?: number;
   colSpan?: number;
+  isFocus?: boolean;
+  onFocus?: (id: number | null) => void;
   keyword?: string;
   onOpenFrame?: (url: string) => void;
   index: number;
@@ -44,6 +52,8 @@ export default function HotBoard(props: HotBoardProps) {
     title,
     rowSpan,
     colSpan,
+    onFocus,
+    isFocus,
     keyword,
     onOpenFrame,
     index,
@@ -96,6 +106,14 @@ export default function HotBoard(props: HotBoardProps) {
     onToggleShow?.(id);
   }, [id, onToggleShow]);
 
+  const handleFullScreen = useCallback(() => {
+    if (isFocus) {
+      onFocus?.(null);
+    } else {
+      onFocus?.(id);
+    }
+  }, [id, isFocus, onFocus]);
+
   useEffect(() => {
     // 暂时停止触发
     if (spiderId && show) {
@@ -117,7 +135,7 @@ export default function HotBoard(props: HotBoardProps) {
       return true
     }
     return show
-  }, [show, topicSettingMode])
+  }, [show, topicSettingMode]);
 
   const renderOptionBar = useMemo(() => {
     return (
@@ -179,7 +197,7 @@ export default function HotBoard(props: HotBoardProps) {
         topicSettingMode && renderOptionBar
       }
       <div
-        className={'flex items-center space-x-2'}
+        className={'flex items-center space-x-2 w-full'}
       >
 
         {
@@ -188,6 +206,23 @@ export default function HotBoard(props: HotBoardProps) {
         <h3
           className={'font-bold'}
         >{title}</h3>
+        <div
+          className={`flex-1 flex justify-end ${topicSettingMode ? 'hidden' : ''}`}
+        >
+          <Tooltip title={isFocus ? '放大' : '恢复大小'}>
+            <Button
+              size={"small"}
+              type={'link'}
+              onClick={handleFullScreen}
+              style={{
+                alignSelf: 'flex-end',
+              }}
+            >
+              {colSpan && rowSpan ? <FullscreenExitOutlined/> : <FullscreenOutlined/>}
+            </Button>
+          </Tooltip>
+        </div>
+
       </div>
 
       <div
