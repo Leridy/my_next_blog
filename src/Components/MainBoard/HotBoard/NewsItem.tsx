@@ -12,7 +12,7 @@ export interface NewsItemProps extends HotNews {
  * use gold yellow and red to show the index to make it more eye-catching
  */
 const IndexColor = [
-  'text-amber-700',
+  'text-amber-600',
   'text-amber-500',
   'text-amber-400',
 ]
@@ -69,7 +69,7 @@ export default function NewsItem(props: NewsItemProps) {
         `}
       title={description || title}
     >
-      <p className={`w-1/12 text-right ${IndexColor[index]}`}>{index + 1}.</p>
+      <p className={`w-1/12 news-index text-center ${IndexColor[index]}`}>{index + 1}</p>
       <span
         className={`
             overflow-hidden 

@@ -32,6 +32,8 @@
     --color-hot-border-background: var(--color-primary);
     --color-card-background: var(--color-quaternary);
 
+    --color-transparent-background: rgba(255, 255, 255, .5);
+
 
 
 }
@@ -63,6 +65,9 @@
         --color-success-hover: rgba(33, 136, 56, 0.75);
         --color-success-active: rgba(30, 126, 52, 0.75);
         --color-success-text: #fff;
+
+
+        --color-transparent-background: rgba(0, 0, 0, .5);
 
 
 

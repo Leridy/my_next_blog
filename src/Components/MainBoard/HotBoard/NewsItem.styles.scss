@@ -35,3 +35,16 @@
   }
 }
 
+.news-index {
+  width: 18px;
+  height: 18px;
+  line-height: 20px;
+  font-size: .6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-transparent-background);
+  border-radius: 5px;
+  opacity: .8;
+}
+
