@@ -11,7 +11,7 @@ import {
   EyeOutlined,
   FullscreenExitOutlined,
   FullscreenOutlined,
-  MenuOutlined,
+  MenuOutlined, SyncOutlined,
 } from "@ant-design/icons";
 import {useUserSettingContext} from "@/Provider/UserSettingProvider";
 import {Button, Tooltip} from "antd";
@@ -114,20 +114,24 @@ export default function HotBoard(props: HotBoardProps) {
     }
   }, [id, isFocus, onFocus]);
 
+  const handleGetNewsList = useCallback(() => {
+    getNewsList({
+      spiderId,
+      // get today's news
+      updatedAt: new Date(new Date().toISOString().split('T')[0]),
+      pageSize: Number(pageSize),
+      page: 1,
+      key: 'hotCount',
+      order: 'desc'
+    });
+  }, [getNewsList, spiderId, pageSize]);
+
   useEffect(() => {
     // 暂时停止触发
     if (spiderId && show) {
-      getNewsList({
-        spiderId,
-        // get today's news
-        updatedAt: new Date(new Date().toISOString().split('T')[0]),
-        pageSize: Number(pageSize),
-        page: 1,
-        key: 'hotCount',
-        order: 'desc'
-      });
+      handleGetNewsList()
     }
-  }, [show, getNewsList, pageSize, spiderId]);
+  }, [show, spiderId, handleGetNewsList]);
 
 
   const showBoard = useMemo<boolean | undefined>(() => {
@@ -209,6 +213,17 @@ export default function HotBoard(props: HotBoardProps) {
         <div
           className={`flex-1 flex justify-end ${topicSettingMode ? 'hidden' : ''}`}
         >
+          <Tooltip title={'刷新'}>
+            <Button
+              size={"small"}
+              type={'link'}
+              onClick={handleGetNewsList}
+              disabled={loading}
+              style={{display: spiderId ? undefined : 'none'}}
+            >
+              <SyncOutlined spin={loading}/>
+            </Button>
+          </Tooltip>
           <Tooltip title={isFocus ? '恢复大小' : '放大面版'}>
             <Button
               size={"small"}

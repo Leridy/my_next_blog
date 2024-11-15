@@ -1,6 +1,14 @@
 @use "../../../app/scss/animations.scss";
 
-.news-title {
+.NewsItem-wrapper {
+  &:hover {
+    .NewsItem-news-index {
+      opacity: 1;
+    }
+  }
+}
+
+.NewsItem-news-title {
   position: relative;
   transition: transform .3s;
   transform: translateX(0);
@@ -35,7 +43,7 @@
   }
 }
 
-.news-index {
+.NewsItem-news-index {
   width: 18px;
   height: 18px;
   line-height: 20px;
@@ -45,6 +53,6 @@
   justify-content: center;
   background-color: var(--color-transparent-background);
   border-radius: 5px;
-  opacity: .8;
+  opacity: .6;
 }
 

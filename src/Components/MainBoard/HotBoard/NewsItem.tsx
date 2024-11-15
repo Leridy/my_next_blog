@@ -33,8 +33,9 @@ export default function NewsItem(props: NewsItemProps) {
   }, [onClick, url])
 
   const renderExtraData = useMemo(() => {
-    // make number as a number with number unit like 10000 -> 1万， 12000 -> 1.2万, and if the number is less than 1000, just show the number.
-    // if hotCount is big than 10000 return '🔥' + hotCount / 10000 + '万' else return hotCount
+    // Make number as a number with number unit like 10,000 → 1万, 12000 → 1.2万,
+    // and if the number is less than 1000, just show the number.
+    // If hotCount is bigger than return 10,000 '🔥' + hotCount / 10,000 + '万' else return hotCount.
     const hotCountText = hotCount && hotCount > 10000 ? `🔥${(hotCount / 10000).toFixed(1)}万` : hotCount;
     if (hotCountText && hotCount && hotCount > 10000) return hotCountText;
 
@@ -58,18 +59,18 @@ export default function NewsItem(props: NewsItemProps) {
 
   return (
     <div
+      title={description || title}
       className={`
             flex items-start 
             ${index < 2 ? 'font-bold' : ''}
             gap-1
-            title
+            NewsItem-wrapper
             hover:font-bold
             ease-in-out
             mb-2
         `}
-      title={description || title}
     >
-      <p className={`w-1/12 news-index text-center ${IndexColor[index]}`}>{index + 1}</p>
+      <p className={`w-1/12 NewsItem-news-index text-center ${IndexColor[index]}`}>{index + 1}</p>
       <span
         className={`
             overflow-hidden 
@@ -77,7 +78,7 @@ export default function NewsItem(props: NewsItemProps) {
             flex-1
             height-8
             cursor-pointer
-            news-title
+            NewsItem-news-title
             inline-block
           `}
         dangerouslySetInnerHTML={{__html: renderTitleWithHighlight}}
