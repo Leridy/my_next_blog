@@ -83,6 +83,7 @@ export default async function Spider(props?: SpiderProps) {
         }
 
       } catch (e) {
+        console.error(e);
         if (e instanceof MyNRError) throw e;
         if (e instanceof Error) {
           console.error(e);
