@@ -24,7 +24,7 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
   const id = (await params).id
   let data: HotNews[] | HotNews | Page<HotNews> | null = null;
   let pageQuery: PageDataBaseQuery | undefined = undefined;
-  let orderRule: OrderBy |undefined = undefined;
+  let orderRule: OrderBy | undefined = undefined;
 
   if (originQuery?.page && originQuery?.pageSize) {
     pageQuery = {
@@ -66,7 +66,14 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
     }
   }
 
-  return NextResponse.json(dataWithPage || data, {status: 200});
+  return NextResponse.json(dataWithPage || data, {
+    status: 200,
+    // 设置一个三十分钟的协商缓存
+    headers: {
+      'Cache-Control': 'max-age=1800',
+      'last-modified': new Date().toUTCString(),
+    }
+  });
 }
 
 async function post(req: NextRequest) {
