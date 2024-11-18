@@ -56,6 +56,7 @@ export default function BrandIcon(props: BrandIconProps) {
           case 'ifanr': // https://www.ifanr.com/
           case 'sspai': // https://sspai.com/
           case 'tieba': // https://tieba.baidu.com/
+          case '51cto': // https://www.51cto.com/
             return <Image src={`/icons/${src}.svg`} alt={src} width={size} height={size}/>;
           default:
             return <FileTextOutlined size={size}/>
