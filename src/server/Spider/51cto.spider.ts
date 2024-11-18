@@ -64,7 +64,7 @@ async function getData(): Promise<{data:{data: {list: FiveOneCTODataStructure[]}
 }
 
 function dataTransformer(data: FiveOneCTODataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
-  return data.filter(item => Boolean(item.url)).map((item, index) => {
+  return data.map((item, index) => {
     const {
         title,
         abstract: description,
