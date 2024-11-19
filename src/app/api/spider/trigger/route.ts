@@ -9,8 +9,6 @@ import Spider from "@/server/Spider";
 async function get(req: NextRequest) {
   const originQuery = Object.fromEntries(req.nextUrl.searchParams.entries());
 
-  console.log('originQuery', originQuery);
-
   const {name} = originQuery
 
   const spiderNames = name ? [name] : [];

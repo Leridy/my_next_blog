@@ -3,8 +3,9 @@ import UserBoard from "@/Components/MainBoard/UserBoard/UserBoard";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import LinkFrame from "@/Components/LinkFrame/LinkFrame";
 import useApi from "@/app/manage/hooks/useApi";
-import {HotTopic} from "@prisma/client";
+import {HotNewsStatistics, HotTopic} from "@prisma/client";
 import {useUserSettingContext} from "@/Provider/UserSettingProvider";
+
 
 interface MainBoardProps {
   keyword: string;
@@ -20,13 +21,24 @@ export default function MainBoard(props: MainBoardProps) {
   const [focus, setFocus] = useState<number | null>(null);
 
   const {get, items} = useApi<HotTopic>({apiURL: 'hot'});
+  const {edit: updateNewsStatistics} = useApi<HotNewsStatistics>({
+    apiURL: 'statistic/news',
+    headers: {
+      'x-ignore-error': 'true'
+    }
+  });
 
   const {topicSetting, updateTopicSetting} = useUserSettingContext();
   const {order, exclude} = useMemo(() => topicSetting, [topicSetting]);
 
-  const handleOpenLink = useCallback((url: string) => {
+  const handleOpenLink = useCallback(async (url: string, id: number) => {
     window.open(url, '_blank');
-  }, []);
+    try {
+      await updateNewsStatistics(String(id), {});
+    } catch (e) {
+      console.error(e);
+    }
+  }, [updateNewsStatistics]);
 
   const handleToggleShow = useCallback((id: number) => {
     const newSetting = {

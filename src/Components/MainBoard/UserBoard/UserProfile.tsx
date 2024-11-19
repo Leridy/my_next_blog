@@ -21,7 +21,7 @@ export default function UserProfile() {
   const router = useRouter();
   const {setting} = useSiteSettingContext();
 
-  const {setting: settingEntry} = useSettingMap<{setting: boolean}>({
+  const {setting: settingEntry} = useSettingMap<{ setting: boolean }>({
     baseKey: SITE_SETTING_KEY,
     setting,
     subKeys: [
@@ -88,7 +88,7 @@ export default function UserProfile() {
                     router.push('/');
                   }}
             >
-                <LogoutOutlined/> 登出
+              <LogoutOutlined/> 登出
             </Button>
         }
 
@@ -120,38 +120,9 @@ export default function UserProfile() {
     }
   }, [generateSaying]);
 
-  return (
-    <Card
-      header={<h1>User Profile</h1>}
-      actions={
-        renderActions
-      }
-    >
-      {/*使用grid 布局， 将内容分为 三行三列，其中第一 二个项目占 三列，*/}
-      <div className={'h-full grid grid-rows-3 grid-cols-3 gap-2'}>
-        <div
-          className={'flex justify-center items-center user-profile-avatar'}
-          style={{gridColumn: 'span 3'}}
-        >
-          <Avatar
-            size={'medium'}
-            name={name || '客人'}
-          />
-        </div>
-
-        <div
-          className={'flex justify-center items-center'}
-          style={{gridColumn: 'span 3'}}
-        >
-          <strong className={'text-lg'}>
-            {name ?
-              <InputtingText text={`${name},${oldSaying}`} cursorBlinkSpeed={'fast'} key={name}/> :
-              <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={oldSaying}/>
-            }
-          </strong>
-
-        </div>
-
+  const renderInfo = useMemo(() => {
+    return (
+      <>
         <div
           style={{gridColumn: 'span 1'}}
           className={'grid grid-rows-2 gap-2 justify-center items-center'}
@@ -187,6 +158,45 @@ export default function UserProfile() {
               {joinedDays}
           </span>
         </div>
+      </>
+    )
+  }, [joinedDays]);
+
+  return (
+    <Card
+      header={<h1>User Profile</h1>}
+      actions={
+        renderActions
+      }
+    >
+      {/*使用grid 布局， 将内容分为 三行三列，其中第一 二个项目占 三列，*/}
+      <div className={'h-full grid grid-rows-3 grid-cols-3 gap-2'}>
+        <div
+          className={'flex justify-center items-center user-profile-avatar'}
+          style={{gridColumn: 'span 3'}}
+        >
+          <Avatar
+            size={'medium'}
+            name={name || '客人'}
+          />
+        </div>
+
+        <div
+          className={'flex justify-center items-center'}
+          style={{gridColumn: 'span 3'}}
+        >
+          <strong className={'text-lg'}>
+            {name ?
+              <InputtingText text={`${name},${oldSaying}`} cursorBlinkSpeed={'fast'} key={name}/> :
+              <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={oldSaying}/>
+            }
+          </strong>
+
+        </div>
+
+        {name ? renderInfo : null}
+
+
       </div>
     </Card>
   )

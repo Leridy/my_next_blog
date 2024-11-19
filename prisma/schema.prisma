@@ -44,6 +44,14 @@ model HotNews {
   updatedAt   DateTime @updatedAt
 }
 
+model HotNewsStatistics {
+  id         Int      @id @default(autoincrement())
+  newsId     Int      @unique
+  clickCount Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
 // HotSpider: means the mainly website info for hot news origin
 // 因为 Spider 的逻辑是硬编码的，所以这里是一个固定的表，数据由 Spider 代码自动插入
 // 一个 Spider 可以对应一个 HotTopic

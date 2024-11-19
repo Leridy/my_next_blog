@@ -5,7 +5,7 @@ import {HotNews} from "@prisma/client";
 export interface NewsItemProps extends HotNews {
   index: number;
   keyword?: string;
-  onClick?: (url: string) => void;
+  onClick?: (url: string, id: number) => void;
 }
 
 /**
@@ -24,13 +24,13 @@ const IndexColor = [
  */
 
 export default function NewsItem(props: NewsItemProps) {
-  const {index, title, url, tags, hotCount, description, keyword, onClick} = props;
+  const {index, title, url, tags, hotCount, description, keyword, onClick, id} = props;
 
   const handleLinkClick = useCallback(() => {
     if (url && onClick) {
-      onClick(url);
+      onClick(url, id);
     }
-  }, [onClick, url])
+  }, [id, onClick, url])
 
   const renderExtraData = useMemo(() => {
     // Make number as a number with number unit like 10,000 → 1万, 12000 → 1.2万,

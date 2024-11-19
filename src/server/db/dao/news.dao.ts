@@ -2,6 +2,7 @@ import {HotNews} from "@prisma/client";
 import {HotNews as HN} from "../models/news";
 import {OrderBy, PageDataBaseQuery} from "@/server/db/dao/type";
 
+
 class NewsDao {
   public async get(query: Partial<Omit<HotNews, 'tags'>> | number, page?: PageDataBaseQuery, orderByRule?: OrderBy) {
     if (typeof query === 'number') {
@@ -51,6 +52,22 @@ class NewsDao {
         uniqueId: query.uniqueId,
         updatedAt: {
           gte: query.updatedAt
+        }
+      }
+    });
+  }
+
+  // get All data count
+  public async getAllCount() {
+    return HN.count();
+  }
+
+  // get data count today
+  public async getTodayCount() {
+    return HN.count({
+      where: {
+        updatedAt: {
+          gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
         }
       }
     });
