@@ -3,10 +3,11 @@ import BrandIcon from "./BrandIcon";
 import NewsItem from "./NewsItem";
 import {useCallback, useEffect, useMemo} from "react";
 import useApi from "@/app/manage/hooks/useApi";
-import {HotNews} from "@prisma/client";
+import {HotNews, HotSpider} from "@prisma/client";
 import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
 import useSettingMap from "@/Components/hooks/useSettingMap";
 import {
+  BugOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
   FullscreenExitOutlined,
@@ -65,6 +66,14 @@ export default function HotBoard(props: HotBoardProps) {
   const {items: news, get: getNewsList, loading} = useApi<HotNews>({
     apiURL: 'news',
   });
+
+  const {get: triggerSpiderRefresh} = useApi<HotSpider>({
+    apiURL: 'spider/trigger',
+    headers: {
+      'x-ignore-error': 'true'
+    }
+  });
+
   const {setting} = useSiteSettingContext();
   const {topicSettingMode,} = useUserSettingContext();
   const {pageSize} = useSettingMap<{ pageSize: number }>({
@@ -114,7 +123,7 @@ export default function HotBoard(props: HotBoardProps) {
     }
   }, [id, isFocus, onFocus]);
 
-  const handleGetNewsList = useCallback(() => {
+  const handleGetNewsList = useCallback(async () => {
     getNewsList({
       spiderId,
       // get today's news
@@ -125,6 +134,16 @@ export default function HotBoard(props: HotBoardProps) {
       order: 'desc'
     });
   }, [getNewsList, spiderId, pageSize]);
+
+  const handleTriggerSpiderRefresh = useCallback(async () => {
+    if (icon && spiderId) {
+      await triggerSpiderRefresh({
+        name: icon,
+      });
+
+      handleGetNewsList();
+    }
+  }, [handleGetNewsList, icon, spiderId, triggerSpiderRefresh]);
 
   useEffect(() => {
     // 暂时停止触发
@@ -213,6 +232,17 @@ export default function HotBoard(props: HotBoardProps) {
         <div
           className={`flex-1 flex justify-end ${topicSettingMode ? 'hidden' : ''}`}
         >
+          <Tooltip title={'触发爬虫'}>
+            <Button
+              size={"small"}
+              type={'link'}
+              onClick={handleTriggerSpiderRefresh}
+              disabled={loading || news?.length > 0}
+              style={{display: news.length > 0 ? 'none' : undefined}}
+            >
+              <BugOutlined/>
+            </Button>
+          </Tooltip>
           <Tooltip title={'刷新'}>
             <Button
               size={"small"}
