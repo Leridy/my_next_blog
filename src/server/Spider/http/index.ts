@@ -1,6 +1,6 @@
-import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
+import axios, {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
 
-const requestHandler = (request: AxiosRequestConfig): AxiosRequestConfig => {
+const requestHandler = (request: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
   // 在 headers 里面添加 user-agent the request possibly undefined
   request.headers = request.headers || {};
   request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3';
