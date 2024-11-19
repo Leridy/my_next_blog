@@ -6,6 +6,7 @@ const routerMap = new Map<string[], (req: NextRequest) => Promise<NextResponse> 
 
 const pathRequireTokenAdminRole = [
   '/manage',
+  '/blog/admin',
 ];
 
 routerMap.set(pathRequireTokenAdminRole, (req: NextRequest) => validationAuthToken(req, {
@@ -60,6 +61,7 @@ export const config = {
   matcher: [
     // admin page is protected
     '/manage/:path*',
+    '/blog/admin/:path*',
 
     // login and register need to encrypt password
     '/api/user/login',
