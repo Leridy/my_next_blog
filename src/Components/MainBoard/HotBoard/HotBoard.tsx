@@ -15,9 +15,10 @@ import {
   MenuOutlined, SyncOutlined,
 } from "@ant-design/icons";
 import {useUserSettingContext} from "@/Provider/UserSettingProvider";
-import {Button, Tooltip} from "antd";
+import {Button, message, Tooltip} from "antd";
 import {useDrag, useDrop} from "react-dnd";
 import "./HotBoard.styles.scss";
+import {NetworkError} from "@/http";
 
 const SITE_SETTING_KEY = 'HotBoard';
 
@@ -137,11 +138,17 @@ export default function HotBoard(props: HotBoardProps) {
 
   const handleTriggerSpiderRefresh = useCallback(async () => {
     if (icon && spiderId) {
-      await triggerSpiderRefresh({
-        name: icon,
-      });
 
-      handleGetNewsList();
+      try {
+        await triggerSpiderRefresh({
+          name: icon,
+        });
+
+        handleGetNewsList();
+      } catch (e) {
+        message.error((e as NetworkError).bizMessage);
+      }
+
     }
   }, [handleGetNewsList, icon, spiderId, triggerSpiderRefresh]);
 
