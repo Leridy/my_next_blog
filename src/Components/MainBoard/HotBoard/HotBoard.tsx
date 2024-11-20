@@ -68,7 +68,7 @@ export default function HotBoard(props: HotBoardProps) {
     apiURL: 'news',
   });
 
-  const {get: triggerSpiderRefresh} = useApi<HotSpider>({
+  const {get: triggerSpiderRefresh, loading: spiderLoading} = useApi<HotSpider>({
     apiURL: 'spider/trigger',
     headers: {
       'x-ignore-error': 'true'
@@ -143,10 +143,10 @@ export default function HotBoard(props: HotBoardProps) {
         await triggerSpiderRefresh({
           name: icon,
         });
-
-        handleGetNewsList();
       } catch (e) {
         message.error((e as NetworkError).bizMessage);
+      } finally {
+        handleGetNewsList();
       }
 
     }
@@ -244,7 +244,7 @@ export default function HotBoard(props: HotBoardProps) {
               size={"small"}
               type={'link'}
               onClick={handleTriggerSpiderRefresh}
-              disabled={loading || news?.length > 0}
+              disabled={loading || spiderLoading || news?.length > 0}
               style={{display: news.length > 0 ? 'none' : undefined}}
             >
               <BugOutlined/>
