@@ -1,5 +1,5 @@
 'use client'
-import {Button, Input, message, TableColumnProps} from "antd";
+import {Badge, Button, Input, message, TableColumnProps} from "antd";
 import {useCallback, useMemo} from "react";
 import BrandIcon from "@/Components/MainBoard/HotBoard/BrandIcon";
 import ManageList from "@/app/manage/Components/ManageList";
@@ -8,7 +8,9 @@ import useApi from "@/app/manage/hooks/useApi";
 import {NetworkError} from "@/http";
 
 
-export default function HotList() {
+const colors = ['green', 'yellow', 'red'];
+
+export default function HotSpiderList() {
 
   const {get: triggerSpiderRefresh} = useApi({
     apiURL: 'spider/trigger',
@@ -65,7 +67,24 @@ export default function HotList() {
       title: '更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
-      render: (updatedAt: string) => new Date(updatedAt).toLocaleString(),
+      render: (updatedAt: string) => {
+        const now = new Date();
+        const lastUpdate = new Date(updatedAt);
+        const diff = now.getTime() - lastUpdate.getTime()
+        let color = colors[0]
+        if (diff > 1000 * 60 * 60) {
+          color = colors[1]
+        }
+        if (diff > 1000 * 60 * 60 * 24) {
+          color = colors[2]
+        }
+        return (
+          <div className={'flex gap-1'}>
+              <Badge color={color}/>
+            {new Date(updatedAt).toLocaleString()}
+            </div>
+        )
+      }
     },
     {
       title: '立即更新',
