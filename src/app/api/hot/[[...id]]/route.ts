@@ -7,6 +7,10 @@ import {APIErrorHandler, MyNRError} from "@/utils/MyNRError";
 
 
 async function get(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+  // 从 req 中获取 headers 的 'x-no-cache'
+  // 如果为 true 则不设置缓存头
+  const {headers} = req;
+  const noCache = headers.get('x-no-cache') === 'true';
   const originQuery = Object.fromEntries(req.nextUrl.searchParams.entries());
   const id = (await params).id
   let data: HotTopic[] | HotTopic | null = null;
@@ -22,7 +26,16 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
     id, query,
   });
 
-  return NextResponse.json(data, {status: 200});
+  const shouldCache = data && Array.isArray(data) && data.length === 0;
+
+  return NextResponse.json(data, {
+    status: 200,
+    // 添加缓存头
+    headers: noCache || shouldCache ? {} : {
+      'Cache-Control': 'public, max-age=600',
+      'last-modified': new Date().toUTCString(),
+    }
+  });
 }
 
 

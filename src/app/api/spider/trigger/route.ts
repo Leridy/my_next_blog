@@ -7,6 +7,8 @@ import Spider from "@/server/Spider";
  * @description 因为 Spider 的注册是由代码自动完成的，所以不需要提供创建、更新、删除的接口，这里只需要提供列表和详情接口
  */
 async function get(req: NextRequest) {
+  const {headers} = req;
+  const noCache = headers.get('x-no-cache') === 'true';
   const originQuery = Object.fromEntries(req.nextUrl.searchParams.entries());
 
   const {name} = originQuery
@@ -15,7 +17,13 @@ async function get(req: NextRequest) {
 
   const result = await Spider({spiderNames});
 
-  return NextResponse.json(result, {status: 200});
+  return NextResponse.json(result, {
+    status: 200,
+    headers: noCache ? {} : {
+      'Cache-Control': 'public, max-age=1800',
+      'last-modified': new Date().toUTCString(),
+    }
+  });
 }
 
 export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);

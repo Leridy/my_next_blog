@@ -9,6 +9,10 @@ import {useEffect} from "react";
 import BrandIcon from "@/Components/MainBoard/HotBoard/BrandIcon";
 
 
+const headers = {
+  'x-no-cache': 'true'
+}
+
 export default function HotEditor() {
   const {
     cardTitle,
@@ -26,6 +30,7 @@ export default function HotEditor() {
 
   const {items: spiders, get} = useApi<HotSpider>({
     apiURL: 'spider',
+    headers
   });
 
   useEffect(() => {

@@ -13,7 +13,8 @@ export default function HotList() {
   const {get: triggerSpiderRefresh} = useApi({
     apiURL: 'spider/trigger',
     headers: {
-      'x-ignore-error': 'true'
+      'x-ignore-error': 'true',
+      'x-no-cache': 'true'
     }
   });
 

@@ -22,6 +22,10 @@ interface ManageListProps<T> {
   children?: ReactNode;
 }
 
+const headers = {
+  'x-no-cache': 'true'
+}
+
 export default function ManageList<T>(props: ManageListProps<T>) {
   const {
     title,
@@ -44,7 +48,8 @@ export default function ManageList<T>(props: ManageListProps<T>) {
 
   const {get, del, items, pagedItems, loading} = useApi<T>({
     apiURL,
-    exception: manageName === 'user' ? true : undefined
+    exception: manageName === 'user' ? true : undefined,
+    headers
   });
 
   // @ts-expect-error T won't have page and pageSize property
@@ -188,7 +193,8 @@ export default function ManageList<T>(props: ManageListProps<T>) {
       {
         children && (
           <div className={'mb-4'}>
-            <FilterForm onSearch={(newState) => setQueryData(prev => ({...prev, ...newState, page: prev.page ? 1 : undefined}))}>
+            <FilterForm
+              onSearch={(newState) => setQueryData(prev => ({...prev, ...newState, page: prev.page ? 1 : undefined}))}>
               {children}
             </FilterForm>
           </div>

@@ -8,9 +8,13 @@ import useApi from "@/app/manage/hooks/useApi";
 import {HotSpider} from "@prisma/client";
 
 
+const headers = {
+  'x-no-cache': 'true'
+}
 export default function HotList() {
   const {items: spiders, get: getSpider} = useApi<HotSpider>({
     apiURL: 'spider',
+    headers
   })
   /**
    *   id          Int      @id @default(autoincrement())

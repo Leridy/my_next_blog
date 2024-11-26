@@ -9,9 +9,13 @@ import ManageFormModal, {ManageFormModalRef} from "@/app/manage/Components/Manag
 import BrandIcon from "@/Components/MainBoard/HotBoard/BrandIcon";
 
 
+const headers = {
+    'x-no-cache': 'true'
+}
 export default function HotList() {
   const {items: spiders, get: getSpider} = useApi<HotSpider>({
     apiURL: 'spider',
+    headers,
   })
 
   const modalRef = useRef<ManageFormModalRef>(null);

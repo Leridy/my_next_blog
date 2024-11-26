@@ -19,6 +19,8 @@ const schema = Yup.object().shape({
  * @description 因为 news 是 Spider 自动创建的
  */
 async function get(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+  const {headers} = req;
+  const noCache = headers.get('x-no-cache') === 'true';
   const originQuery = Object.fromEntries(req.nextUrl.searchParams.entries()) as unknown as Pick<HotNews, 'title' | 'description' | 'spiderId'> & Partial<PageApiQuery & OrderByApiQuery>;
   if (originQuery.spiderId) originQuery.spiderId = Number(originQuery.spiderId);
   const id = (await params).id
@@ -66,11 +68,12 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
     }
   }
 
+  const shouldCache = data && Array.isArray(data) && data.length === 0;
 
   return NextResponse.json(dataWithPage || data, {
     status: 200,
     // 如果有数据，设置一个三十分钟的协商缓存
-    headers: data && Array.isArray(data) && data.length === 0 ? {} : {
+    headers: noCache || shouldCache ? {} : {
       'Cache-Control': 'max-age=1800',
       'last-modified': new Date().toUTCString(),
     }
