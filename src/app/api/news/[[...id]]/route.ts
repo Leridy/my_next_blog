@@ -66,10 +66,11 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
     }
   }
 
+
   return NextResponse.json(dataWithPage || data, {
     status: 200,
-    // 设置一个三十分钟的协商缓存
-    headers: {
+    // 如果有数据，设置一个三十分钟的协商缓存
+    headers: data && Array.isArray(data) && data.length === 0 ? {} : {
       'Cache-Control': 'max-age=1800',
       'last-modified': new Date().toUTCString(),
     }
