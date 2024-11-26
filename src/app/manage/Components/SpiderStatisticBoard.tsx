@@ -74,6 +74,7 @@ export default function SpiderStatisticBoard() {
             color={color}
             variant={'outlined'}
             onClick={() => handleRefresh(spider.name)}
+            disabled={triggerLoading}
           >
             <BrandIcon src={spider.name}/>
             {spider.name}
@@ -81,7 +82,7 @@ export default function SpiderStatisticBoard() {
         </Tooltip>
       )
     })
-  }, [handleRefresh, spiders]);
+  }, [handleRefresh, spiders, triggerLoading]);
 
   const renderTitle = useMemo(() => {
     return (
