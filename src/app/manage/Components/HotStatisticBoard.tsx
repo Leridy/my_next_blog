@@ -31,6 +31,26 @@ export default function HotStatisticBoard() {
     headers,
   });
 
+  const {
+    getOne: getVisitorStatistic, data: visitorData, loading: visitorStatLoading
+  } = useApi<{
+    todayClickCount: number,
+    allClickCount: number,
+  }>({
+    apiURL: 'statistic/news',
+    headers,
+  });
+
+  const {
+    getOne: getClickedTopic, data: topicData, loading: topicLoading
+  } = useApi<{
+    todayClickedNewsCount: number,
+  }>({
+    apiURL: 'statistic/news',
+    headers,
+  });
+
+
   const handleManage = useCallback(() => {
     router.push('/manage/hot')
   }, [router])
@@ -47,12 +67,14 @@ export default function HotStatisticBoard() {
             onClick={() => {
               getNewsRank();
               getNewsStatistic('count')
+              getVisitorStatistic('visitor')
+              getClickedTopic('topic')
             }}
             type={'link'}
             size={'small'}
           >
             <SyncOutlined
-              spin={loading || newsStatLoading}
+              spin={loading || newsStatLoading || visitorStatLoading || topicLoading}
             />
             刷新
           </Button>
@@ -66,7 +88,7 @@ export default function HotStatisticBoard() {
         </div>
       </div>
     )
-  }, [getNewsRank, getNewsStatistic, loading, newsStatLoading]);
+  }, [getClickedTopic, getNewsRank, getNewsStatistic, getVisitorStatistic, handleManage, loading, newsStatLoading, topicLoading, visitorStatLoading]);
 
   useEffect(() => {
     getNewsRank()
@@ -76,39 +98,119 @@ export default function HotStatisticBoard() {
     getNewsStatistic('count')
   }, [getNewsStatistic])
 
+  useEffect(() => {
+    getVisitorStatistic('visitor')
+  }, [getVisitorStatistic])
+
+  useEffect(() => {
+    getClickedTopic('topic')
+  }, [getClickedTopic])
+
   return (
     <Card
       title={renderTitle}
       size={'small'}
     >
-      <MyPieChart
+      <div
         style={{
-          height: '300px',
-          width: '100%'
+          width: '100%',
+          display: 'flex',
+          minHeight: '300px',
+          flexWrap: 'wrap',
         }}
-        options={{
-          series: [
-            {
-              type: 'pie',
-              radius: '70%',
-              // center: ['50%', '50%'],
-              label: {
-                show: true,
-                formatter: '{b}: {c} ({d}%)'
-              },
-              avoidLabelOverlap: false,
-              itemStyle: {
-                borderRadius: 10,
-                borderColor: '#fff',
-                borderWidth: 2
-              },
-              data: [
-                {name: '今日数据', value: countData?.todayNewsCount},
-                {name: '往日数据', value: (countData?.allNewsCount || 0) - (countData?.todayNewsCount || 0)}
-              ]
-            }
-          ]
-        }}/>
+
+      >
+        <MyPieChart
+          style={{
+            height: '300px',
+            width: '50%'
+          }}
+          options={{
+            series: [
+              {
+                type: 'pie',
+                radius: '70%',
+                // center: ['50%', '50%'],
+                label: {
+                  show: true,
+                  formatter: '{b}: {c} ({d}%)'
+                },
+                avoidLabelOverlap: false,
+                itemStyle: {
+                  borderRadius: 10,
+                  borderColor: '#fff',
+                  borderWidth: 2
+                },
+                data: [
+                  {name: '近24小时点击量', value: visitorData?.todayClickCount},
+                  {
+                    name: '早前总点击量',
+                    value: (visitorData?.allClickCount || 0) - (visitorData?.todayClickCount || 0)
+                  }
+                ]
+              }
+            ]
+          }}/>
+
+        <MyPieChart
+          style={{
+            height: '300px',
+            width: '50%'
+          }}
+          options={{
+            series: [
+              {
+                type: 'pie',
+                radius: '70%',
+                // center: ['50%', '50%'],
+                label: {
+                  show: true,
+                  formatter: '{b}: {c} ({d}%)'
+                },
+                avoidLabelOverlap: false,
+                itemStyle: {
+                  borderRadius: 10,
+                  borderColor: '#fff',
+                  borderWidth: 2
+                },
+                data: [
+                  {name: '今日访问主题数', value: topicData?.todayClickedNewsCount},
+                  {name: '今日总主题数', value: countData?.todayNewsCount}
+                ]
+              }
+            ]
+          }}/>
+
+        <MyPieChart
+          style={{
+            height: '300px',
+            width: '50%'
+          }}
+          options={{
+            series: [
+              {
+                type: 'pie',
+                radius: '70%',
+                // center: ['50%', '50%'],
+                label: {
+                  show: true,
+                  formatter: '{b}: {c} ({d}%)'
+                },
+                avoidLabelOverlap: false,
+                itemStyle: {
+                  borderRadius: 10,
+                  borderColor: '#fff',
+                  borderWidth: 2
+                },
+                data: [
+                  {name: '今日数据', value: countData?.todayNewsCount},
+                  {name: '往日数据', value: (countData?.allNewsCount || 0) - (countData?.todayNewsCount || 0)}
+                ]
+              }
+            ]
+          }}/>
+      </div>
+
 
       {
         NewsRank.map((item, index) => {

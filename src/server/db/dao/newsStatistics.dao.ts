@@ -43,6 +43,24 @@ class NewsStatistics {
     })
   }
 
+  public async getClickCount(date?: Date): Promise<number> {
+    const where = date
+      ? {updatedAt: {gte: date, lt: new Date(date.getTime() + 24 * 60 * 60 * 1000)}}
+      : undefined;
+    const result = await HNS.aggregate({where, _sum: {clickCount: true}});
+    return result._sum.clickCount;
+  }
+
+  public async getTodayNewsCount(): Promise<number> {
+    const where = {
+      updatedAt: {
+        gt: new Date(Date.now() - 24 * 60 * 60 * 1000)
+      }
+    };
+    const result = await HNS.aggregate({where, _count: {id: true}});
+    return result._count.id;
+  }
+
 
   public async create(data: Omit<HotNewsStatistics, 'id' | 'createdAt' | 'updatedAt'>) {
     return HNS.create({
