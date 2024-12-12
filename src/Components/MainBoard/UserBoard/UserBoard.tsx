@@ -15,7 +15,7 @@ export default function UserBoard() {
 
 
   return (
-    <div className={'grid gap-6 h-full overflow-y-scroll'}>
+    <div className={'grid gap-6 h-full overflow-y-scroll user-board'}>
       <TipsAndNotification/>
 
       <UserProfile/>

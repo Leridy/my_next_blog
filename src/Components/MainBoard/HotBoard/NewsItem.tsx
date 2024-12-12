@@ -83,6 +83,7 @@ export default function NewsItem(props: NewsItemProps) {
           `}
         dangerouslySetInnerHTML={{__html: renderTitleWithHighlight}}
         onClick={handleLinkClick}
+        onAuxClick={handleLinkClick}
         data-title={title}
       />
       <span

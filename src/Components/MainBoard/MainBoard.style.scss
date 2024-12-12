@@ -1,0 +1,17 @@
+.main-board {
+  .hot-board-wrapper {
+    .scroll-controller {
+      right: 10px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+  }
+
+
+  &:hover {
+    .scroll-controller {
+      opacity: 1;
+    }
+  }
+
+}

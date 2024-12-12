@@ -1,10 +1,12 @@
 import HotBoard from "./HotBoard/HotBoard";
 import UserBoard from "@/Components/MainBoard/UserBoard/UserBoard";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import LinkFrame from "@/Components/LinkFrame/LinkFrame";
 import useApi from "@/app/manage/hooks/useApi";
 import {HotNewsStatistics, HotTopic} from "@prisma/client";
 import {useUserSettingContext} from "@/Provider/UserSettingProvider";
+import './MainBoard.style.scss';
+import ScrollController from "@/Components/MainBoard/ScrollController/ScrollController";
 
 
 interface MainBoardProps {
@@ -19,6 +21,8 @@ export default function MainBoard(props: MainBoardProps) {
   const {keyword} = props;
   const [openedLink, setOpenedLink] = useState<string>('');
   const [focus, setFocus] = useState<number | null>(null);
+
+  const HotBoardRef = useRef<HTMLDivElement>(null);
 
   const {get, items} = useApi<HotTopic>({apiURL: 'hot'});
   const {edit: updateNewsStatistics} = useApi<HotNewsStatistics>({
@@ -92,6 +96,18 @@ export default function MainBoard(props: MainBoardProps) {
     updateTopicSetting(newSetting);
   }, [TopicItemsToRender, topicSetting, updateTopicSetting]);
 
+  const handleScrollUp = useCallback(() => {
+    if (HotBoardRef.current) {
+      HotBoardRef.current.scrollBy({top: -500, behavior: 'smooth'});
+    }
+  }, []);
+
+  const handleScrollDown = useCallback(() => {
+    if (HotBoardRef.current) {
+      HotBoardRef.current.scrollBy({top: 500, behavior: 'smooth'});
+    }
+  }, []);
+
 
   const renderHotBoard = useMemo(() => {
     return (
@@ -137,31 +153,40 @@ export default function MainBoard(props: MainBoardProps) {
   return (
     // 使用 grid 布局将 HotBoard 和 UserBoard 放在一起
     <div
-      className={'grid grid-cols-5 pt-16 h-full'}
+      className={'grid grid-cols-5 pt-16 h-full main-board'}
     >
       <div
-        className={
-          'grid grid-cols-1 col-span-5 md:col-span-4 gap-6 p-4  ' +
-          'sm:grid-cols-2 ' +
-          'md:grid-cols-2 ' +
-          'lg:grid-cols-3 ' +
-          'xl:grid-cols-5 ' +
-          'h-full ' +
-          'overflow-y-auto'
-        }
-        style={{
-          height: 'calc(100vh - 4rem)',
-          overflowY: 'scroll',
-        }}
+        className={'relative col-span-5 md:col-span-4 h-full hot-board-wrapper'}
       >
-        {renderHotBoard}
+        <div
+          ref={HotBoardRef}
+          className={
+            'relative grid grid-cols-1  gap-6 p-4   ' +
+            'sm:grid-cols-2 ' +
+            'md:grid-cols-2 ' +
+            'lg:grid-cols-3 ' +
+            'xl:grid-cols-5 ' +
+            'h-full ' +
+            'overflow-y-auto'
+          }
+          style={{
+            height: 'calc(100vh - 4rem)',
+            overflowY: 'scroll',
+          }}
+        >
+          {renderHotBoard}
+        </div>
+        <ScrollController
+          onScrollUp={handleScrollUp}
+          onScrollDown={handleScrollDown}
+        />
       </div>
 
 
       <div
         className={
           'hidden md:block col-span-1 pl-0 pr-4 pt-4 pb-4 h-full ' +
-          'gap-6 overflow-y-scroll'
+          'gap-6 overflow-y-scroll relative'
         }
       >
         <UserBoard/>
