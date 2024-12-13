@@ -123,7 +123,6 @@ export default function BrowserFingerprint() {
 
   useEffect(() => {
     if (!fingerprint) return;
-    console.log('fingerprint', fingerprint);
     create({fingerprint});
     setFingerprint('');
   }, [create, fingerprint]);

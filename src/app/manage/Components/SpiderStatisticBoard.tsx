@@ -40,6 +40,8 @@ export default function SpiderStatisticBoard() {
     outdatedCount,
     hourlyRate,
     dailyRate,
+    halfHourlyCount,
+    quarterlyCount,
     oldestSpiderLastUpdate,
   } = useMemo(() => {
     const now = new Date().getTime();
@@ -50,6 +52,10 @@ export default function SpiderStatisticBoard() {
       
       if (diff < 1000 * 60 * 60) {
         acc.hourly++;
+      } else if (diff < 1000 * 60 * 60 * 6) {
+        acc.halfHourly++;
+      } else if (diff < 1000 * 60 * 60 * 12) {
+        acc.quarterly++;
       } else if (diff < 1000 * 60 * 60 * 24) {
         acc.daily++; 
       } else {
@@ -66,6 +72,8 @@ export default function SpiderStatisticBoard() {
       hourly: 0,
       daily: 0, 
       outdated: 0,
+      halfHourly: 0,
+      quarterly: 0,
       oldest: null as HotSpider | null
     });
 
@@ -78,7 +86,9 @@ export default function SpiderStatisticBoard() {
       dailyCount: counts.daily,
       outdatedCount: counts.outdated,
       hourlyRate: Math.round((counts.hourly / total) * 100),
-      dailyRate: Math.round(((counts.hourly + counts.daily) / total) * 100)
+      dailyRate: Math.round(((counts.hourly + counts.daily) / total) * 100),
+      halfHourlyCount: counts.halfHourly,
+      quarterlyCount: counts.quarterly,
     };
   }, [spiders]);
 
@@ -214,6 +224,14 @@ export default function SpiderStatisticBoard() {
                   {
                     name: "1小时内更新",
                     value: hourlyCount,
+                  },
+                  {
+                    name: "6小时内更新",
+                    value: halfHourlyCount,
+                  },
+                  {
+                    name: "12小时内更新",
+                    value: quarterlyCount,
                   },
                   {
                     name: "24小时内更新",
