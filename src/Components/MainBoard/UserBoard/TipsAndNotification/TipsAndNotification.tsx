@@ -24,7 +24,7 @@ export default function TipsAndNotification() {
       >
         <DigitalClock
           showDate={true}
-          showTitle={true}
+          showTitle={false}
         />
 
         <div

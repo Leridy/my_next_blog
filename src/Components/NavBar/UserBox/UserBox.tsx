@@ -6,6 +6,7 @@ import {Button, Tooltip} from "antd";
 import {EditFilled} from "@ant-design/icons";
 import {useCallback} from "react";
 import {useUserSettingContext} from "@/Provider/UserSettingProvider";
+import AddToFavoritesButton from "@/Components/NavBar/AddToFavoritesButton/AddToFavoritesButton";
 
 export default function UserBox() {
   const {user} = useUserContext();
@@ -30,6 +31,8 @@ export default function UserBox() {
           {topicSettingMode ? <EditFilled style={{color: 'red'}}/> : <EditFilled/>}
         </Button>
       </Tooltip>
+
+      <AddToFavoritesButton/>
 
       {
         user ? <Avatar name={user.name}/> : <LoginBox/>
