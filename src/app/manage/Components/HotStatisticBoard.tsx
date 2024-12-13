@@ -1,6 +1,6 @@
 import MyPieChart from "@/app/manage/Components/MyPieChart";
 import useApi from "@/app/manage/hooks/useApi";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CommonStatisticCard from "./CommonStatisticCard";
 
@@ -132,7 +132,7 @@ export default function HotStatisticBoard() {
       </div>
       <div
         style={{
-          width: "100%", 
+          width: "100%",
           display: "flex",
           minHeight: "200px",
           flexWrap: "wrap",
