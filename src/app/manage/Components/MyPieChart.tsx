@@ -51,13 +51,13 @@ echarts.use([
   LabelLayout
 ]);
 
-interface MyPieChartProps {
+interface MyPieChartProps<T> {
   options?: EChartsOption;
-  data?: never[];
+  data?: T[];
   style?: React.CSSProperties;
 }
 
-export default function MyPieChart(props: MyPieChartProps) {
+export default function MyPieChart<T>(props: MyPieChartProps<T>) {
   const {options, data, style} = props;
   const ref = useRef(null);
   const myChart = useRef<ECharts | null>(null);

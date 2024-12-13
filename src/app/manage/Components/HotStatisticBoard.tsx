@@ -1,6 +1,6 @@
 import MyPieChart from "@/app/manage/Components/MyPieChart";
 import useApi from "@/app/manage/hooks/useApi";
-import {useCallback, useEffect} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import {useRouter} from "next/navigation";
 import CommonStatisticCard from "./CommonStatisticCard";
 
@@ -76,6 +76,53 @@ export default function HotStatisticBoard() {
     headers,
   });
 
+  const chartData = useMemo(() => {
+    return [
+      {
+        data: [
+          {
+            name: "近24小时点击量",
+            value: visitorData?.todayClickCount,
+          },
+          {
+            name: "早前总点击量", 
+            value: (visitorData?.allClickCount || 0) - (visitorData?.todayClickCount || 0),
+          },
+        ]
+      },
+      {
+        data: [
+          {
+            name: "今日访问主题数",
+            value: topicData?.todayClickedNewsCount,
+          },
+          {
+            name: "今日总主题数", 
+            value: countData?.todayNewsCount
+          },
+        ]
+      },
+      {
+        data: [
+          {
+            name: "今日数据",
+            value: countData?.todayNewsCount
+          },
+          {
+            name: "往日数据",
+            value: (countData?.allNewsCount || 0) - (countData?.todayNewsCount || 0),
+          },
+        ]
+      },
+      {
+        data: topicClickData?.topicTodayVisitedInfo.map(item => ({
+          name: item.name,
+          value: item.clickCount
+        })) || []
+      }
+    ]
+  }, [countData, topicClickData, topicData, visitorData])
+  
   const handleRefresh = useCallback(() => {
     getNewsRank();
     getNewsStatistic("count");
@@ -160,156 +207,46 @@ export default function HotStatisticBoard() {
           flexWrap: "wrap",
         }}
       >
-        <MyPieChart
-          style={{
-            height: "200px",
-          }}
-          options={{
-            tooltip: {
-              trigger: 'item',
-              formatter: "{b}: {c} ({d}%)",
-            },
-            series: [
-              {
-                type: "pie",
-                radius: "70%",
-                // center: ['50%', '50%'],
-                label: {
-                  show: false,
-                  position: 'center',
-                  formatter: "{b}: {c} ({d}%)",
-                },
-                avoidLabelOverlap: false,
-                itemStyle: {
-                  borderRadius: 5,
-                  borderColor: "#fff",
-                  borderWidth: 2,
-                },
-                data: [
-                  {
-                    name: "近24小时点击量",
-                    value: visitorData?.todayClickCount,
-                  },
-                  {
-                    name: "早前总点击量",
-                    value:
-                      (visitorData?.allClickCount || 0) -
-                      (visitorData?.todayClickCount || 0),
-                  },
-                ],
+        {chartData.map(({data}, index) => (
+          <MyPieChart
+            key={index}
+            style={{
+              height: "200px",
+            }}
+            options={{
+              tooltip: {
+                trigger: 'item',
+                formatter: "{b}: {c} ({d}%)",
               },
-            ],
-          }}
-        />
-
-        <MyPieChart
-          style={{
-            height: "200px",
-          }}
-          options={{
-            tooltip: {
-              trigger: 'item',
-              formatter: "{b}: {c} ({d}%)",
-            },
-            series: [
-              {
-                type: "pie",
-                radius: "70%",
-                // center: ['50%', '50%'],
-                label: {
-                  show: false,
-                  position: 'center',
-                  formatter: "{b}: {c} ({d}%)",
+              legend: {
+                orient: 'horizontal',
+                textStyle: {
+                  fontSize: 10
                 },
-                avoidLabelOverlap: false,
-                itemStyle: {
-                  borderRadius: 5,
-                  borderColor: "#fff",
-                  borderWidth: 2,
-                },
-                data: [
-                  {
-                    name: "今日访问主题数",
-                    value: topicData?.todayClickedNewsCount,
+                
+                bottom: 0,
+              },
+              series: [
+                {
+                  type: "pie",
+                  radius: "70%",
+                  label: {
+                    show: false,
+                    position: 'center',
+                    formatter: "{b}: {c} ({d}%)",
                   },
-                  {name: "今日总主题数", value: countData?.todayNewsCount},
-                ],
-              },
-            ],
-          }}
-        />
-
-        <MyPieChart
-          style={{
-            height: "200px",
-          }}
-          options={{
-            tooltip: {
-              trigger: 'item',
-              formatter: "{b}: {c} ({d}%)",
-            },
-            series: [
-              {
-                type: "pie",
-                radius: "70%",
-                // center: ['50%', '50%'],
-                label: {
-                  show: false,
-                  position: 'center',
-                  formatter: "{b}: {c} ({d}%)",
-                },
-                avoidLabelOverlap: false,
-                itemStyle: {
-                  borderRadius: 5,
-                  borderColor: "#fff",
-                  borderWidth: 2,
-                },
-                data: [
-                  {name: "今日数据", value: countData?.todayNewsCount},
-                  {
-                    name: "往日数据",
-                    value:
-                      (countData?.allNewsCount || 0) -
-                      (countData?.todayNewsCount || 0),
+                  avoidLabelOverlap: false,
+                  itemStyle: {
+                    borderRadius: 5,
+                    borderColor: "#fff",
+                    borderWidth: 2,
                   },
-                ],
-              },
-            ],
-          }}
-        />
-
-        <MyPieChart
-          style={{
-            height: "200px",
-          }}
-          options={{
-            tooltip: {
-              trigger: 'item',
-              formatter: "{b}: {c} ({d}%)",
-            },
-            series: [
-              {
-                type: "pie",
-                radius: "70%",
-                label: {
-                  show: false,
-                  position: 'center',
-                  formatter: "{b}: {c} ({d}%)",
+                  data: data
                 },
-                avoidLabelOverlap: false,
-                itemStyle: {
-                  borderRadius: 5,
-                  borderColor: "#fff",
-                  borderWidth: 2,
-                },
-                data: topicClickData?.topicTodayVisitedInfo.map(item => ({
-                  name: item.name,
-                  value: item.clickCount
-                })) || []
-              },
-            ],
-          }}
-        />
+              ],
+            }}
+          />
+        ))}
       </div>
 
       <div className="max-h-[200px] overflow-auto">
