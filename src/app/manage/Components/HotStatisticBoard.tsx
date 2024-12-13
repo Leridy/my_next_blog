@@ -1,7 +1,7 @@
 import MyPieChart from "@/app/manage/Components/MyPieChart";
 import useApi from "@/app/manage/hooks/useApi";
-import { useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import {useCallback, useEffect} from "react";
+import {useRouter} from "next/navigation";
 import CommonStatisticCard from "./CommonStatisticCard";
 
 const headers = {
@@ -202,7 +202,7 @@ export default function HotStatisticBoard() {
                     name: "今日访问主题数",
                     value: topicData?.todayClickedNewsCount,
                   },
-                  { name: "今日总主题数", value: countData?.todayNewsCount },
+                  {name: "今日总主题数", value: countData?.todayNewsCount},
                 ],
               },
             ],
@@ -231,7 +231,7 @@ export default function HotStatisticBoard() {
                   borderWidth: 2,
                 },
                 data: [
-                  { name: "今日数据", value: countData?.todayNewsCount },
+                  {name: "今日数据", value: countData?.todayNewsCount},
                   {
                     name: "往日数据",
                     value:
@@ -249,12 +249,18 @@ export default function HotStatisticBoard() {
         {NewsRank.map((item, index) => {
           return (
             <div key={index} className={"flex justify-between items-center"}>
+
               <a
                 href={item.url}
                 target={"_blank"}
                 rel={"noreferrer"}
-                className={"text-blue-500"}
+                className={" hover:underline flex"}
               >
+                <span
+                    className={` w-6 flex items-center justify-center text-sm `}
+                >
+                  {index + 1}.
+                </span>
                 {item.title}
               </a>
               <span>{item.clickCount}</span>
