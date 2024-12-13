@@ -1,5 +1,5 @@
 import CommonStatisticCard from "./CommonStatisticCard";
-import { useCallback, useEffect } from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import useApi from "../hooks/useApi";
 import MyPieChart from "./MyPieChart";
 
@@ -28,6 +28,10 @@ export default function VisitorStatisticBoard() {
     apiURL: "/statistic/visitor",
   });
 
+  const averagePagePerVisitor = useMemo(() => {
+    // 注意这里的除数不能为 0，向上取整
+    return Math.ceil((visitedCount?.todayVisitedCount || 0) / (visitorCount?.todayVisitorCount || 1));
+  }, [visitorCount, visitedCount]);
   useEffect(() => {
     getVisitorCount("count");
   }, [getVisitorCount]);
@@ -47,7 +51,7 @@ export default function VisitorStatisticBoard() {
       onRefresh={handleRefresh}
       loading={visitorLoading || visitedLoading}
     >
-      <div className="grid grid-cols-4 gap-4 p-4 mb-4">
+      <div className="grid grid-cols-5 gap-4 p-4 mb-4">
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日访客</span>
           <span className="text-2xl font-bold mt-2">{visitorCount?.todayVisitorCount || 0}</span>
@@ -64,15 +68,21 @@ export default function VisitorStatisticBoard() {
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
+          <span className="text-gray-600 text-sm">今日访客平均次数</span>
+          <span
+            className="text-2xl font-bold mt-2">{averagePagePerVisitor}</span>
+        </div>
+
+        <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">总访问量</span>
           <span className="text-2xl font-bold mt-2">{visitedCount?.totalVisitedCount || 0}</span>
         </div>
       </div>
-      
+
       <div
         style={{
           width: "100%",
-          display: "flex", 
+          display: "flex",
           minHeight: "200px",
           flexWrap: "wrap",
         }}
@@ -98,9 +108,9 @@ export default function VisitorStatisticBoard() {
                   borderWidth: 2,
                 },
                 data: [
-                  { name: "今日访客", value: visitorCount?.todayVisitorCount },
+                  {name: "今日访客", value: visitorCount?.todayVisitorCount},
                   {
-                    name: "历史访客", 
+                    name: "历史访客",
                     value:
                       (visitorCount?.totalVisitorCount || 0) -
                       (visitorCount?.todayVisitorCount || 0),
