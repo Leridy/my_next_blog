@@ -7,6 +7,7 @@ import {HotNewsStatistics, HotTopic} from "@prisma/client";
 import {useUserSettingContext} from "@/Provider/UserSettingProvider";
 import './MainBoard.style.scss';
 import ScrollController from "@/Components/MainBoard/ScrollController/ScrollController";
+import BrowserFingerprint from "@/Components/BrowserFingerprint/BrowserFingerprint";
 
 
 interface MainBoardProps {
@@ -196,7 +197,7 @@ export default function MainBoard(props: MainBoardProps) {
       {
         openedLink && <LinkFrame url={openedLink} onClose={() => setOpenedLink('')} title={'Opened Link'}/>
       }
-
+      <BrowserFingerprint />
     </div>
   )
 }
