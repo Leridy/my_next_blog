@@ -188,7 +188,7 @@ export default function UserProfile() {
           <strong className={'text-lg'}>
             {name ?
               <InputtingText text={`${name},${oldSaying}`} cursorBlinkSpeed={'fast'} key={name}/> :
-              <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={oldSaying}/>
+              <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={'old-saying'}/>
             }
           </strong>
 
