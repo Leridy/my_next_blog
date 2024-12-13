@@ -1,7 +1,7 @@
 'use client';
-import {Card} from "antd";
 import HotStatisticBoard from "@/app/manage/Components/HotStatisticBoard";
 import SpiderStatisticBoard from "@/app/manage/Components/SpiderStatisticBoard";
+import VisitorStatisticBoard from "@/app/manage/Components/VisitorStatisticBoard";
 
 
 export default function ManageHome() {
@@ -16,11 +16,7 @@ export default function ManageHome() {
 
       <SpiderStatisticBoard/>
 
-
-      <Card
-        title={'今日用户活跃度'}
-        size={'small'}
-      ></Card>
+      <VisitorStatisticBoard />
     </div>
   )
 }

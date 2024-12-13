@@ -33,31 +33,36 @@ class VisitorDao {
     })
   }
 
+  getNewVisitorCount() {
+    return V.count({
+      where: {
+        createdAt: {
+          gte: new Date(new Date().setHours(0, 0, 0, 0))
+        }
+      }
+    })
+  }
+
   // 获取访客总数
   getVisitorCount() {
     return V.count()
   }
 
   // 计算访问次数
-  getVisitedCount(date?: Date) {
-    if (date) {
-      return V.aggregate({
-        where: {
-          updatedAt: {
-            gte: date
-          }
-        },
-        _sum: {
-          visitedCount: true
-        },
-      })
-    }
+  async getVisitedCount(date?: Date) {
+    const where = date
+      ? {updatedAt: {gte: date, lt: new Date(date.getTime() + 24 * 60 * 60 * 1000)}}
+      : undefined;
 
-    return V.aggregate({
+    const result = await V.aggregate({
+      where,
       _sum: {
         visitedCount: true
       }
-    })
+    });
+
+    return result._sum.visitedCount;
+
   }
 }
 
