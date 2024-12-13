@@ -14,7 +14,7 @@ class HotDao {
     return Hot.findMany({
       where: {
         ...query,
-        id: query.id ? Number(query.id) : undefined,
+        // id: query.id ? Number(query.id) : undefined,
         name: {
           contains: query.name,
           mode: 'insensitive'

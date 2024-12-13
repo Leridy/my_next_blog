@@ -33,13 +33,23 @@ export default function MainBoard(props: MainBoardProps) {
     }
   });
 
+  const {edit: updateTopicStatistics} = useApi({
+    apiURL: 'statistic/news/topic',
+    headers: {
+      'x-ignore-error': 'true'
+    }
+  })
+
   const {topicSetting, updateTopicSetting} = useUserSettingContext();
   const {order, exclude} = useMemo(() => topicSetting, [topicSetting]);
 
-  const handleOpenLink = useCallback(async (url: string, id: number) => {
+  const handleOpenLink = useCallback(async (url: string, id: number, topicId?: number) => {
     window.open(url, '_blank');
     try {
       await updateNewsStatistics(String(id), {});
+      if (topicId) {
+        await updateTopicStatistics(String(topicId), {});
+      }
     } catch (e) {
       console.error(e);
     }
@@ -197,7 +207,7 @@ export default function MainBoard(props: MainBoardProps) {
       {
         openedLink && <LinkFrame url={openedLink} onClose={() => setOpenedLink('')} title={'Opened Link'}/>
       }
-      <BrowserFingerprint />
+      <BrowserFingerprint/>
     </div>
   )
 }

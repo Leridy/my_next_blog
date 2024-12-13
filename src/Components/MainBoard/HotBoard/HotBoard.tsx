@@ -34,7 +34,7 @@ export interface HotBoardProps {
   isFocus?: boolean;
   onFocus?: (id: number | null) => void;
   keyword?: string;
-  onOpenFrame?: (url: string, id: number) => void;
+  onOpenFrame?: (url: string, id: number, topicId?: number) => void;
   index: number;
   // user setting config
   show?: boolean;
@@ -87,9 +87,9 @@ export default function HotBoard(props: HotBoardProps) {
     return news?.filter(ele => ele.title.includes(keyword || ''))
   }, [news, keyword]);
 
-  const openFrame = useCallback((url: string, id: number) => {
-    onOpenFrame?.(url, id);
-  }, [onOpenFrame]);
+  const openFrame = useCallback((url: string, newsId: number) => {
+    onOpenFrame?.(url, newsId, id );
+  }, [id, onOpenFrame]);
 
   const [{isDragging}, ref] = useDrag(
     () => ({

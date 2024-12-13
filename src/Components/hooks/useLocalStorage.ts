@@ -36,7 +36,7 @@ export default function useLocalStorage<T>(props: UseLocalStorageProps<T>): UseL
   const setStoredValue = useCallback((value: T) => {
     LS.setItem(key, JSON.stringify(value));
     setValue(value);
-  }, [key]);
+  }, [LS, key]);
 
   return {value, setValue: setStoredValue};
 }

@@ -22,9 +22,10 @@ export default function HotStatisticBoard() {
     items: NewsRank,
     loading,
   } = useApi<NewsRankItem>({
-    apiURL: "statistic/news",
+    apiURL: "statistic/news/top20News",
     headers,
   });
+
   const {
     getOne: getNewsStatistic,
     data: countData,
@@ -60,12 +61,28 @@ export default function HotStatisticBoard() {
     headers,
   });
 
+  const {
+    getOne: getTopicClickStatistic,
+    data: topicClickData,
+    loading: topicClickLoading,
+  } = useApi<{
+    topicTodayVisitedInfo: {
+      name: string,
+      clickCount: number
+      topicId: number
+    }[]
+  }>({
+    apiURL: "statistic/news/topic",
+    headers,
+  });
+
   const handleRefresh = useCallback(() => {
     getNewsRank();
     getNewsStatistic("count");
     getVisitorStatistic("visitor");
-    getClickedTopic("topic");
-  }, [getClickedTopic, getNewsRank, getNewsStatistic, getVisitorStatistic]);
+    getClickedTopic("todayClickedNewsCount");
+    getTopicClickStatistic("");
+  }, [getClickedTopic, getNewsRank, getNewsStatistic, getTopicClickStatistic, getVisitorStatistic]);
 
   const handleManage = useCallback(() => {
     router.push("/manage/hot");
@@ -84,13 +101,17 @@ export default function HotStatisticBoard() {
   }, [getVisitorStatistic]);
 
   useEffect(() => {
-    getClickedTopic("topic");
+    getClickedTopic('todayClickedNewsCount');
   }, [getClickedTopic]);
+
+  useEffect(() => {
+    getTopicClickStatistic("");
+  }, [getTopicClickStatistic]);
 
   return (
     <CommonStatisticCard
       title={"热门数据统计"}
-      loading={loading || newsStatLoading || visitorStatLoading || topicLoading}
+      loading={loading || newsStatLoading || visitorStatLoading || topicLoading || topicClickLoading}
       onRefresh={handleRefresh}
       onGoManage={handleManage}
     >
@@ -130,10 +151,11 @@ export default function HotStatisticBoard() {
           </span>
         </div>
       </div>
+
       <div
+        className={"grid grid-cols-4 gap-4 p-4 mb-4"}
         style={{
           width: "100%",
-          display: "flex",
           minHeight: "200px",
           flexWrap: "wrap",
         }}
@@ -141,16 +163,20 @@ export default function HotStatisticBoard() {
         <MyPieChart
           style={{
             height: "200px",
-            width: "33.33%",
           }}
           options={{
+            tooltip: {
+              trigger: 'item',
+              formatter: "{b}: {c} ({d}%)",
+            },
             series: [
               {
                 type: "pie",
-                radius: "50%",
+                radius: "70%",
                 // center: ['50%', '50%'],
                 label: {
-                  show: true,
+                  show: false,
+                  position: 'center',
                   formatter: "{b}: {c} ({d}%)",
                 },
                 avoidLabelOverlap: false,
@@ -179,16 +205,20 @@ export default function HotStatisticBoard() {
         <MyPieChart
           style={{
             height: "200px",
-            width: "33.33%",
           }}
           options={{
+            tooltip: {
+              trigger: 'item',
+              formatter: "{b}: {c} ({d}%)",
+            },
             series: [
               {
                 type: "pie",
-                radius: "50%",
+                radius: "70%",
                 // center: ['50%', '50%'],
                 label: {
-                  show: true,
+                  show: false,
+                  position: 'center',
                   formatter: "{b}: {c} ({d}%)",
                 },
                 avoidLabelOverlap: false,
@@ -212,16 +242,20 @@ export default function HotStatisticBoard() {
         <MyPieChart
           style={{
             height: "200px",
-            width: "33.33%",
           }}
           options={{
+            tooltip: {
+              trigger: 'item',
+              formatter: "{b}: {c} ({d}%)",
+            },
             series: [
               {
                 type: "pie",
-                radius: "50%",
+                radius: "70%",
                 // center: ['50%', '50%'],
                 label: {
-                  show: true,
+                  show: false,
+                  position: 'center',
                   formatter: "{b}: {c} ({d}%)",
                 },
                 avoidLabelOverlap: false,
@@ -243,6 +277,39 @@ export default function HotStatisticBoard() {
             ],
           }}
         />
+
+        <MyPieChart
+          style={{
+            height: "200px",
+          }}
+          options={{
+            tooltip: {
+              trigger: 'item',
+              formatter: "{b}: {c} ({d}%)",
+            },
+            series: [
+              {
+                type: "pie",
+                radius: "70%",
+                label: {
+                  show: false,
+                  position: 'center',
+                  formatter: "{b}: {c} ({d}%)",
+                },
+                avoidLabelOverlap: false,
+                itemStyle: {
+                  borderRadius: 5,
+                  borderColor: "#fff",
+                  borderWidth: 2,
+                },
+                data: topicClickData?.topicTodayVisitedInfo.map(item => ({
+                  name: item.name,
+                  value: item.clickCount
+                })) || []
+              },
+            ],
+          }}
+        />
       </div>
 
       <div className="max-h-[200px] overflow-auto">
@@ -257,7 +324,7 @@ export default function HotStatisticBoard() {
                 className={" hover:underline flex"}
               >
                 <span
-                    className={` w-6 flex items-center justify-center text-sm `}
+                  className={` w-6 flex items-center justify-center text-sm `}
                 >
                   {index + 1}.
                 </span>
