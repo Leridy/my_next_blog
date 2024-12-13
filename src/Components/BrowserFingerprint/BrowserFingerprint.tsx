@@ -131,7 +131,7 @@ export default function BrowserFingerprint() {
   return (
     <canvas
       id="fingerprint" width="200" height="200"
-      // style={{display: 'none'}}
+      style={{display: 'none'}}
     />
   )
 }
