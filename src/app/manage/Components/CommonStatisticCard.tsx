@@ -1,6 +1,6 @@
-import { Button, Card } from "antd";
-import { ReactNode, useCallback, useMemo } from "react";
-import { SyncOutlined } from "@ant-design/icons";
+import {Button, Card} from "antd";
+import {ReactNode, useCallback, useMemo} from "react";
+import {SyncOutlined} from "@ant-design/icons";
 
 interface CommonStatisticCardProps {
   title?: ReactNode;
@@ -11,7 +11,7 @@ interface CommonStatisticCardProps {
 }
 
 export default function CommonStatisticCard(props: CommonStatisticCardProps) {
-  const { title, children, onRefresh, onGoManage, loading } = props;
+  const {title, children, onRefresh, onGoManage, loading} = props;
 
   const handleManage = useCallback(() => {
     onGoManage?.();
@@ -22,24 +22,31 @@ export default function CommonStatisticCard(props: CommonStatisticCardProps) {
       <div className={"flex justify-between items-center"}>
         {title}
 
-        <div>
-          <Button
-            onClick={onRefresh}
-            type={"link"}
-            size={"small"}
-            className={onRefresh ? "" : "none"}
-          >
-            <SyncOutlined spin={loading} />
-            刷新
-          </Button>
-          <Button
-            className={onGoManage ? "" : "none"}
-            type={"link"}
-            size={"small"}
-            onClick={handleManage}
-          >
-            管理
-          </Button>
+        <div
+          className={
+            "flex items-center space-x-1 text-sm font-normal"
+          }
+        >
+          {
+            onRefresh && <Button
+                  onClick={onRefresh}
+                  type={"link"}
+                  size={"small"}
+              >
+                <SyncOutlined spin={loading}/>
+                刷新
+              </Button>
+          }
+          {
+            onGoManage && <Button
+
+                  type={"link"}
+                  size={"small"}
+                  onClick={handleManage}
+              >
+                管理
+              </Button>
+          }
         </div>
       </div>
     );
