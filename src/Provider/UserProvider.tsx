@@ -5,7 +5,7 @@ import {message} from "antd";
 
 interface UserContextType {
   user: Omit<User, 'password'> | null;
-  requestLogout: () => void;
+  requestLogout: () => Promise<void>;
   requestUserInfo: () => void;
 }
 

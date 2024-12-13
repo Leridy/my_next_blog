@@ -41,7 +41,7 @@ export default function UserCard(props: CardProps) {
       className={'flex p-4 rounded-lg shadow-md flex-col card relative'}
       style={{
         background: 'var(--color-card-background)',
-        height: '20vh',
+        minHeight: '20vh',
         ...style
       }}
     >

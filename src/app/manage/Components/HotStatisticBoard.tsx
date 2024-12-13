@@ -85,7 +85,7 @@ export default function HotStatisticBoard() {
             value: visitorData?.todayClickCount,
           },
           {
-            name: "早前总点击量", 
+            name: "早前总点击量",
             value: (visitorData?.allClickCount || 0) - (visitorData?.todayClickCount || 0),
           },
         ]
@@ -97,7 +97,7 @@ export default function HotStatisticBoard() {
             value: topicData?.todayClickedNewsCount,
           },
           {
-            name: "今日总主题数", 
+            name: "今日总主题数",
             value: countData?.todayNewsCount
           },
         ]
@@ -122,7 +122,7 @@ export default function HotStatisticBoard() {
       }
     ]
   }, [countData, topicClickData, topicData, visitorData])
-  
+
   const handleRefresh = useCallback(() => {
     getNewsRank();
     getNewsStatistic("count");

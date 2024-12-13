@@ -44,7 +44,7 @@ export default function LinksBoard() {
 
   return (
     <Card
-      header={'Links'}
+      header={'链接'}
     >
       <div
         className={'grid gap-4 grid-cols-3'}

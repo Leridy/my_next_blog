@@ -20,7 +20,7 @@ export default function TipsAndNotification() {
   return (
     enable ? (
       <Card
-        header={'Tips & Notification'}
+        header={'提示与通知'}
       >
         <DigitalClock
           showDate={true}

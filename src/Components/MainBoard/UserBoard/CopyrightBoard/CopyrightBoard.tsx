@@ -28,7 +28,7 @@ export default function CopyrightBoard() {
   })
   return (
     <Card
-      header={'Copyright'}
+      header={'版权声明'}
     >
       <div
         className={'grid gap-4'}

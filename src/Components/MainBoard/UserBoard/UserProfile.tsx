@@ -1,41 +1,55 @@
 import Card from "@/Components/Card";
 import Avatar from "@/Components/NavBar/Avatar";
-import {useUserContext} from "@/Provider/UserProvider";
-import {useCallback, useEffect, useMemo, useState} from "react";
-import './UserProfile.style.scss'
+import { useUserContext } from "@/Provider/UserProvider";
+import {ReactNode, useCallback, useEffect, useMemo, useState} from "react";
+import "./UserProfile.style.scss";
 import InputtingText from "@/Components/InputtingText/InputtingText";
-import {sayings, someEmoji, politeWords2} from "@/mock/emojiAndSayings";
-import {Button, message, Space} from "antd";
-import {DesktopOutlined, LogoutOutlined, SettingFilled} from "@ant-design/icons";
-import {useRouter} from "next/navigation";
-import {Role} from "@/server/middlewares";
-import {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
-import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
+import { sayings, someEmoji, politeWords2 } from "@/mock/emojiAndSayings";
+import { Button, message, Space } from "antd";
+import {
+  DesktopOutlined, LoadingOutlined,
+  LogoutOutlined,
+  SettingFilled,
+} from "@ant-design/icons";
+import { useRouter } from "next/navigation";
+import { Role } from "@/server/middlewares";
+import { UserInfo } from "@/Components/UserComponents/hooks/useUserAuthData";
+import { useSiteSettingContext } from "@/Provider/SiteSettingProvider";
 import useSettingMap from "@/Components/hooks/useSettingMap";
+import useApi from "@/app/manage/hooks/useApi";
 
-
-const SITE_SETTING_KEY = 'UserBoard.UserProfile';
+const SITE_SETTING_KEY = "UserBoard.UserProfile";
 
 export default function UserProfile() {
-  const {user, requestLogout} = useUserContext();
+  const { user, requestLogout } = useUserContext();
   const router = useRouter();
-  const {setting} = useSiteSettingContext();
+  const { setting } = useSiteSettingContext();
 
-  const {setting: settingEntry} = useSettingMap<{ setting: boolean }>({
+  const { setting: settingEntry } = useSettingMap<{ setting: boolean }>({
     baseKey: SITE_SETTING_KEY,
     setting,
-    subKeys: [
-      'setting',
-    ]
-  })
+    subKeys: ["setting"],
+  });
 
-  const [oldSaying, setOldSaying] = useState<string>('你好 👋');
+  const {
+    getOne: getVisitorCount,
+    loading: visitorLoading,
+    data: visitorCount,
+  } = useApi<{
+    todayVisitorCount: number;
+    totalVisitorCount: number;
+    newVisitorCount: number;
+  }>({
+    apiURL: "/statistic/visitor",
+  });
 
-  const {name, createdAt, role} = useMemo<UserInfo>(() => {
-      return user || {name: '', createdAt: new Date(), role: Role.USER} as UserInfo;
-    }, [user]
-  )
+  const [oldSaying, setOldSaying] = useState<string>("你好 👋");
 
+  const { name, createdAt, role } = useMemo<UserInfo>(() => {
+    return (
+      user || ({ name: "", createdAt: new Date(), role: Role.USER } as UserInfo)
+    );
+  }, [user]);
 
   const joinedDays = useMemo(() => {
     if (!createdAt) {
@@ -47,13 +61,20 @@ export default function UserProfile() {
   }, [createdAt]);
 
   const generateSaying = useCallback(() => {
-    let oldSaying = '';
+    let oldSaying = "";
     if (!name) {
-      const prefixEmoji = someEmoji[Math.floor(Math.random() * someEmoji.length)];
-      const suffixEmoji = someEmoji[Math.floor(Math.random() * someEmoji.length)];
-      oldSaying = prefixEmoji + ' ' + sayings[Math.floor(Math.random() * sayings.length)] + ' ' + suffixEmoji;
+      const prefixEmoji =
+        someEmoji[Math.floor(Math.random() * someEmoji.length)];
+      const suffixEmoji =
+        someEmoji[Math.floor(Math.random() * someEmoji.length)];
+      oldSaying =
+        prefixEmoji +
+        " " +
+        sayings[Math.floor(Math.random() * sayings.length)] +
+        " " +
+        suffixEmoji;
     } else {
-      oldSaying = politeWords2[Math.floor(Math.random() * politeWords2.length)]
+      oldSaying = politeWords2[Math.floor(Math.random() * politeWords2.length)];
     }
 
     setOldSaying(oldSaying);
@@ -62,52 +83,45 @@ export default function UserProfile() {
   const renderActions = useMemo(() => {
     return (
       <Space>
-        {
-          settingEntry ? (
-            <Button
-              size={"small"}
-              type={"link"}
-              onClick={
-                () => {
-                  message.info('功能暂未开放');
-                }}
-            >
-              <SettingFilled/> 设置
-            </Button>
-          ) : null
-        }
+        {settingEntry ? (
+          <Button
+            size={"small"}
+            type={"link"}
+            onClick={() => {
+              message.info("功能暂未开放");
+            }}
+          >
+            <SettingFilled /> 设置
+          </Button>
+        ) : null}
 
-        {
-          name && <Button
-                size={"small"}
-                type={"link"}
-                onClick={
-                  async () => {
-                    await requestLogout();
-                    message.success('登出成功，感谢划水时间的陪伴');
-                    router.push('/');
-                  }}
-            >
-              <LogoutOutlined/> 登出
-            </Button>
-        }
+        {name && (
+          <Button
+            size={"small"}
+            type={"link"}
+            onClick={async () => {
+              await requestLogout();
+              message.success("登出成功，感谢划水时间的陪伴");
+              router.push("/");
+            }}
+          >
+            <LogoutOutlined /> 登出
+          </Button>
+        )}
 
-        {
-          role >= Role.ADMIN && (
-            <Button
-              size={"small"}
-              type={"link"}
-              onClick={
-                () => {
-                  router.push('/manage');
-                }}
-            >
-              <DesktopOutlined/> 管理
-            </Button>
-          )
-        }
+        {role >= Role.ADMIN && (
+          <Button
+            size={"small"}
+            type={"link"}
+            onClick={() => {
+              router.push("/manage");
+            }}
+          >
+            <DesktopOutlined /> 管理
+          </Button>
+        )}
       </Space>
-    )
+    );
   }, [settingEntry, name, role, requestLogout, router]);
 
   useEffect(() => {
@@ -117,87 +131,102 @@ export default function UserProfile() {
 
     return () => {
       clearInterval(handler);
-    }
+    };
   }, [generateSaying]);
 
-  const renderInfo = useMemo(() => {
+  useEffect(() => {
+    getVisitorCount('count');
+  }, [getVisitorCount]);
+
+
+  const renderUserInfo = useCallback((data: {label: string, value: number | ReactNode}[]) => {
     return (
       <>
-        <div
-          style={{gridColumn: 'span 1'}}
-          className={'grid grid-rows-2 gap-2 justify-center items-center'}
-        >
-          <span
-            className={' font-bold'}
-          >Today</span>
-          <span
-            className={'text-center'}
-          >0</span>
-        </div>
-        <div
-          style={{gridColumn: 'span 1'}}
-          className={'grid grid-rows-2 gap-2 justify-center'}
-        >
-          <span
-            className={' font-bold'}
-          >Total</span>
-          <span
-            className={'text-center'}
-          >0</span>
-        </div>
-        <div
-          style={{gridColumn: 'span 1'}}
-          className={'grid grid-rows-2 gap-2 justify-center items-center'}
-        >
-          <span
-            className={'font-bold'}
-          >Joined</span>
-          <span
-            className={'text-center'}
+        {data.map(({label, value}) => (
+          <div
+            key={label}
+            style={{ gridColumn: "span 1" }}
+            className={"grid grid-rows-2 gap-2 justify-center items-center"}
           >
-              {joinedDays}
-          </span>
-        </div>
+            <span className={"font-bold"}>{label}</span>
+            <span className={"text-center"}>{value}</span>
+          </div>
+        ))}
       </>
-    )
+    );
+  }, []);
+
+  const visitorInfoData = useMemo(() => {
+    return [
+      {
+        label: "新水友",
+        value: visitorLoading ? <LoadingOutlined spin={true} /> : visitorCount?.newVisitorCount || 0
+      },
+      {
+        label: "今日上线水友",
+        value: visitorLoading ? <LoadingOutlined spin={true} /> : visitorCount?.todayVisitorCount || 0
+      },
+      {
+        label: "所有水友",
+        value: visitorLoading ? <LoadingOutlined spin={true} /> : visitorCount?.totalVisitorCount || 0
+      }
+    ];
+  }, [visitorCount, visitorLoading]);
+
+  const userInfoData = useMemo(() => {
+    return [
+      {
+        label: "今天查看",
+        value: 0
+      },
+      {
+        label: "所有信息",
+        value: 0
+      },
+      {
+        label: "加入天数",
+        value: joinedDays
+      }
+    ];
   }, [joinedDays]);
 
+  const renderVisitorInfo = useMemo(() => renderUserInfo(visitorInfoData), [visitorInfoData, renderUserInfo]);
+  const renderInfo = useMemo(() => renderUserInfo(userInfoData), [userInfoData, renderUserInfo]);
+
   return (
-    <Card
-      header={<h1>User Profile</h1>}
-      actions={
-        renderActions
-      }
-    >
+    <Card header={<h1>用户</h1>} actions={renderActions}>
       {/*使用grid 布局， 将内容分为 三行三列，其中第一 二个项目占 三列，*/}
-      <div className={'h-full grid grid-rows-3 grid-cols-3 gap-2'}>
+      <div className={"h-full grid grid-rows-3 grid-cols-3 gap-2"}>
         <div
-          className={'flex justify-center items-center user-profile-avatar'}
-          style={{gridColumn: 'span 3'}}
+          className={"flex justify-center items-center user-profile-avatar"}
+          style={{ gridColumn: "span 3" }}
         >
-          <Avatar
-            size={'medium'}
-            name={name || '客人'}
-          />
+          <Avatar size={"medium"} name={name || "客人"} />
         </div>
 
         <div
-          className={'flex justify-center items-center'}
-          style={{gridColumn: 'span 3'}}
+          className={"flex justify-center items-center"}
+          style={{ gridColumn: "span 3" }}
         >
-          <strong className={'text-lg'}>
-            {name ?
-              <InputtingText text={`${name},${oldSaying}`} cursorBlinkSpeed={'fast'} key={name}/> :
-              <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={'old-saying'}/>
-            }
+          <strong className={"text-lg"}>
+            {name ? (
+              <InputtingText
+                text={`${name},${oldSaying}`}
+                cursorBlinkSpeed={"fast"}
+                key={name}
+              />
+            ) : (
+              <InputtingText
+                text={oldSaying}
+                cursorBlinkSpeed={"fast"}
+                key={"old-saying"}
+              />
+            )}
           </strong>
-
         </div>
 
-        {name ? renderInfo : null}
-
-
+        {name ? renderInfo : renderVisitorInfo}
       </div>
     </Card>
-  )
+  );
 }
