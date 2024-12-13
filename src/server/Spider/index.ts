@@ -16,6 +16,7 @@ import tieba from "@/server/Spider/tieba.spider";
 import fiveOneCTO from "@/server/Spider/51cto.spider";
 import coolapk from "@/server/Spider/coolapk.spider";
 import weread from "@/server/Spider/weread.spider";
+import lottery from "@/server/Spider/lottery.spider";
 import {MyNRError} from "@/utils/MyNRError";
 import {shuffleArray} from "@/utils/shuffleArray";
 
@@ -29,7 +30,7 @@ export default async function Spider(props?: SpiderProps) {
     const updateResult = [];
     let tasks = [];
     if (spiderNames.length === 0) {
-      tasks = shuffleArray([weread, kr, ithome, hupu, bilibili, juejin, v2ex, toutiao, zhihu, huxiu, sina, thepaper, tiktok, ifanr, sspai, tieba, fiveOneCTO, coolapk, weread]);
+      tasks = shuffleArray([weread, kr, ithome, hupu, bilibili, juejin, v2ex, toutiao, zhihu, huxiu, sina, thepaper, tiktok, ifanr, sspai, tieba, fiveOneCTO, coolapk, weread, lottery]);
     } else {
       tasks = spiderNames.map((name) => {
         switch (name) {
@@ -69,6 +70,8 @@ export default async function Spider(props?: SpiderProps) {
             return coolapk;
           case 'weread':
             return weread;
+          case 'lottery':
+            return lottery;
           default:
             return () => {
               throw new MyNRError(`爬虫 ${name} 不存在`, 404);

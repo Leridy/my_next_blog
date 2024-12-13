@@ -88,7 +88,7 @@ export default function HotBoard(props: HotBoardProps) {
   }, [news, keyword]);
 
   const openFrame = useCallback((url: string, newsId: number) => {
-    onOpenFrame?.(url, newsId, id );
+    onOpenFrame?.(url, newsId, id);
   }, [id, onOpenFrame]);
 
   const [{isDragging}, ref] = useDrag(
@@ -192,9 +192,13 @@ export default function HotBoard(props: HotBoardProps) {
 
   const renderNews = useMemo(() => {
       return (
-        filterNews?.map((newsInfo, i) => <NewsItem
-          onClick={openFrame}
-          keyword={keyword} index={i} {...newsInfo} key={newsInfo.id}/>) || ''
+        filterNews?.sort((a, b) => {
+          // 判断 hotCount大小排序
+          return b.hotCount - a.hotCount;
+        })
+          .map((newsInfo, i) => <NewsItem
+            onClick={openFrame}
+            keyword={keyword} index={i} {...newsInfo} key={newsInfo.id}/>) || ''
       )
     }, [filterNews, keyword, openFrame]
   )

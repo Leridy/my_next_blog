@@ -1,13 +1,14 @@
 import Card from "@/Components/Card";
 import Avatar from "@/Components/NavBar/Avatar";
 import { useUserContext } from "@/Provider/UserProvider";
-import {ReactNode, useCallback, useEffect, useMemo, useState} from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import "./UserProfile.style.scss";
 import InputtingText from "@/Components/InputtingText/InputtingText";
 import { sayings, someEmoji, politeWords2 } from "@/mock/emojiAndSayings";
 import { Button, message, Space } from "antd";
 import {
-  DesktopOutlined, LoadingOutlined,
+  DesktopOutlined,
+  LoadingOutlined,
   LogoutOutlined,
   SettingFilled,
 } from "@ant-design/icons";
@@ -81,48 +82,62 @@ export default function UserProfile() {
   }, [name]);
 
   const renderActions = useMemo(() => {
+    const actions = [
+      settingEntry && (
+        <Button
+          size={"small"}
+          type={"link"}
+          onClick={() => {
+            message.info("功能暂未开放");
+          }}
+        >
+          <SettingFilled /> 设置
+        </Button>
+      ),
+
+      name && (
+        <Button
+          size={"small"}
+          type={"link"}
+          onClick={async () => {
+            await requestLogout();
+            message.success("登出成功，感谢划水时间的陪伴");
+            router.push("/");
+          }}
+        >
+          <LogoutOutlined /> 登出
+        </Button>
+      ),
+
+      role >= Role.ADMIN && (
+        <Button
+          size={"small"}
+          type={"link"}
+          onClick={() => {
+            router.push("/manage");
+          }}
+        >
+          <DesktopOutlined /> 管理
+        </Button>
+      ),
+    ].filter(Boolean);
     return (
       <Space>
-        {settingEntry ? (
-          <Button
-            size={"small"}
-            type={"link"}
-            onClick={() => {
-              message.info("功能暂未开放");
-            }}
-          >
-            <SettingFilled /> 设置
-          </Button>
-        ) : null}
-
-        {name && (
-          <Button
-            size={"small"}
-            type={"link"}
-            onClick={async () => {
-              await requestLogout();
-              message.success("登出成功，感谢划水时间的陪伴");
-              router.push("/");
-            }}
-          >
-            <LogoutOutlined /> 登出
-          </Button>
-        )}
-
-        {role >= Role.ADMIN && (
-          <Button
-            size={"small"}
-            type={"link"}
-            onClick={() => {
-              router.push("/manage");
-            }}
-          >
-            <DesktopOutlined /> 管理
-          </Button>
+        {actions.length > 0 ? (
+          actions.map((action) => action)
+        ) : (
+          <div className={"flex justify-center flex-col items-center w-full"}>
+            这里有登录后才有的功能哦
+            <InputtingText
+              text={oldSaying}
+              cursorBlinkSpeed={"fast"}
+              key={"old-saying"}
+            />
+          </div>
         )}
       </Space>
     );
-  }, [settingEntry, name, role, requestLogout, router]);
+  }, [settingEntry, name, role, requestLogout, router, oldSaying]);
 
   useEffect(() => {
     const handler = setInterval(() => {
@@ -135,41 +150,55 @@ export default function UserProfile() {
   }, [generateSaying]);
 
   useEffect(() => {
-    getVisitorCount('count');
+    getVisitorCount("count");
   }, [getVisitorCount]);
 
-
-  const renderUserInfo = useCallback((data: {label: string, value: number | ReactNode}[]) => {
-    return (
-      <>
-        {data.map(({label, value}) => (
-          <div
-            key={label}
-            style={{ gridColumn: "span 1" }}
-            className={"grid grid-rows-2 gap-2 justify-center items-center"}
-          >
-            <span className={"font-bold"}>{label}</span>
-            <span className={"text-center"}>{value}</span>
-          </div>
-        ))}
-      </>
-    );
-  }, []);
+  const renderUserInfo = useCallback(
+    (data: { label: string; value: number | ReactNode }[]) => {
+      return (
+        <>
+          {data.map(({ label, value }) => (
+            <div
+              key={label}
+              style={{ gridColumn: "span 1" }}
+              className={"grid grid-rows-2 gap-2 justify-center items-center"}
+            >
+              <span className={"font-bold"}>{label}</span>
+              <span className={"text-center"}>{value}</span>
+            </div>
+          ))}
+        </>
+      );
+    },
+    []
+  );
 
   const visitorInfoData = useMemo(() => {
     return [
       {
         label: "新水友",
-        value: visitorLoading ? <LoadingOutlined spin={true} /> : visitorCount?.newVisitorCount || 0
+        value: visitorLoading ? (
+          <LoadingOutlined spin={true} />
+        ) : (
+          visitorCount?.newVisitorCount || 0
+        ),
       },
       {
         label: "今日上线水友",
-        value: visitorLoading ? <LoadingOutlined spin={true} /> : visitorCount?.todayVisitorCount || 0
+        value: visitorLoading ? (
+          <LoadingOutlined spin={true} />
+        ) : (
+          visitorCount?.todayVisitorCount || 0
+        ),
       },
       {
         label: "所有水友",
-        value: visitorLoading ? <LoadingOutlined spin={true} /> : visitorCount?.totalVisitorCount || 0
-      }
+        value: visitorLoading ? (
+          <LoadingOutlined spin={true} />
+        ) : (
+          visitorCount?.totalVisitorCount || 0
+        ),
+      },
     ];
   }, [visitorCount, visitorLoading]);
 
@@ -177,21 +206,27 @@ export default function UserProfile() {
     return [
       {
         label: "今天查看",
-        value: 0
+        value: 0,
       },
       {
         label: "所有信息",
-        value: 0
+        value: 0,
       },
       {
         label: "加入天数",
-        value: joinedDays
-      }
+        value: joinedDays,
+      },
     ];
   }, [joinedDays]);
 
-  const renderVisitorInfo = useMemo(() => renderUserInfo(visitorInfoData), [visitorInfoData, renderUserInfo]);
-  const renderInfo = useMemo(() => renderUserInfo(userInfoData), [userInfoData, renderUserInfo]);
+  const renderVisitorInfo = useMemo(
+    () => renderUserInfo(visitorInfoData),
+    [visitorInfoData, renderUserInfo]
+  );
+  const renderInfo = useMemo(
+    () => renderUserInfo(userInfoData),
+    [userInfoData, renderUserInfo]
+  );
 
   return (
     <Card header={<h1>用户</h1>} actions={renderActions}>

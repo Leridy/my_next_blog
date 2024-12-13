@@ -49,12 +49,35 @@ export default function NewsItem(props: NewsItemProps) {
   }, [hotCount, tags])
 
   const renderTitleWithHighlight = useMemo(() => {
+    let newTitle = title;
     // if there is a keyword, use the keyword to highlight the title.
+    
+    // 如果 title 里面包含 红 橙 蓝 那么 进行如下替换
+    // 如 “红01” => <span class="bg-red-500 text-white font-bold rounded-md">01</span>
+    // 如 “橙01” => <span class="bg-orange-500 text-white font-bold rounded-md">01</span>
+    // 如 “蓝01” => <span class="bg-blue-500 text-white font-bold rounded-md">01</span>
+  
+    // 如果 title 包含 红 蓝 橙 字符，进行替换
+    const colorMap: Record<string, string> = {
+      '红': 'bg-red-500',
+      '蓝': 'bg-blue-500', 
+      '橙': 'bg-orange-500'
+    };
+
+
+    for (const color in colorMap) {
+      const reg = new RegExp(`${color}(\\d+)`, 'g');
+      newTitle = newTitle.replace(reg, (_, num) => {
+        return `<span class="${colorMap[color]} text-white font-bold rounded-md px-1">${num}</span>`;
+      }).replace(/,/g, ' ');
+    }
+
     if (keyword) {
       const reg = new RegExp(keyword, 'g');
-      return title.replace(reg, `<span class="bg-amber-200 text-black font-bold">${keyword}</span>`);
+      newTitle = newTitle.replace(reg, `<span class="bg-amber-200 text-black font-bold">${keyword}</span>`);
     }
-    return title;
+
+    return newTitle;
   }, [keyword, title])
 
   return (
