@@ -96,7 +96,7 @@ export default function VisitorStatisticBoard() {
             series: [
               {
                 type: "pie",
-                radius: "50%",
+                radius: "70%",
                 label: {
                   show: true,
                   formatter: "{b}: {c} ({d}%)",
@@ -130,7 +130,7 @@ export default function VisitorStatisticBoard() {
             series: [
               {
                 type: "pie",
-                radius: "50%",
+                radius: "70%",
                 label: {
                   show: true,
                   formatter: "{b}: {c} ({d}%)",

@@ -45,11 +45,11 @@ export default function SpiderStatisticBoard() {
     oldestSpiderLastUpdate,
   } = useMemo(() => {
     const now = new Date().getTime();
-    
+
     // 计算各时间段的爬虫数量
     const counts = spiders.reduce((acc, spider) => {
       const diff = now - new Date(spider.updatedAt).getTime();
-      
+
       if (diff < 1000 * 60 * 60) {
         acc.hourly++;
       } else if (diff < 1000 * 60 * 60 * 6) {
@@ -57,20 +57,20 @@ export default function SpiderStatisticBoard() {
       } else if (diff < 1000 * 60 * 60 * 12) {
         acc.quarterly++;
       } else if (diff < 1000 * 60 * 60 * 24) {
-        acc.daily++; 
+        acc.daily++;
       } else {
         acc.outdated++;
       }
-      
+
       // 追踪最旧的爬虫
       if (!acc.oldest || diff > now - new Date(acc.oldest.updatedAt).getTime()) {
         acc.oldest = spider;
       }
-      
+
       return acc;
     }, {
       hourly: 0,
-      daily: 0, 
+      daily: 0,
       outdated: 0,
       halfHourly: 0,
       quarterly: 0,
@@ -78,7 +78,7 @@ export default function SpiderStatisticBoard() {
     });
 
     const total = spiders.length;
-    
+
     return {
       oldestSpider: counts.oldest,
       oldestSpiderLastUpdate: counts.oldest,
@@ -209,7 +209,7 @@ export default function SpiderStatisticBoard() {
             series: [
               {
                 type: "pie",
-                radius: "50%",
+                radius: "70%",
                 label: {
                   show: true,
                   formatter: "{b}: {c} ({d}%)",
