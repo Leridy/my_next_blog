@@ -60,6 +60,8 @@ export default function BrandIcon(props: BrandIconProps) {
           case 'coolapk': // https://www.coolapk.com/
           case 'weread': // https://weread.qq.com/
           case 'lottery': // https://m.500.com/
+          case 'QQNews': // https://news.qq.com/
+          case 'geekpark': // https://www.geekpark.net/
             return <Image src={`/icons/${src}.svg`} alt={src} width={size} height={size}/>;
           default:
             return <FileTextOutlined size={size}/>
