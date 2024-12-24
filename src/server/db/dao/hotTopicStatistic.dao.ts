@@ -30,9 +30,9 @@ class HotTopicStatisticDao {
   }
 
   checkAndRemoveStatisticInfoNotToday() {
-    HTS.deleteMany({
+    return HTS.deleteMany({
       where: {
-        updatedAt: {
+        createdAt: {
           lt: new Date(new Date().setHours(0, 0, 0, 0))
         }
       }

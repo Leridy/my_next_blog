@@ -19,7 +19,7 @@ const put = async (req: NextRequest, {params}: { params: Promise<{ id: [string] 
 
 const get = async () => {
   // 清除过期的热门栏目统计数据
-  hotTopicStatisticDao.checkAndRemoveStatisticInfoNotToday();
+  await hotTopicStatisticDao.checkAndRemoveStatisticInfoNotToday();
   // 获取今日所有被统计栏目的点击次数
   const topicTodayVisitedInfo = await hotTopicStatisticDao.getAllClickCount();
 
