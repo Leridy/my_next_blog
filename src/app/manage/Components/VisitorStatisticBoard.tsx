@@ -77,7 +77,7 @@ export default function VisitorStatisticBoard() {
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
-          <span className="text-gray-600 text-sm">今日访问</span>
+          <span className="text-gray-600 text-sm">今日页面打开次数</span>
           <span className="text-2xl font-bold mt-2">{visitedCount?.todayVisitedCount || 0}</span>
         </div>
 
