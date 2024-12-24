@@ -4,9 +4,7 @@ import VisitorDao from "@/server/db/dao/visitor.dao";
 
 async function get() {
   // 获取今日访问次数
-  const todayVisitedCount = await VisitorDao.getVisitedCount(
-    new Date(new Date().setHours(0, 0, 0, 0))
-  );
+  const todayVisitedCount = await VisitorDao.getTodayVisitedCount();
   // 获取总访问次数
   const totalVisitedCount = await VisitorDao.getVisitedCount();
 

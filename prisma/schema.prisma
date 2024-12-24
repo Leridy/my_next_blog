@@ -147,6 +147,7 @@ model visitor {
   browserSign  String   @id @default("")
   ip           String   @default("")
   visitedCount Int      @default(0)
+  todayCount   Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

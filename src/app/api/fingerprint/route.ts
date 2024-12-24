@@ -5,10 +5,12 @@ import {readableStreamToJSON} from "@/utils/readableStreamToJSON";
 
 async function post(req: NextRequest) {
   const data = await readableStreamToJSON<{ fingerprint: string }>(req.body);
+  const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || '';
 
   if (typeof data !== 'string' && data.fingerprint) {
     await VisitorDao.updateOrCreate({
-      browserSign: data.fingerprint
+      browserSign: data.fingerprint,
+      ip
     });
   }
 

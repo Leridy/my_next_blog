@@ -2,6 +2,7 @@ import CommonStatisticCard from "./CommonStatisticCard";
 import {useCallback, useEffect, useMemo} from "react";
 import useApi from "../hooks/useApi";
 import MyPieChart from "./MyPieChart";
+import {visitor} from "@prisma/client";
 
 export default function VisitorStatisticBoard() {
   // 模仿 HotStatisticBoard 实现 VisitorStatisticCard
@@ -28,6 +29,14 @@ export default function VisitorStatisticBoard() {
     apiURL: "/statistic/visitor",
   });
 
+  const {
+    get: getVisitorRankList,
+    loading: visitorRankLoading,
+    items: visitorRankList,
+  } = useApi<visitor>({
+    apiURL: "/statistic/visitor/rank",
+  });
+
   const averagePagePerVisitor = useMemo(() => {
     // 注意这里的除数不能为 0，向上取整
     return Math.ceil((visitedCount?.todayVisitedCount || 0) / (visitorCount?.todayVisitorCount || 1));
@@ -40,16 +49,21 @@ export default function VisitorStatisticBoard() {
     getVisitedCount("visited");
   }, [getVisitedCount]);
 
+  useEffect(() => {
+    getVisitorRankList();
+  }, [getVisitorRankList]);
+
   const handleRefresh = useCallback(() => {
     getVisitorCount("count");
     getVisitedCount("visited");
-  }, [getVisitedCount, getVisitorCount]);
+    getVisitorRankList();
+  }, [getVisitedCount, getVisitorCount, getVisitorRankList]);
 
   return (
     <CommonStatisticCard
       title={"访客统计"}
       onRefresh={handleRefresh}
-      loading={visitorLoading || visitedLoading}
+      loading={visitorLoading || visitedLoading || visitorRankLoading}
     >
       <div className="grid grid-cols-5 gap-4 p-4 mb-4">
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
@@ -157,6 +171,32 @@ export default function VisitorStatisticBoard() {
             ],
           }}
         />
+      </div>
+
+      <h5 className="text-xs font-bold mt-4">访客排行榜</h5>
+
+      <div className="max-h-[200px] overflow-auto">
+        {visitorRankList.map((item, index) => {
+          return (
+            <div key={index} className={"flex justify-between items-center"}>
+
+              <a
+                href={`https://www.ip138.com/iplookup.php?ip=${item.ip}&action=2`}
+                target={"_blank"}
+                rel={"noreferrer"}
+                className={" hover:underline flex"}
+              >
+                <span
+                  className={` w-6 flex items-center justify-center text-sm `}
+                >
+                  {index + 1}.
+                </span>
+                {item.ip} - {item.browserSign}
+              </a>
+              <span>{item.todayCount}</span>
+            </div>
+          );
+        })}
       </div>
     </CommonStatisticCard>
   );
