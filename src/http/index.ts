@@ -65,9 +65,9 @@ export class NetworkError extends Error {
 export function axiosErrorToNetworkError(error: AxiosError) {
   // convert error to network error
   const status = error.response?.status || 500;
-  const bizMessage = error.message;
   // @ts-expect-error error response may not exist
-  const message = error.response?.data?.message;
+  const bizMessage = error.response?.data?.message;
+  const message = error.message
   const extraData = error.response?.data;
 
   const newError = new NetworkError(message, status, bizMessage, extraData, error);
@@ -75,6 +75,12 @@ export function axiosErrorToNetworkError(error: AxiosError) {
   if (error.config?.headers?.['x-ignore-error']) throw newError;
 
   switch (status) {
+    case 400:
+      notification.error({
+        message: '请求错误',
+        description: newError.bizMessage || newError.message || '请求错误，请检查参数',
+      });
+      break;
     case 401:
       notification.error({
         message: '未登录',

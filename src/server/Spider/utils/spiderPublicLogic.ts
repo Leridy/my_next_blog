@@ -5,7 +5,7 @@ import {getSetting, updateSetting} from "@/server/Spider/utils/setting.cache";
 import SettingDao from "@/server/db/dao/setting.dao";
 import NewsDao from "@/server/db/dao/news.dao";
 
-const isProd = process.env.CURRENT_ENV === 'production';
+const isProd = true // process.env.CURRENT_ENV === 'production';
 
 const SITE_SETTING_KEY = 'Spider';
 

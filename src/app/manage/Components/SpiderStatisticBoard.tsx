@@ -103,7 +103,7 @@ export default function SpiderStatisticBoard() {
         await triggerSpiderRefresh({ name });
         message.success("更新成功");
       } catch (e) {
-        message.error((e as NetworkError).message);
+        message.error((e as NetworkError).bizMessage);
       } finally {
         getSpiders();
       }

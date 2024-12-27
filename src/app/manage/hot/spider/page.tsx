@@ -26,7 +26,7 @@ export default function HotSpiderList() {
       await triggerSpiderRefresh({name});
       message.success('更新成功');
     } catch (e) {
-      message.error((e as NetworkError).message);
+      message.error((e as NetworkError).bizMessage);
     }
 
   }, [triggerSpiderRefresh]);
