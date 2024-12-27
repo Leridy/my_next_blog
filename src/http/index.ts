@@ -65,9 +65,9 @@ export class NetworkError extends Error {
 export function axiosErrorToNetworkError(error: AxiosError) {
   // convert error to network error
   const status = error.response?.status || 500;
-  const message = error.message;
+  const bizMessage = error.message;
   // @ts-expect-error error response may not exist
-  const bizMessage = error.response?.data?.message;
+  const message = error.response?.data?.message;
   const extraData = error.response?.data;
 
   const newError = new NetworkError(message, status, bizMessage, extraData, error);
