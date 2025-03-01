@@ -1,14 +1,10 @@
 @use "@/app/scss/animations.scss";
 
 
-.hotBoard {
+.widthAnimation {
   position: relative;
   min-height: 40vh;
   transition: all 0.5s;
-
-  &.hide {
-    opacity: .5 !important;
-  }
 
   &.normal {
     opacity: 0;
@@ -26,6 +22,14 @@
       cursor: grabbing;
     }
   }
+
+  &.hide {
+    opacity: .5 !important;
+  }
+}
+
+.hotBoard {
+
 }
 
 .hotBoardNewsList {
