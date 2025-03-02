@@ -11,6 +11,7 @@ import TodoList from '@/Components/TodoList';
 import FoodPicker from '@/Components/FoodPicker';
 import CommentSystem from '@/Components/CommentsBoard';
 import { useUserSettingContext } from '@/Provider/UserSettingProvider';
+import BuyMeCoffee from '@/Components/BuyMeCoffee';
 
 const BOARD_ORDER_KEY = 'userBoardOrder';
 
@@ -127,6 +128,12 @@ export default function UserBoard() {
         header: '',
       },
       {
+        id: 'BuyMeCoffee',
+        component: <BuyMeCoffee />,
+        header: '请我喝咖啡',
+        style: { minHeight: '400px' },
+      },
+      {
         id: 'links',
         component: <LinksBoard />,
         header: '友情链接',
@@ -143,12 +150,6 @@ export default function UserBoard() {
         header: '敲木鱼',
         style: { minHeight: '400px' },
       },
-      // {
-      //   id: 'MouseGame',
-      //   component: <MouseGame />,
-      //   header: 'Mouse Game',
-      //   style: { minHeight: '400px' },
-      // },
       {
         id: 'todoList',
         component: <TodoList />,
