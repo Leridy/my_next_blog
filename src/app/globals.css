@@ -2,78 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --text-size: 12px;
-    /**
-     color palette
-     main color is #DFF2EB #B9E5E8 #7AB2D3 #4A628A
-     */
-    --color-background: #DFF2EB;
-    --color-primary: #B9E5E8;
-    --color-secondary: #7AB2D3;
-    --color-tertiary: #4A628A;
-    --color-quaternary: #CBDCEB;
-
-    --color-text: #333;
-    --color-text-light: #fff;
-    --color-text-dark: #000;
-    --color-text-secondary: #666;
-
-    --color-border: #ccc;
-    --color-border-dark: #333;
-
-
-    --color-success: #28a745;
-    --color-success-hover: #218838;
-    --color-success-active: #1e7e34;
-    --color-success-text: #fff;
-
-    --color-navbar-background: var(--color-tertiary);
-    --color-hot-border-background: var(--color-primary);
-    --color-card-background: var(--color-quaternary);
-
-    --color-transparent-background: rgba(255, 255, 255, .5);
-
-
-
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        /**
-            color palette for dark mode
-            main color is #1A3636 #40534C #677D6A #D6BD98
-         */
-
-        --color-background:  #D6BD98;
-        --color-primary: #677D6A;
-        --color-secondary:  #40534C;
-        --color-tertiary: #1A3636;
-        --color-quaternary: #629584;
-
-        --color-text: #e2e2e2;
-        --color-text-light: #fff;
-        --color-text-dark: #000;
-        --color-text-secondary: #ccc;
-
-        --color-border: #ccc;
-        --color-border-dark: #333;
-
-
-        /* dark mode success colors should be deeper than light mode */
-        --color-success: rgba(40, 167, 69, 0.75);
-        --color-success-hover: rgba(33, 136, 56, 0.75);
-        --color-success-active: rgba(30, 126, 52, 0.75);
-        --color-success-text: #fff;
-
-
-        --color-transparent-background: rgba(0, 0, 0, .5);
-
-
-
-    }
-}
-
 body {
     background-color: var(--color-background);
     color: var(--color-text);
@@ -102,3 +30,67 @@ body {
 }
 
 
+:root {
+    --text-size: 14px;
+
+    /* 主色调 */
+    --color-background: rgba(223, 242, 235, 0.95);
+    --color-primary: rgba(185, 229, 232, 0.9);
+    --color-secondary: rgba(122, 178, 211, 0.85);
+    --color-tertiary: rgba(74, 98, 138, 0.95);
+    --color-quaternary: rgba(203, 220, 235, 0.85);
+
+    /* 文本颜色 */
+    --color-text: rgba(40, 44, 52, 0.9);
+    --color-text-light: rgba(255, 255, 255, 0.95);
+    --color-text-dark: rgba(0, 0, 0, 0.85);
+    --color-text-secondary: rgba(102, 102, 102, 0.75);
+
+    /* 边框颜色 */
+    --color-border: rgba(204, 204, 204, 0.6);
+    --color-border-dark: rgba(51, 51, 51, 0.7);
+
+    /* 功能色 */
+    --color-success: rgba(40, 167, 69, 0.9);
+    --color-success-hover: rgba(33, 136, 56, 0.95);
+    --color-success-active: rgba(30, 126, 52, 1);
+    --color-success-text: rgba(255, 255, 255, 0.95);
+
+    /* 应用变量 */
+    --color-navbar-background: var(--color-tertiary);
+    --color-hot-border-background: rgba(185, 229, 232, 0.8);
+    --color-card-background: rgba(203, 220, 235, 0.75);
+    --color-transparent-background: rgba(255, 255, 255, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* 主色调 - 暗色模式 */
+        --color-background: rgba(26, 54, 54, 0.95);
+        --color-primary: rgba(103, 125, 106, 0.85);
+        --color-secondary: rgba(64, 83, 76, 0.9);
+        --color-tertiary: rgba(26, 54, 54, 1);
+        --color-quaternary: rgba(98, 149, 132, 0.8);
+
+        /* 文本颜色 - 暗色模式 */
+        --color-text: rgba(226, 226, 226, 0.9);
+        --color-text-light: rgba(255, 255, 255, 0.95);
+        --color-text-dark: rgba(0, 0, 0, 0.85);
+        --color-text-secondary: rgba(204, 204, 204, 0.8);
+
+        /* 边框颜色 - 暗色模式 */
+        --color-border: rgba(204, 204, 204, 0.4);
+        --color-border-dark: rgba(51, 51, 51, 0.8);
+
+        /* 功能色 - 暗色模式 */
+        --color-success: rgba(40, 167, 69, 0.75);
+        --color-success-hover: rgba(33, 136, 56, 0.8);
+        --color-success-active: rgba(30, 126, 52, 0.85);
+        --color-success-text: rgba(255, 255, 255, 0.95);
+
+        /* 应用变量 - 暗色模式 */
+        --color-transparent-background: rgba(0, 0, 0, 0.6);
+        --color-card-background: rgba(98, 149, 132, 0.3);
+        --color-hot-border-background: rgba(103, 125, 106, 0.6);
+    }
+}

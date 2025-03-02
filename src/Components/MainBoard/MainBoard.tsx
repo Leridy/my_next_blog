@@ -53,7 +53,7 @@ export default function MainBoard(props: MainBoardProps) {
     } catch (e) {
       console.error(e);
     }
-  }, [updateNewsStatistics]);
+  }, [updateNewsStatistics, updateTopicStatistics]);
 
   const handleToggleShow = useCallback((id: number) => {
     const newSetting = {

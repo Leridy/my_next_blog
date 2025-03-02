@@ -43,15 +43,11 @@ export default function LinksBoard() {
   }, [linkList])
 
   return (
-    <Card
-      header={'链接'}
+    <div
+      className={'grid gap-4 grid-cols-3'}
     >
-      <div
-        className={'grid gap-4 grid-cols-3'}
-      >
-        {renderLinks}
-      </div>
-    </Card>
+      {renderLinks}
+    </div>
 
   )
 }
