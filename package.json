@@ -8,7 +8,8 @@
     "build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "curl -X GET https://api.vercel.com/v1/integrations/deploy/prj_qMtRl2Fvd5g1tvEK7UwJ3vS1hSYx/AUO1eeNzmQ"
+    "deploy": "curl -X GET https://api.vercel.com/v1/integrations/deploy/prj_qMtRl2Fvd5g1tvEK7UwJ3vS1hSYx/AUO1eeNzmQ",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
@@ -55,6 +56,8 @@
     "css-loader": "^7.1.2",
     "eslint": "^8",
     "eslint-config-next": "15.0.1",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-plugin-prettier": "^5.2.3",
     "postcss": "^8",
     "prisma": "^6.1.0",
     "sass": "^1.80.4",
@@ -65,5 +68,11 @@
   "type": "module",
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
