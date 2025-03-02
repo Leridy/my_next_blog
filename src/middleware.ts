@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  getUserIdAndRoleToHeaders,
-  Role,
-  validationAuthToken,
-} from '@/server/middlewares';
+import { getUserIdAndRoleToHeaders, Role, validationAuthToken } from '@/server/middlewares';
 import { MyNRError } from '@/utils/MyNRError';
 
-const routerMap = new Map<
-  string[],
-  (
-    req: NextRequest
-  ) => Promise<NextResponse> | Promise<void> | NextResponse | undefined
->();
+const routerMap = new Map<string[], (req: NextRequest) => Promise<NextResponse> | Promise<void> | NextResponse | undefined>();
 
 const pathRequireTokenAdminRole = ['/manage', '/blog/admin'];
 

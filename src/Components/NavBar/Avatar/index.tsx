@@ -37,14 +37,7 @@ const avatarFontColor = () => {
 };
 
 const avatarFontFamily = () => {
-  const fontFamily = [
-    'Microsoft Yahei',
-    'SimHei',
-    'KaiTi',
-    'FangSong',
-    'Arial',
-    'sans-serif',
-  ];
+  const fontFamily = ['Microsoft Yahei', 'SimHei', 'KaiTi', 'FangSong', 'Arial', 'sans-serif'];
   return fontFamily[hash % fontFamily.length];
 };
 
@@ -96,27 +89,13 @@ function Avatar(props: AvatarProps) {
     context.fillStyle = avatarFontColor();
     context.textAlign = 'center';
 
-    context.fillText(
-      (name || '客')[0].toUpperCase(),
-      avatarSize * 4,
-      avatarSize * 6.1
-    );
+    context.fillText((name || '客')[0].toUpperCase(), avatarSize * 4, avatarSize * 6.1);
     return canvas.toDataURL();
   }, [name, src, avatarSize]);
 
   return (
-    <div
-      className="flex items-center justify-center rounded-full avatar"
-      style={{ width: avatarSize, height: avatarSize }}
-      onClick={onClick}
-    >
-      <img
-        className="cursor-pointer rounded"
-        src={avatarSrc}
-        alt={name}
-        width={avatarSize}
-        height={avatarSize}
-      />
+    <div className="flex items-center justify-center rounded-full avatar" style={{ width: avatarSize, height: avatarSize }} onClick={onClick}>
+      <img className="cursor-pointer rounded" src={avatarSrc} alt={name} width={avatarSize} height={avatarSize} />
     </div>
   );
 }

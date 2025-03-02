@@ -3,16 +3,11 @@ import ManageList from '@/app/manage/Components/ManageList';
 import FormItem from 'antd/es/form/FormItem';
 import { Input, message, Select, TableColumnProps } from 'antd';
 import { useCallback, useMemo, useRef } from 'react';
-import ManageFormModal, {
-  ManageFormModalRef,
-} from '@/app/manage/Components/ManageFormModal';
+import ManageFormModal, { ManageFormModalRef } from '@/app/manage/Components/ManageFormModal';
 import { setting } from '@prisma/client';
 import dynamic from 'next/dynamic';
 
-const MonacoEditorNoSSR = dynamic(
-  () => import('react-monaco-editor/lib/editor'),
-  { ssr: false }
-);
+const MonacoEditorNoSSR = dynamic(() => import('react-monaco-editor/lib/editor'), { ssr: false });
 export default function ManageSetting() {
   const modalRef = useRef<ManageFormModalRef>(null);
   const columns = useMemo<TableColumnProps<setting>[]>(
@@ -73,13 +68,7 @@ export default function ManageSetting() {
 
   return (
     <>
-      <ManageList
-        title={'网站设置'}
-        apiURL={'setting'}
-        columns={columns}
-        onCreate={handleCreate}
-        onEdit={handleEdit}
-      >
+      <ManageList title={'网站设置'} apiURL={'setting'} columns={columns} onCreate={handleCreate} onEdit={handleEdit}>
         <FormItem label={'标签'} name={'label'} validateTrigger={['onBlur']}>
           <Input />
         </FormItem>
@@ -105,39 +94,17 @@ export default function ManageSetting() {
         apiURL={'setting'}
         ref={modalRef}
       >
-        <FormItem
-          label={'标签'}
-          name={'label'}
-          required
-          rules={[{ required: true, message: '请输入标签' }]}
-        >
+        <FormItem label={'标签'} name={'label'} required rules={[{ required: true, message: '请输入标签' }]}>
           <Input />
         </FormItem>
-        <FormItem
-          label={'键'}
-          name={'key'}
-          validateTrigger={['onBlur']}
-          required
-          rules={[{ required: true, message: '请输入键' }]}
-        >
+        <FormItem label={'键'} name={'key'} validateTrigger={['onBlur']} required rules={[{ required: true, message: '请输入键' }]}>
           <Input />
         </FormItem>
-        <FormItem
-          label={'值'}
-          name={'value'}
-          required
-          rules={[{ required: true, message: '请输入值' }]}
-        >
+        <FormItem label={'值'} name={'value'} required rules={[{ required: true, message: '请输入值' }]}>
           <MonacoEditorNoSSR height="300" language="JSON" theme="vs-dark" />
         </FormItem>
 
-        <FormItem
-          label={'可见范围'}
-          name={'role'}
-          validateTrigger={['onBlur']}
-          required
-          rules={[{ required: true, message: '请选择可见范围' }]}
-        >
+        <FormItem label={'可见范围'} name={'role'} validateTrigger={['onBlur']} required rules={[{ required: true, message: '请选择可见范围' }]}>
           <Select placeholder={'请选择'} className={'w-full'}>
             <Select.Option value={'1'}>公开</Select.Option>
             <Select.Option value={'2'}>内部</Select.Option>

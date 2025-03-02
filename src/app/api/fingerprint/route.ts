@@ -5,8 +5,7 @@ import { readableStreamToJSON } from '@/utils/readableStreamToJSON';
 
 async function post(req: NextRequest) {
   const data = await readableStreamToJSON<{ fingerprint: string }>(req.body);
-  const ip =
-    req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || '';
+  const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || '';
 
   if (typeof data !== 'string' && data.fingerprint) {
     await VisitorDao.updateOrCreate({
@@ -23,5 +22,4 @@ async function post(req: NextRequest) {
   );
 }
 
-export const POST = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, post);
+export const POST = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, post);

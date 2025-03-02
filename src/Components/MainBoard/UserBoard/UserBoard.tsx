@@ -24,15 +24,7 @@ interface DraggableCardProps {
   style?: React.CSSProperties;
 }
 
-const DraggableCard = ({
-  id,
-  index,
-  moveCard,
-  isDraggable,
-  children,
-  header,
-  style,
-}: DraggableCardProps) => {
+const DraggableCard = ({ id, index, moveCard, isDraggable, children, header, style }: DraggableCardProps) => {
   const [{ isDragging }, drag] = useDrag({
     type: 'CARD',
     item: () => ({ id, index }),
@@ -172,9 +164,7 @@ export default function UserBoard() {
       try {
         const orderIds = JSON.parse(savedOrder) as string[];
         // 按保存的顺序重排卡片
-        const orderedCards = orderIds
-          .map((id) => initialCards.find((card) => card.id === id))
-          .filter(Boolean) as CardItem[];
+        const orderedCards = orderIds.map((id) => initialCards.find((card) => card.id === id)).filter(Boolean) as CardItem[];
 
         // 确保所有卡片都被包含，可能有新增的卡片
         initialCards.forEach((card) => {
@@ -216,15 +206,7 @@ export default function UserBoard() {
     <div className={'grid gap-6 h-full overflow-y-scroll user-board'}>
       {cards.map((card, index) =>
         card.header ? (
-          <DraggableCard
-            key={card.id}
-            id={card.id}
-            index={index}
-            moveCard={moveCard}
-            isDraggable={isDraggable}
-            header={card.header}
-            style={card.style}
-          >
+          <DraggableCard key={card.id} id={card.id} index={index} moveCard={moveCard} isDraggable={isDraggable} header={card.header} style={card.style}>
             {card.component}
           </DraggableCard>
         ) : (

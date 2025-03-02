@@ -62,14 +62,7 @@ export default function BrandIcon(props: BrandIconProps) {
         case 'QQNews': // https://news.qq.com/
         case 'geekpark': // https://www.geekpark.net/
         case 'woshipm': // https://www.woshipm.com/
-          return (
-            <Image
-              src={`/icons/${src}.svg`}
-              alt={src}
-              width={size}
-              height={size}
-            />
-          );
+          return <Image src={`/icons/${src}.svg`} alt={src} width={size} height={size} />;
         default:
           return <FileTextOutlined size={size} />;
       }

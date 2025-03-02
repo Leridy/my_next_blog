@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface JuejinDataStructure {
   content: {
@@ -62,21 +58,14 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'juejin 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  `https://api.juejin.cn/content_api/v1/content/article_rank?category_id=1&type=hot`;
+const URL_GENERATOR = () => `https://api.juejin.cn/content_api/v1/content/article_rank?category_id=1&type=hot`;
 
 async function getData(): Promise<JuejinResponse<JuejinDataStructure>> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: JuejinDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: JuejinDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     const { content_counter, author, content } = item;
     return {
@@ -86,13 +75,8 @@ function dataTransformer(
       url: `https://juejin.cn/post/${content.content_id}`,
       uniqueId: `juejin-${content.content_id}`,
       spiderId,
-      hotCount:
-        content_counter.like +
-        content_counter.comment_count +
-        content_counter.hot_rank,
-      tags: [
-        author.name.length < 6 ? author.name : author.name.slice(0, 3) + '...',
-      ],
+      hotCount: content_counter.like + content_counter.comment_count + content_counter.hot_rank,
+      tags: [author.name.length < 6 ? author.name : author.name.slice(0, 3) + '...'],
     };
   });
 }

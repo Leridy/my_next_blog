@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface HuxiuDataStructure {
   object_type: number;
@@ -86,13 +82,7 @@ async function getData(): Promise<string> {
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: HuxiuDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: HuxiuDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data
     .filter((item) => Boolean(item.url))
     .map((item, index) => {
@@ -103,8 +93,7 @@ function dataTransformer(
         url: item.url || `https://www.huxiu.com/moment?from=pc&index=${index}`,
         uniqueId: `huxiu-${item.object_id}`,
         spiderId,
-        hotCount:
-          item.count_info.agree_num + item.count_info.total_comment_num || 0,
+        hotCount: item.count_info.agree_num + item.count_info.total_comment_num || 0,
         tags: [item.user_info.username],
       };
     });
@@ -116,14 +105,12 @@ function dataTransformer(
 export default async function main() {
   const { id } = await spiderPublicLogic(SPIDER_INFO);
 
-  const pattern =
-    /<script>[\s\S]*?window\.__INITIAL_STATE__\s*=\s*(\{[\s\S]*?\});[\s\S]*?<\/script>/;
+  const pattern = /<script>[\s\S]*?window\.__INITIAL_STATE__\s*=\s*(\{[\s\S]*?\});[\s\S]*?<\/script>/;
 
   const requestedData: string = await getData();
 
   const matchResult = requestedData.match(pattern);
-  const result = JSON.parse(<string>matchResult?.[1]).moment.momentList
-    .moment_list.datalist;
+  const result = JSON.parse(<string>matchResult?.[1]).moment.momentList.moment_list.datalist;
 
   const transformedData = dataTransformer(result, id);
 

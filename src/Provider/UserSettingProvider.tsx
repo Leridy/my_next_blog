@@ -13,9 +13,7 @@ interface UserSettingContextType {
   setTopicSettingMode: (mode: boolean) => void;
 }
 
-const UserSettingContext = React.createContext<
-  UserSettingContextType | undefined
->(undefined);
+const UserSettingContext = React.createContext<UserSettingContextType | undefined>(undefined);
 
 interface UserSettingProviderProps {
   children: React.ReactNode;

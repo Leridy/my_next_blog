@@ -74,18 +74,8 @@ export default function SideMenu() {
   }
 
   return currentMenu ? (
-    <Sider
-      width={200}
-      className="bg-white"
-      style={{ height: 'calc(100vh - 64px)' }}
-    >
-      <Menu
-        onClick={handleClick}
-        mode="inline"
-        selectedKeys={selectedKeys}
-        style={{ height: '100%', borderRight: 0, padding: 4 }}
-        items={currentMenu}
-      />
+    <Sider width={200} className="bg-white" style={{ height: 'calc(100vh - 64px)' }}>
+      <Menu onClick={handleClick} mode="inline" selectedKeys={selectedKeys} style={{ height: '100%', borderRight: 0, padding: 4 }} items={currentMenu} />
     </Sider>
   ) : null;
 }

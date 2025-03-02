@@ -14,50 +14,11 @@ import { ImageResponse } from '@vercel/og';
  * code color should be some bright colors
  * font should be some common fonts
  **/
-const backgroundColors = [
-  '#1A3636',
-  '#2C7873',
-  '#4A628A',
-  '#EE6C4D',
-  '#1A3636',
-  '#40534C',
-  '#677D6A',
-  '#D6BD98',
-];
-const lineColors: string[] = [
-  '#F95959',
-  '#F9A03F',
-  '#F9F871',
-  '#A3DE83',
-  '#5ECC62',
-  '#FCFFCC',
-  '#FFD7C4',
-  '#FFF4B5',
-];
-const codeColors: string[] = [
-  '#F95959',
-  '#F9A03F',
-  '#F9F871',
-  '#A3DE83',
-  '#5ECC62',
-  '#FCFFCC',
-  '#FFD7C4',
-  '#FFF4B5',
-];
-const fonts: string[] = [
-  'Arial',
-  'Helvetica',
-  'sans-serif',
-  'monospace',
-  'cursive',
-];
-const exceededTextArray = [
-  'exceeded limit',
-  'too busy',
-  'try later',
-  '稍后再试',
-  '请求过多',
-];
+const backgroundColors = ['#1A3636', '#2C7873', '#4A628A', '#EE6C4D', '#1A3636', '#40534C', '#677D6A', '#D6BD98'];
+const lineColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
+const codeColors: string[] = ['#F95959', '#F9A03F', '#F9F871', '#A3DE83', '#5ECC62', '#FCFFCC', '#FFD7C4', '#FFF4B5'];
+const fonts: string[] = ['Arial', 'Helvetica', 'sans-serif', 'monospace', 'cursive'];
+const exceededTextArray = ['exceeded limit', 'too busy', 'try later', '稍后再试', '请求过多'];
 const transforms = (height: number, width: number): string => {
   const rotate = Math.random() * 10;
   const translateX = (Math.random() * width) / 5;
@@ -76,9 +37,7 @@ const generateValidateCodeImage = (code: string) => {
   const levels = [3, 4, 7];
   const width = 400;
   const height = 120;
-  const backgroundColor = exceededTextArray.includes(code)
-    ? '#FF0000'
-    : backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
+  const backgroundColor = exceededTextArray.includes(code) ? '#FF0000' : backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
   const font = fonts[Math.floor(Math.random() * fonts.length)];
   const fontSize = 50;
   const codeColor = codeColors[Math.floor(Math.random() * codeColors.length)];
@@ -139,18 +98,14 @@ async function get(req: NextRequest) {
   let isNewSession = false;
   let isReachRequestLimit = false;
   let isCodeOutdated = false;
-  const exceededText =
-    exceededTextArray[Math.floor(Math.random() * exceededTextArray.length)];
+  const exceededText = exceededTextArray[Math.floor(Math.random() * exceededTextArray.length)];
 
   await validateCodeDao.clearTimeoutValidateCode();
   if (!sessionId) {
     // if request does not have sessionId, create a new one
     // get some user agent and ip address and timestamp to generate a fingerprint
     // you should know that type of req is NextRequest.
-    const userFingerprint =
-      req.headers.get('user-agent') ||
-      '' + req.headers.get('remoteAddress') ||
-      (('' + Date.now()) as string);
+    const userFingerprint = req.headers.get('user-agent') || '' + req.headers.get('remoteAddress') || (('' + Date.now()) as string);
     const salt = process.env.SESSION_SECRET || '';
     sessionId = hashPassword(userFingerprint, salt);
     isNewSession = true;
@@ -158,10 +113,7 @@ async function get(req: NextRequest) {
     // if sessionId exists, check if it reaches the request limit and expired
     data = await validateCodeDao.getValidateCodeBySessionId(sessionId);
     if (data) {
-      if (
-        Date.now() - data.createdAt.getTime() < FIVE_MINUTES &&
-        data.requestTime >= requestLimit
-      ) {
+      if (Date.now() - data.createdAt.getTime() < FIVE_MINUTES && data.requestTime >= requestLimit) {
         isReachRequestLimit = true;
       } else if (Date.now() - data.createdAt.getTime() > FIVE_MINUTES) {
         // if the code is outdated, delete it
@@ -207,5 +159,4 @@ async function get(req: NextRequest) {
   );
 }
 
-export const GET = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, get);
+export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);

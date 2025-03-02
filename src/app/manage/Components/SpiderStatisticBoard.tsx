@@ -33,17 +33,7 @@ export default function SpiderStatisticBoard() {
     },
   });
 
-  const {
-    oldestSpider,
-    hourlyCount,
-    dailyCount,
-    outdatedCount,
-    hourlyRate,
-    dailyRate,
-    halfHourlyCount,
-    quarterlyCount,
-    oldestSpiderLastUpdate,
-  } = useMemo(() => {
+  const { oldestSpider, hourlyCount, dailyCount, outdatedCount, hourlyRate, dailyRate, halfHourlyCount, quarterlyCount, oldestSpiderLastUpdate } = useMemo(() => {
     const now = new Date().getTime();
 
     // 计算各时间段的爬虫数量
@@ -64,10 +54,7 @@ export default function SpiderStatisticBoard() {
         }
 
         // 追踪最旧的爬虫
-        if (
-          !acc.oldest ||
-          diff > now - new Date(acc.oldest.updatedAt).getTime()
-        ) {
+        if (!acc.oldest || diff > now - new Date(acc.oldest.updatedAt).getTime()) {
           acc.oldest = spider;
         }
 
@@ -131,16 +118,8 @@ export default function SpiderStatisticBoard() {
       }
 
       return (
-        <Tooltip
-          title={`最后更新时间:${lastUpdate.toLocaleString()}`}
-          key={spider.id}
-        >
-          <Button
-            color={color}
-            variant={'outlined'}
-            onClick={() => handleRefresh(spider.name)}
-            disabled={triggerLoading}
-          >
+        <Tooltip title={`最后更新时间:${lastUpdate.toLocaleString()}`} key={spider.id}>
+          <Button color={color} variant={'outlined'} onClick={() => handleRefresh(spider.name)} disabled={triggerLoading}>
             <BrandIcon src={spider.name} />
             {spider.name}
           </Button>
@@ -167,28 +146,21 @@ export default function SpiderStatisticBoard() {
           <span className="text-gray-600 text-sm">最久未更新</span>
           <div className="flex items-center mt-2">
             {oldestSpider && <BrandIcon src={oldestSpider.name} />}
-            <span className="text-xl font-bold">
-              {oldestSpider?.name || '-'}
-            </span>
+            <span className="text-xl font-bold">{oldestSpider?.name || '-'}</span>
           </div>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
-          <span className="text-gray-600 text-sm">
-            {oldestSpider?.name} 上次更新时间
-          </span>
+          <span className="text-gray-600 text-sm">{oldestSpider?.name} 上次更新时间</span>
           <span className="text-xl font-bold mt-2">
             {oldestSpiderLastUpdate?.updatedAt
-              ? new Date(oldestSpiderLastUpdate.updatedAt).toLocaleDateString(
-                  'zh-CN',
-                  {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  }
-                )
+              ? new Date(oldestSpiderLastUpdate.updatedAt).toLocaleDateString('zh-CN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
               : '-'}
           </span>
         </div>

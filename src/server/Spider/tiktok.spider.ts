@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface TiktokDataStructure {
   article_detail_count: number;
@@ -35,13 +31,11 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'tiktok 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  'https://www.douyin.com/aweme/v1/web/hot/search/list/?device_platform=webapp&aid=6383&channel=channel_pc_web&detail_list=1';
+const URL_GENERATOR = () => 'https://www.douyin.com/aweme/v1/web/hot/search/list/?device_platform=webapp&aid=6383&channel=channel_pc_web&detail_list=1';
 
 const getDyCookies = async (): Promise<string> => {
   try {
-    const cookisUrl =
-      'https://www.douyin.com/passport/general/login_guiding_strategy/?aid=6383';
+    const cookisUrl = 'https://www.douyin.com/passport/general/login_guiding_strategy/?aid=6383';
     const result = await http.get(cookisUrl, {
       headers: { originaInfo: true, 'return-raw': true },
     });
@@ -68,13 +62,7 @@ async function getData(): Promise<{
   });
 }
 
-function dataTransformer(
-  data: TiktokDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: TiktokDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
       title: item.word,

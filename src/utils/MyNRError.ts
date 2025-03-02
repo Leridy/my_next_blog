@@ -37,11 +37,7 @@ export class MyNRError extends Error {
    * @param {number} [statusCode=500] The status code of the error.
    * @param optional
    */
-  constructor(
-    message: string,
-    statusCode: number = 500,
-    optional?: Record<string, unknown>
-  ) {
+  constructor(message: string, statusCode: number = 500, optional?: Record<string, unknown>) {
     super(message);
     this.statusCode = statusCode;
     this.headers = optional?.headers;
@@ -94,13 +90,10 @@ export async function APIErrorHandler(
       const token = req.cookies.get('token')?.value;
       if (token) {
         // verify token
-        const secret = new TextEncoder().encode(
-          process.env.JWT_TOKEN_SECRET || ''
-        );
+        const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET || '');
         // const user = jwt.verify(token, secret) as { exp: number, iat: number };
         const { payload: user } = await jose.jwtVerify<User>(token, secret);
-        if ((user?.exp || 1) * 1000 < Date.now())
-          throw new Error('token expired');
+        if ((user?.exp || 1) * 1000 < Date.now()) throw new Error('token expired');
       }
     } catch (e) {
       console.error(e);

@@ -18,5 +18,4 @@ async function post() {
   );
 }
 
-export const POST = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, post);
+export const POST = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, post);

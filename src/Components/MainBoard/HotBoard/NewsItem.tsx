@@ -20,17 +20,7 @@ const IndexColor = ['text-amber-600', 'text-amber-500', 'text-amber-400'];
  */
 
 export default function NewsItem(props: NewsItemProps) {
-  const {
-    index,
-    title,
-    url,
-    tags,
-    hotCount,
-    description,
-    keyword,
-    onClick,
-    id,
-  } = props;
+  const { index, title, url, tags, hotCount, description, keyword, onClick, id } = props;
 
   const handleLinkClick = useCallback(() => {
     if (url && onClick) {
@@ -42,10 +32,7 @@ export default function NewsItem(props: NewsItemProps) {
     // Make number as a number with number unit like 10,000 → 1万, 12000 → 1.2万,
     // and if the number is less than 1000, just show the number.
     // If hotCount is bigger than return 10,000 '🔥' + hotCount / 10,000 + '万' else return hotCount.
-    const hotCountText =
-      hotCount && hotCount > 10000
-        ? `🔥${(hotCount / 10000).toFixed(1)}万`
-        : hotCount;
+    const hotCountText = hotCount && hotCount > 10000 ? `🔥${(hotCount / 10000).toFixed(1)}万` : hotCount;
     if (hotCountText && hotCount && hotCount > 10000) return hotCountText;
 
     if (tags && tags.length) {
@@ -62,10 +49,7 @@ export default function NewsItem(props: NewsItemProps) {
 
     if (keyword) {
       const reg = new RegExp(keyword, 'g');
-      newTitle = newTitle.replace(
-        reg,
-        `<span class="bg-amber-200 text-black font-bold">${keyword}</span>`
-      );
+      newTitle = newTitle.replace(reg, `<span class="bg-amber-200 text-black font-bold">${keyword}</span>`);
     }
 
     // if there is a keyword, use the keyword to highlight the title.
@@ -107,11 +91,7 @@ export default function NewsItem(props: NewsItemProps) {
             mb-2
         `}
     >
-      <p
-        className={`w-1/12 NewsItem-news-index text-center ${IndexColor[index]}`}
-      >
-        {index + 1}
-      </p>
+      <p className={`w-1/12 NewsItem-news-index text-center ${IndexColor[index]}`}>{index + 1}</p>
       <span
         className={`
             overflow-hidden 
@@ -127,9 +107,7 @@ export default function NewsItem(props: NewsItemProps) {
         onAuxClick={handleLinkClick}
         data-title={title}
       />
-      <span style={{ color: 'var(--color-text-secondary)' }}>
-        {renderExtraData}
-      </span>
+      <span style={{ color: 'var(--color-text-secondary)' }}>{renderExtraData}</span>
     </div>
   );
 }

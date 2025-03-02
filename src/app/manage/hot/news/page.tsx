@@ -1,21 +1,11 @@
 'use client';
-import {
-  Button,
-  DatePicker,
-  Input,
-  message,
-  Select,
-  Space,
-  TableColumnProps,
-} from 'antd';
+import { Button, DatePicker, Input, message, Select, Space, TableColumnProps } from 'antd';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import ManageList from '@/app/manage/Components/ManageList';
 import FormItem from 'antd/es/form/FormItem';
 import useApi from '@/app/manage/hooks/useApi';
 import { HotNews, HotSpider } from '@prisma/client';
-import ManageFormModal, {
-  ManageFormModalRef,
-} from '@/app/manage/Components/ManageFormModal';
+import ManageFormModal, { ManageFormModalRef } from '@/app/manage/Components/ManageFormModal';
 import BrandIcon from '@/Components/MainBoard/HotBoard/BrandIcon';
 
 const headers = {
@@ -63,9 +53,7 @@ export default function HotList() {
         width: 100,
         align: 'center',
         render: (spiderId: number) => {
-          const currentSpider = spiders?.find(
-            (item: HotSpider) => item.id === spiderId
-          );
+          const currentSpider = spiders?.find((item: HotSpider) => item.id === spiderId);
           return currentSpider?.name || '未知';
         },
       },
@@ -74,8 +62,7 @@ export default function HotList() {
         dataIndex: 'updatedAt',
         key: 'updatedAt',
         width: 200,
-        sorter: (a: HotNews, b: HotNews) =>
-          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+        sorter: (a: HotNews, b: HotNews) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
         render: (updatedAt: string) => new Date(updatedAt).toLocaleString(),
       },
     ],
@@ -104,14 +91,7 @@ export default function HotList() {
 
   return (
     <>
-      <ManageList
-        title={'热门新闻管理'}
-        apiURL={'news'}
-        columns={columns}
-        usePagination
-        onCreate={handleCreate}
-        onEdit={handleEdit}
-      >
+      <ManageList title={'热门新闻管理'} apiURL={'news'} columns={columns} usePagination onCreate={handleCreate} onEdit={handleEdit}>
         <FormItem label={'新闻标题'} name={'title'}>
           <Input />
         </FormItem>
@@ -149,38 +129,16 @@ export default function HotList() {
         apiURL={'news'}
         ref={modalRef}
       >
-        <FormItem
-          label={'新闻标题'}
-          name={'title'}
-          validateTrigger={['onBlur']}
-          required
-          rules={[{ required: true, message: '请输入新闻标题' }]}
-        >
+        <FormItem label={'新闻标题'} name={'title'} validateTrigger={['onBlur']} required rules={[{ required: true, message: '请输入新闻标题' }]}>
           <Input />
         </FormItem>
-        <FormItem
-          label={'新闻描述'}
-          name={'description'}
-          validateTrigger={['onBlur']}
-        >
+        <FormItem label={'新闻描述'} name={'description'} validateTrigger={['onBlur']}>
           <Input />
         </FormItem>
-        <FormItem
-          label={'新闻链接'}
-          name={'url'}
-          validateTrigger={['onBlur']}
-          required
-          rules={[{ required: true, type: 'url', message: '请输入正确的链接' }]}
-        >
+        <FormItem label={'新闻链接'} name={'url'} validateTrigger={['onBlur']} required rules={[{ required: true, type: 'url', message: '请输入正确的链接' }]}>
           <Input />
         </FormItem>
-        <FormItem
-          label={'关联爬虫'}
-          name={'spiderId'}
-          validateTrigger={['onBlur']}
-          required
-          rules={[{ required: true, message: '请选择关联爬虫' }]}
-        >
+        <FormItem label={'关联爬虫'} name={'spiderId'} validateTrigger={['onBlur']} required rules={[{ required: true, message: '请选择关联爬虫' }]}>
           <Select>
             {spiders?.map((item: HotSpider) => (
               <Select.Option key={item.id} value={item.id}>

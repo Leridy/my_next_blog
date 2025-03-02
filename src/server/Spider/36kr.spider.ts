@@ -1,11 +1,7 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
 import { mergeHeaderObj } from '@/utils/mergeObject';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface KrDataStructure {
   itemId: number;
@@ -32,8 +28,7 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: '36kr 爬虫',
 };
 
-const URL_GENERATOR = (type: string) =>
-  `https://gateway.36kr.com/api/mis/nav/home/nav/rank/${type}`;
+const URL_GENERATOR = (type: string) => `https://gateway.36kr.com/api/mis/nav/home/nav/rank/${type}`;
 
 const HTTP_CONFIG = {
   method: 'POST',
@@ -82,13 +77,7 @@ function genTagsForNews(data: KrDataStructure['templateMaterial']): string[] {
   }, [] as string[]);
 }
 
-function dataTransformer(
-  data: KrDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: KrDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
       title: item.templateMaterial.widgetTitle,
@@ -103,9 +92,7 @@ function dataTransformer(
   });
 }
 
-function mergeTypeData(
-  data: Record<keyof typeof ListType, KrDataStructure[]>
-): KrDataStructure[] {
+function mergeTypeData(data: Record<keyof typeof ListType, KrDataStructure[]>): KrDataStructure[] {
   return Object.keys(data).reduce((acc, cur) => {
     // @ts-expect-error sb 玩意
     return acc.concat(data[cur]);

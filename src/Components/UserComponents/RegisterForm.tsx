@@ -29,11 +29,7 @@ export default function RegisterForm(props: RegisterFormProps) {
 
   return (
     <Form form={form} layout={'vertical'}>
-      <FormItem
-        label={'用户名'}
-        name={'name'}
-        rules={[{ required: true, message: '请输入用户名' }]}
-      >
+      <FormItem label={'用户名'} name={'name'} rules={[{ required: true, message: '请输入用户名' }]}>
         <Input placeholder={'请输入用户名'} />
       </FormItem>
 
@@ -83,19 +79,13 @@ export default function RegisterForm(props: RegisterFormProps) {
       </FormItem>
 
       <Space>
-        <FormItem
-          label={'验证码'}
-          name={'validateCode'}
-          rules={[{ required: true, message: '请输入验证码' }]}
-        >
+        <FormItem label={'验证码'} name={'validateCode'} rules={[{ required: true, message: '请输入验证码' }]}>
           <Input placeholder={'请输入验证码, 区分大小写'} />
         </FormItem>
 
         <FormItem>
           <div
-            className={
-              'cursor-pointer user-modal-validate-code rounded-md overflow-hidden'
-            }
+            className={'cursor-pointer user-modal-validate-code rounded-md overflow-hidden'}
             onClick={handleChangeValidateCode}
             style={{
               backgroundImage: `url(/api/image/validationCode?k=${randomKey})`,

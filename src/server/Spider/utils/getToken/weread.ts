@@ -40,8 +40,7 @@ const getWereadID = (bookId: string) => {
       const sub = fa[1][i];
       const subLength = sub.length.toString(16);
       // 如果长度只有一位数，则在前面添加 0
-      const subLengthPadded =
-        subLength.length === 1 ? '0' + subLength : subLength;
+      const subLengthPadded = subLength.length === 1 ? '0' + subLength : subLength;
       // 将长度和子字符串添加到初始值中
       strSub += subLengthPadded + sub;
       // 如果不是最后一个子字符串，则添加分隔符 'g'

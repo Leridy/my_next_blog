@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface ThePaperDataStructure {
   contId: string;
@@ -102,8 +98,7 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'pengpai 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  `https://cache.thepaper.cn/contentapi/wwwIndex/rightSidebar`;
+const URL_GENERATOR = () => `https://cache.thepaper.cn/contentapi/wwwIndex/rightSidebar`;
 
 async function getData(): Promise<{
   data: { hotNews: ThePaperDataStructure[] };
@@ -112,13 +107,7 @@ async function getData(): Promise<{
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: ThePaperDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: ThePaperDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
       title: item.name,
@@ -128,9 +117,7 @@ function dataTransformer(
       uniqueId: `thepepar-${item.contId}`,
       spiderId,
       hotCount: Number(item.interactionNum) || 0,
-      tags: Array.isArray(item.tagList)
-        ? item.tagList.map((tag) => tag.tag)
-        : [item.name.slice(0, 4)],
+      tags: Array.isArray(item.tagList) ? item.tagList.map((tag) => tag.tag) : [item.name.slice(0, 4)],
     };
   });
 }

@@ -25,9 +25,7 @@ type EditCardReturn<T> = {
   initialValues: T | null;
 };
 
-export default function useEditCard<T>(
-  props: EditCardProps
-): EditCardReturn<T> {
+export default function useEditCard<T>(props: EditCardProps): EditCardReturn<T> {
   const { titleGroup, fallbackPath, apiURL, id } = props;
   const { getOne, create, edit, data, loading, clearData } = useApi<T>({
     apiURL,
@@ -43,10 +41,7 @@ export default function useEditCard<T>(
 
   const isEditMode = useMemo(() => itemId !== undefined, [itemId]);
 
-  const cardTitle = useMemo(
-    (): string => (isEditMode ? titleGroup.edit : titleGroup.create),
-    [isEditMode, titleGroup.create, titleGroup.edit]
-  );
+  const cardTitle = useMemo((): string => (isEditMode ? titleGroup.edit : titleGroup.create), [isEditMode, titleGroup.create, titleGroup.edit]);
 
   const handleCancel = useCallback(() => {
     router.push(props.fallbackPath || '/');

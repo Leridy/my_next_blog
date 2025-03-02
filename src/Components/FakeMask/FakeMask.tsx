@@ -15,9 +15,7 @@ const SITE_SETTING_KEY = 'FakeMask';
  */
 export default function FakeMask() {
   const [searchValue, setSearchValue] = useState<string>('');
-  const [logoAnimation, setLogoAnimation] = useState<string>(
-    'shakeAndUpDown .3s ease-in-out infinite'
-  );
+  const [logoAnimation, setLogoAnimation] = useState<string>('shakeAndUpDown .3s ease-in-out infinite');
   const [fakeMode, setFakeMode] = useState<boolean>(false);
 
   const { setting } = useSiteSettingContext();
@@ -59,8 +57,7 @@ export default function FakeMask() {
     if (MaintainedMode && fakeMode && enable) {
       document.title = String(MaintainedContent);
     } else {
-      document.title =
-        fakeMode && enable ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
+      document.title = fakeMode && enable ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
     }
   }, [MaintainedContent, MaintainedMode, enable, fakeMode]);
 
@@ -70,16 +67,8 @@ export default function FakeMask() {
 
   useEffect(() => {
     const handler = setInterval(() => {
-      const animations = [
-        'shakeAndUpDown .2s ease-in-out infinite',
-        'rotate3D 3s ease-in-out infinite',
-        '',
-        '',
-        '',
-      ];
-      setLogoAnimation(
-        animations[Math.floor(Math.random() * animations.length)]
-      );
+      const animations = ['shakeAndUpDown .2s ease-in-out infinite', 'rotate3D 3s ease-in-out infinite', '', '', ''];
+      setLogoAnimation(animations[Math.floor(Math.random() * animations.length)]);
     }, 20000);
 
     return () => {
@@ -97,27 +86,12 @@ export default function FakeMask() {
             animation: logoAnimation,
           }}
         >
-          <img
-            className={'w-60'}
-            src={'/icons/bing.svg'}
-            alt={'bing'}
-            title={'双击 logo 关闭'}
-          />
+          <img className={'w-60'} src={'/icons/bing.svg'} alt={'bing'} title={'双击 logo 关闭'} />
         </div>
 
         <div>
-          <Input
-            placeholder={''}
-            style={{ width: '400px' }}
-            onChange={(e) => setSearchValue(e.target.value)}
-            value={searchValue}
-            onPressEnter={handleSearch}
-          />
-          <Button
-            type={'primary'}
-            style={{ marginLeft: '1rem' }}
-            onClick={handleSearch}
-          >
+          <Input placeholder={''} style={{ width: '400px' }} onChange={(e) => setSearchValue(e.target.value)} value={searchValue} onPressEnter={handleSearch} />
+          <Button type={'primary'} style={{ marginLeft: '1rem' }} onClick={handleSearch}>
             必应搜索
           </Button>
         </div>
@@ -138,21 +112,13 @@ export default function FakeMask() {
       window.removeEventListener('blur', changeToFakeMode);
       window.removeEventListener('keydown', handlePressEsc);
     };
-  }, [
-    MaintainedContent,
-    MaintainedMode,
-    changeToFakeMode,
-    enable,
-    handlePressEsc,
-  ]);
+  }, [MaintainedContent, MaintainedMode, changeToFakeMode, enable, handlePressEsc]);
 
   return (
     fakeMode &&
     enable && (
       <div
-        className={
-          'fixed top-0 left-0 w-full h-full bg-white flex items-center justify-center fake-mask'
-        }
+        className={'fixed top-0 left-0 w-full h-full bg-white flex items-center justify-center fake-mask'}
         style={{
           zIndex: 9999,
           transition: 'all 0.5s',
@@ -166,11 +132,7 @@ export default function FakeMask() {
         >
           {MaintainedMode ? (
             <div className={'text-red-500 text-lg'}>
-              <InputtingText
-                text={String(MaintainedContent)}
-                cursorBlinkSpeed={'fast'}
-                hideCursor={String(MaintainedContent).includes('<br/>')}
-              />
+              <InputtingText text={String(MaintainedContent)} cursorBlinkSpeed={'fast'} hideCursor={String(MaintainedContent).includes('<br/>')} />
             </div>
           ) : (
             renderSearch

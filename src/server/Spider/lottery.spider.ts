@@ -1,14 +1,7 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
-import {
-  parseLotteryHtml,
-  LotteryResult,
-} from '@/server/Spider/utils/getToken/lottery';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
+import { parseLotteryHtml, LotteryResult } from '@/server/Spider/utils/getToken/lottery';
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'lottery',
@@ -30,13 +23,7 @@ async function getData(): Promise<string> {
   });
 }
 
-function dataTransformer(
-  data: LotteryResult[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: LotteryResult[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   const now = new Date();
   return data
     .filter(({ date, name, numbers }) => {
@@ -66,9 +53,7 @@ export default async function main() {
 
   const requestedData = await getData();
 
-  const result = parseLotteryHtml(
-    requestedData.replace(/[\r\n\t]/g, '').replace(/\s+/g, ' ')
-  );
+  const result = parseLotteryHtml(requestedData.replace(/[\r\n\t]/g, '').replace(/\s+/g, ' '));
 
   const transformedData = dataTransformer(result, id);
 

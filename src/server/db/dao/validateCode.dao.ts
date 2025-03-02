@@ -12,17 +12,13 @@ export class ValidateCodeDao {
     });
   }
 
-  public async createValidateCode(
-    data: Omit<validateCode, 'id' | 'createdAt'>
-  ): Promise<validateCode> {
+  public async createValidateCode(data: Omit<validateCode, 'id' | 'createdAt'>): Promise<validateCode> {
     return VC.create({
       data,
     });
   }
 
-  public async getValidateCodeBySessionId(
-    sessionId: string
-  ): Promise<validateCode | null> {
+  public async getValidateCodeBySessionId(sessionId: string): Promise<validateCode | null> {
     return VC.findFirst({
       where: {
         sessionId,
@@ -30,9 +26,7 @@ export class ValidateCodeDao {
     });
   }
 
-  public async getValidateCode(
-    query: Partial<validateCode>
-  ): Promise<validateCode | null> {
+  public async getValidateCode(query: Partial<validateCode>): Promise<validateCode | null> {
     return VC.findFirst({
       where: {
         ...query,

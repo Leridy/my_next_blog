@@ -9,10 +9,7 @@ import NavBar from '@/Components/NavBar';
 import FakeMask from '@/Components/FakeMask/FakeMask';
 import dynamic from 'next/dynamic';
 
-const UserSettingProviderNoSSR = dynamic(
-  () => import('@/Provider/UserSettingProvider'),
-  { ssr: false }
-);
+const UserSettingProviderNoSSR = dynamic(() => import('@/Provider/UserSettingProvider'), { ssr: false });
 
 export default function ProviderWrapper() {
   const [keyword, setKeyword] = useState<string>('');

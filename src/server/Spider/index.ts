@@ -33,31 +33,7 @@ export default async function Spider(props?: SpiderProps) {
     const updateResult = [];
     let tasks = [];
     if (spiderNames.length === 0) {
-      tasks = shuffleArray([
-        weread,
-        kr,
-        ithome,
-        hupu,
-        bilibili,
-        juejin,
-        v2ex,
-        toutiao,
-        zhihu,
-        huxiu,
-        sina,
-        thepaper,
-        tiktok,
-        ifanr,
-        sspai,
-        tieba,
-        fiveOneCTO,
-        coolapk,
-        weread,
-        lottery,
-        QQNews,
-        geekpark,
-        woshipm,
-      ]);
+      tasks = shuffleArray([weread, kr, ithome, hupu, bilibili, juejin, v2ex, toutiao, zhihu, huxiu, sina, thepaper, tiktok, ifanr, sspai, tieba, fiveOneCTO, coolapk, weread, lottery, QQNews, geekpark, woshipm]);
     } else {
       tasks = spiderNames.map((name) => {
         switch (name) {

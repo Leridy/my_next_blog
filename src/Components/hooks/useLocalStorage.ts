@@ -10,9 +10,7 @@ interface UseLocalStorageReturn<T> {
   setValue: (value: T) => void;
 }
 
-export default function useLocalStorage<T>(
-  props: UseLocalStorageProps<T>
-): UseLocalStorageReturn<T> {
+export default function useLocalStorage<T>(props: UseLocalStorageProps<T>): UseLocalStorageReturn<T> {
   const { key, initialValue } = props;
 
   const LS = localStorage || {

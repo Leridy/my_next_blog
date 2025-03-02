@@ -15,9 +15,7 @@ export type UseApiReturn<T> = {
   pagedItems: Page<T>;
   loading: boolean;
   data: T | null;
-  get: (
-    params?: Partial<T & PageApiQuery & OrderByApiQuery>
-  ) => Promise<T[] | Page<T>>;
+  get: (params?: Partial<T & PageApiQuery & OrderByApiQuery>) => Promise<T[] | Page<T>>;
   getOne: (id: string) => Promise<T>;
   create: (data: Partial<T>) => Promise<T>;
   edit: (id: string, data: Partial<T>) => Promise<T>;
@@ -47,9 +45,7 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
 
       try {
         setLoading(true);
-        const res = (await http.get(finalURL, { params, headers })) as
-          | T[]
-          | Page<T>;
+        const res = (await http.get(finalURL, { params, headers })) as T[] | Page<T>;
         if (Array.isArray(res)) {
           setItems(res);
         } else {

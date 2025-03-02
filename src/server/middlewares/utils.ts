@@ -5,11 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as jose from 'jose';
 import { User } from '@prisma/client';
 
-type LogLevel =
-  | 'info'
-  | 'warn'
-  | 'error'
-  | { method?: boolean; url?: boolean; headers?: boolean; payload?: boolean };
+type LogLevel = 'info' | 'warn' | 'error' | { method?: boolean; url?: boolean; headers?: boolean; payload?: boolean };
 
 /**
  * 日志中间件
@@ -22,8 +18,7 @@ export function logger(handler: MiddlewareHandler, level?: LogLevel) {
     if (typeof level === 'object') {
       if (level.method) console.log('req.method', req.method);
       if (level.url) console.log('req.url', req.url);
-      if (level.payload)
-        console.log('payload', { body: req.body, query: req.query });
+      if (level.payload) console.log('payload', { body: req.body, query: req.query });
       if (level.headers) console.log('req.headers', req.headers);
     } else if (level === 'info') {
       // make method and url in one line

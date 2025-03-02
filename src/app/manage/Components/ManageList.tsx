@@ -1,14 +1,5 @@
 import type { ColumnProps } from 'antd/es/table';
-import {
-  Button,
-  Card,
-  CardProps,
-  message,
-  Modal,
-  Space,
-  Table,
-  TableColumnProps,
-} from 'antd';
+import { Button, Card, CardProps, message, Modal, Space, Table, TableColumnProps } from 'antd';
 import FilterForm from '@/app/manage/Components/FilterForm';
 import useApi from '@/app/manage/hooks/useApi';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
@@ -36,21 +27,7 @@ const headers = {
 };
 
 export default function ManageList<T>(props: ManageListProps<T>) {
-  const {
-    title,
-    apiURL,
-    columns,
-    usePagination = false,
-    showOperation = true,
-    showCreate = true,
-    cardProps = {},
-    manageName,
-    onEdit,
-    onDelete,
-    onCreate,
-    onClickItem,
-    children,
-  } = props;
+  const { title, apiURL, columns, usePagination = false, showOperation = true, showCreate = true, cardProps = {}, manageName, onEdit, onDelete, onCreate, onClickItem, children } = props;
 
   const router = useRouter();
   const pathname = usePathname() || '';
@@ -61,9 +38,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
     headers,
   });
 
-  const [queryData, setQueryData] = useState<
-    Partial<T & PageApiQuery & OrderByApiQuery>
-  >(
+  const [queryData, setQueryData] = useState<Partial<T & PageApiQuery & OrderByApiQuery>>(
     // @ts-expect-error T won't have page and pageSize property
     usePagination
       ? {
@@ -202,12 +177,7 @@ export default function ManageList<T>(props: ManageListProps<T>) {
   }, [get, queryData]);
 
   return (
-    <Card
-      {...cardProps}
-      title={renderTitle}
-      className={'h-full'}
-      size={'small'}
-    >
+    <Card {...cardProps} title={renderTitle} className={'h-full'} size={'small'}>
       {children && (
         <div className={'mb-4'}>
           <FilterForm

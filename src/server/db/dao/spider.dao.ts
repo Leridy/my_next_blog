@@ -2,11 +2,7 @@ import { HotSpider as HS } from '@/server/db/models/spider';
 import { HotSpider } from '@prisma/client';
 
 class SpiderDao {
-  public async get(
-    query:
-      | Partial<Pick<HotSpider, 'name' | 'description' | 'updatedAt'>>
-      | string
-  ) {
+  public async get(query: Partial<Pick<HotSpider, 'name' | 'description' | 'updatedAt'>> | string) {
     // if a query is string, return HotSpider with that name
     // else return HotSpider fit the query.
     if (typeof query === 'string') {

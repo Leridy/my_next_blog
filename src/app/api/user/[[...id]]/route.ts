@@ -7,10 +7,7 @@ import { APIErrorHandler, MyNRError } from '@/utils/MyNRError';
 import { Role } from '@/server/middlewares';
 import * as Yup from 'yup';
 
-async function get(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function get(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   let id: string | undefined = undefined;
   const query = Object.fromEntries(req.nextUrl.searchParams.entries());
   id = (await params).id;
@@ -58,10 +55,7 @@ async function post(req: NextRequest) {
       .equals([Yup.ref('password')]),
   });
 
-  const data = (await encryptPwdWithSalt(req)) as Pick<
-    User,
-    'name' | 'password' | 'email'
-  > & {
+  const data = (await encryptPwdWithSalt(req)) as Pick<User, 'name' | 'password' | 'email'> & {
     password2: string;
     validateCode: string;
   };
@@ -77,15 +71,11 @@ async function post(req: NextRequest) {
   return NextResponse.json(result, { status: 200 });
 }
 
-async function put(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function put(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const data = await readableStreamToJSON<Omit<User, 'id'>>(req.body);
-    if (typeof data !== 'object')
-      throw new MyNRError('无效数据', 401, { data });
+    if (typeof data !== 'object') throw new MyNRError('无效数据', 401, { data });
     const result = await userDao.updateUser({ ...data, id: Number(id) });
     return NextResponse.json(result, { status: 200 });
   } catch (e) {
@@ -93,21 +83,14 @@ async function put(
   }
 }
 
-async function del(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function del(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!id) throw new MyNRError('无效的 id', 401, { id });
   const result = await userDao.deleteUser(id);
   return NextResponse.json(result, { status: 200 });
 }
 
-export const GET = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, get);
-export const POST = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, post);
-export const PUT = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, put);
-export const DELETE = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, del);
+export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);
+export const POST = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, post);
+export const PUT = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, put);
+export const DELETE = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, del);

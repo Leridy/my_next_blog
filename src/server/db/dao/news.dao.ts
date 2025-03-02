@@ -3,11 +3,7 @@ import { HotNews as HN } from '../models/news';
 import { OrderBy, PageDataBaseQuery } from '@/server/db/dao/type';
 
 class NewsDao {
-  public async get(
-    query: Partial<Omit<HotNews, 'tags'>> | number,
-    page?: PageDataBaseQuery,
-    orderByRule?: OrderBy
-  ) {
+  public async get(query: Partial<Omit<HotNews, 'tags'>> | number, page?: PageDataBaseQuery, orderByRule?: OrderBy) {
     if (typeof query === 'number') {
       return HN.findUnique({
         where: {
@@ -76,18 +72,13 @@ class NewsDao {
     });
   }
 
-  public async create(
-    query: Pick<HotNews, 'title' | 'description' | 'url' | 'uniqueId'>
-  ) {
+  public async create(query: Pick<HotNews, 'title' | 'description' | 'url' | 'uniqueId'>) {
     return HN.create({
       data: query,
     });
   }
 
-  public async update(
-    id: number,
-    data: Pick<HotNews, 'title' | 'description' | 'url'>
-  ) {
+  public async update(id: number, data: Pick<HotNews, 'title' | 'description' | 'url'>) {
     return HN.update({
       where: {
         id: id,

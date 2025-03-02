@@ -1,11 +1,4 @@
-import {
-  CSSProperties,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { CSSProperties, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import './Card.style.scss';
 
 export interface CardProps {
@@ -88,15 +81,7 @@ export default function UserCard(props: CardProps) {
   }, [header]);
 
   const renderAction = useMemo(() => {
-    return (
-      <div
-        className={
-          'flex justify-center items-center absolute bottom-0 left-0 w-full rounded-b-lg overflow-hidden card-action-part'
-        }
-      >
-        {actions}
-      </div>
-    );
+    return <div className={'flex justify-center items-center absolute bottom-0 left-0 w-full rounded-b-lg overflow-hidden card-action-part'}>{actions}</div>;
   }, [actions]);
 
   return (

@@ -6,15 +6,7 @@ import useApi from '@/app/manage/hooks/useApi';
 import { HotNews, HotSpider } from '@prisma/client';
 import { useSiteSettingContext } from '@/Provider/SiteSettingProvider';
 import useSettingMap from '@/Components/hooks/useSettingMap';
-import {
-  BugOutlined,
-  EyeInvisibleOutlined,
-  EyeOutlined,
-  FullscreenExitOutlined,
-  FullscreenOutlined,
-  MenuOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
+import { BugOutlined, EyeInvisibleOutlined, EyeOutlined, FullscreenExitOutlined, FullscreenOutlined, MenuOutlined, SyncOutlined } from '@ant-design/icons';
 import { useUserSettingContext } from '@/Provider/UserSettingProvider';
 import { Button, message, Tooltip } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
@@ -49,22 +41,7 @@ export interface HotBoardProps {
  * @description 这个组件是用来展示热门内容的，你需要传入以下信息，然后这个组件会展示出来
  */
 export default function HotBoard(props: HotBoardProps) {
-  const {
-    id,
-    icon,
-    title,
-    rowSpan,
-    colSpan,
-    onFocus,
-    isFocus,
-    keyword,
-    onOpenFrame,
-    index,
-    spiderId,
-    show = false,
-    onMoveItem,
-    onToggleShow,
-  } = props;
+  const { id, icon, title, rowSpan, colSpan, onFocus, isFocus, keyword, onOpenFrame, index, spiderId, show = false, onMoveItem, onToggleShow } = props;
 
   // 鼠标交互状态
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -92,13 +69,12 @@ export default function HotBoard(props: HotBoardProps) {
     apiURL: 'news',
   });
 
-  const { get: triggerSpiderRefresh, loading: spiderLoading } =
-    useApi<HotSpider>({
-      apiURL: 'spider/trigger',
-      headers: {
-        'x-ignore-error': 'true',
-      },
-    });
+  const { get: triggerSpiderRefresh, loading: spiderLoading } = useApi<HotSpider>({
+    apiURL: 'spider/trigger',
+    headers: {
+      'x-ignore-error': 'true',
+    },
+  });
 
   const { setting } = useSiteSettingContext();
   const { topicSettingMode } = useUserSettingContext();
@@ -257,10 +233,7 @@ export default function HotBoard(props: HotBoardProps) {
           </div>
         </Tooltip>
         <Tooltip title={show ? '不看它' : '看它'}>
-          <div
-            className={`toggle-button ${show ? '' : 'hide'}`}
-            onClick={handleToggle}
-          >
+          <div className={`toggle-button ${show ? '' : 'hide'}`} onClick={handleToggle}>
             {show ? <EyeInvisibleOutlined /> : <EyeOutlined />}
           </div>
         </Tooltip>
@@ -275,15 +248,7 @@ export default function HotBoard(props: HotBoardProps) {
           // 判断 hotCount大小排序
           return b.hotCount - a.hotCount;
         })
-        .map((newsInfo, i) => (
-          <NewsItem
-            onClick={openFrame}
-            keyword={keyword}
-            index={i}
-            {...newsInfo}
-            key={newsInfo.id}
-          />
-        )) || ''
+        .map((newsInfo, i) => <NewsItem onClick={openFrame} keyword={keyword} index={i} {...newsInfo} key={newsInfo.id} />) || ''
     );
   }, [filterNews, keyword, openFrame]);
 
@@ -329,16 +294,7 @@ export default function HotBoard(props: HotBoardProps) {
            30px rgba(0,0,0,0.5)`
         : '0px 5px 15px rgba(0,0,0,0.1)',
     };
-  }, [
-    news?.length,
-    position,
-    isHovered,
-    rowSpan,
-    colSpan,
-    index,
-    isDragging,
-    showBoard,
-  ]);
+  }, [news?.length, position, isHovered, rowSpan, colSpan, index, isDragging, showBoard]);
 
   // 计算文字阴影样式
   const textShadowStyle = useMemo(() => {
@@ -375,22 +331,7 @@ export default function HotBoard(props: HotBoardProps) {
         animationDelay: `${(index || 0) * 0.1}s`,
       }}
     >
-      <div
-        ref={setRefs}
-        className={
-          'p-4 ' +
-          'rounded-lg ' +
-          'hotBoard' +
-          'ard ' +
-          'flex-col ' +
-          'sm:h-full ' +
-          `${show ? '' : 'hide'} `
-        }
-        style={cardStyle}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
+      <div ref={setRefs} className={'p-4 ' + 'rounded-lg ' + 'hotBoard' + 'ard ' + 'flex-col ' + 'sm:h-full ' + `${show ? '' : 'hide'} `} style={cardStyle} onMouseMove={handleMouseMove} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
         {!news?.length && !loading && !topicSettingMode && (
           <div
             style={{
@@ -414,34 +355,17 @@ export default function HotBoard(props: HotBoardProps) {
         )}
 
         {topicSettingMode && renderOptionBar}
-        <div
-          className={'flex items-center space-x-2 w-full'}
-          style={{ position: 'relative', zIndex: 1 }}
-        >
+        <div className={'flex items-center space-x-2 w-full'} style={{ position: 'relative', zIndex: 1 }}>
           {icon && <BrandIcon src={icon} />}
           <h3 className={'font-bold'}>{title}</h3>
-          <div
-            className={`flex-1 flex justify-end ${topicSettingMode ? 'hidden' : ''}`}
-          >
+          <div className={`flex-1 flex justify-end ${topicSettingMode ? 'hidden' : ''}`}>
             <Tooltip title={'触发爬虫'}>
-              <Button
-                size={'small'}
-                type={'link'}
-                onClick={handleTriggerSpiderRefresh}
-                disabled={loading || spiderLoading || news?.length > 0}
-                style={{ display: news.length > 0 ? 'none' : undefined }}
-              >
+              <Button size={'small'} type={'link'} onClick={handleTriggerSpiderRefresh} disabled={loading || spiderLoading || news?.length > 0} style={{ display: news.length > 0 ? 'none' : undefined }}>
                 <BugOutlined />
               </Button>
             </Tooltip>
             <Tooltip title={'刷新'}>
-              <Button
-                size={'small'}
-                type={'link'}
-                onClick={handleGetNewsList}
-                disabled={loading}
-                style={{ display: spiderId ? undefined : 'none' }}
-              >
+              <Button size={'small'} type={'link'} onClick={handleGetNewsList} disabled={loading} style={{ display: spiderId ? undefined : 'none' }}>
                 <SyncOutlined spin={loading} />
               </Button>
             </Tooltip>
@@ -460,26 +384,8 @@ export default function HotBoard(props: HotBoardProps) {
           </div>
         </div>
 
-        <div
-          className={
-            'hotBoardNewsList mt-4 mb-4 ' +
-            `${filterNews?.length ? 'fade-in' : ''}`
-          }
-          style={{ position: 'relative', zIndex: 1 }}
-        >
-          {filterNews?.length && !topicSettingMode ? (
-            renderNews
-          ) : (
-            <EmptyBoard
-              loading={loading}
-              text={topicSettingMode ? '拖动卡片来排序' : undefined}
-              icon={
-                topicSettingMode ? (
-                  <BrandIcon src={icon} size={100} />
-                ) : undefined
-              }
-            />
-          )}
+        <div className={'hotBoardNewsList mt-4 mb-4 ' + `${filterNews?.length ? 'fade-in' : ''}`} style={{ position: 'relative', zIndex: 1 }}>
+          {filterNews?.length && !topicSettingMode ? renderNews : <EmptyBoard loading={loading} text={topicSettingMode ? '拖动卡片来排序' : undefined} icon={topicSettingMode ? <BrandIcon src={icon} size={100} /> : undefined} />}
         </div>
       </div>
     </div>

@@ -35,12 +35,7 @@ export default function ManageUser() {
   );
 
   return (
-    <ManageList
-      title={'用户管理'}
-      apiURL={'user'}
-      columns={columns}
-      manageName={'user'}
-    >
+    <ManageList title={'用户管理'} apiURL={'user'} columns={columns} manageName={'user'}>
       <FormItem label={'用户名'} name={'name'}>
         <Input />
       </FormItem>

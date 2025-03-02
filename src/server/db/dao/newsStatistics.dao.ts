@@ -22,9 +22,7 @@ class NewsStatistics {
     });
   }
 
-  public async getTop20List(): Promise<
-    Pick<HotNewsStatistics, 'id' | 'newsId' | 'clickCount'>[]
-  > {
+  public async getTop20List(): Promise<Pick<HotNewsStatistics, 'id' | 'newsId' | 'clickCount'>[]> {
     return HNS.findMany({
       where: {
         updatedAt: {
@@ -67,17 +65,13 @@ class NewsStatistics {
     return result._count.id;
   }
 
-  public async create(
-    data: Omit<HotNewsStatistics, 'id' | 'createdAt' | 'updatedAt'>
-  ) {
+  public async create(data: Omit<HotNewsStatistics, 'id' | 'createdAt' | 'updatedAt'>) {
     return HNS.create({
       data,
     });
   }
 
-  public async update(
-    data: Omit<HotNewsStatistics, 'id' | 'createdAt' | 'updatedAt'>
-  ) {
+  public async update(data: Omit<HotNewsStatistics, 'id' | 'createdAt' | 'updatedAt'>) {
     const { newsId, ...rest } = data;
     return HNS.update({
       where: {

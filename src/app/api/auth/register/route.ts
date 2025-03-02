@@ -21,20 +21,14 @@ async function post(req: NextRequest) {
       .equals([Yup.ref('password')]),
   });
 
-  const data = (await encryptPwdWithSalt(req)) as Pick<
-    User,
-    'name' | 'password' | 'email' | 'role'
-  > & {
+  const data = (await encryptPwdWithSalt(req)) as Pick<User, 'name' | 'password' | 'email' | 'role'> & {
     password2: string;
     validateCode: string;
   };
   await schema.validate(data);
 
   const sessionId = req.cookies.get('sessionId')?.value || '';
-  const validateResult = await checkValidationCode(
-    data.validateCode,
-    sessionId
-  );
+  const validateResult = await checkValidationCode(data.validateCode, sessionId);
 
   const dataToCreate: Partial<typeof data> = { ...data };
   // remove double-check data
@@ -49,8 +43,7 @@ async function post(req: NextRequest) {
   // remove password field
   delete result.password;
 
-  if (validateResult)
-    resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
+  if (validateResult) resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
 
   return NextResponse.json(result, {
     status: 200,
@@ -58,5 +51,4 @@ async function post(req: NextRequest) {
   });
 }
 
-export const POST = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, post);
+export const POST = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, post);

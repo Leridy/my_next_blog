@@ -2,16 +2,12 @@ import validateCodeDao from '@/server/db/dao/validateCode.dao';
 import type { SetHeaderOperation } from '@/server/middlewares';
 import { MyNRError } from '@/utils/MyNRError';
 
-export async function checkValidationCode(
-  code: string,
-  id: string
-): Promise<SetHeaderOperation | undefined> {
+export async function checkValidationCode(code: string, id: string): Promise<SetHeaderOperation | undefined> {
   // 验证验证码
   const validateCode = code;
   const sessionId = id;
 
-  if (!validateCode || !sessionId)
-    throw new MyNRError('验证码错误', 400, { validateCode, sessionId });
+  if (!validateCode || !sessionId) throw new MyNRError('验证码错误', 400, { validateCode, sessionId });
 
   // 验证验证码是否正确
   const data = await validateCodeDao.getValidateCode({

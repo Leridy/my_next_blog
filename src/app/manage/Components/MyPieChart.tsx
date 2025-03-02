@@ -43,13 +43,7 @@ const defaultOption = {
   ],
 };
 
-echarts.use([
-  TooltipComponent,
-  LegendComponent,
-  PieChart,
-  CanvasRenderer,
-  LabelLayout,
-]);
+echarts.use([TooltipComponent, LegendComponent, PieChart, CanvasRenderer, LabelLayout]);
 
 interface MyPieChartProps<T> {
   options?: EChartsOption;

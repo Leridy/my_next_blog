@@ -1,6 +1,4 @@
-export async function readableStreamToJSON<T>(
-  readableStream: ReadableStream<Uint8Array> | null
-): Promise<T | string> {
+export async function readableStreamToJSON<T>(readableStream: ReadableStream<Uint8Array> | null): Promise<T | string> {
   if (!readableStream) return '';
 
   const reader = readableStream.getReader();

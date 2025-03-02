@@ -3,14 +3,7 @@
  * 这是用来共享网站设置的Provider
  */
 
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import React, { createContext, useContext, ReactNode, useEffect, useMemo, useRef } from 'react';
 import { setting } from '@prisma/client';
 import useApi from '@/app/manage/hooks/useApi';
 import useSettingMap from '@/Components/hooks/useSettingMap';
@@ -19,17 +12,10 @@ interface SiteSettingContextType {
   setting: Map<string, setting>;
 }
 
-const SiteSettingContext = createContext<SiteSettingContextType | undefined>(
-  undefined
-);
+const SiteSettingContext = createContext<SiteSettingContextType | undefined>(undefined);
 
 const SITE_SETTING_KEY = 'SiteSetting';
-export const SiteSettingProvider = ({
-  children,
-}: {
-  children: ReactNode;
-  initialState?: setting[] | null;
-}) => {
+export const SiteSettingProvider = ({ children }: { children: ReactNode; initialState?: setting[] | null }) => {
   const requestLimit = useRef(false);
   const { get, items } = useApi<setting>({ apiURL: 'setting' });
   const { get: triggerSpiderRefresh } = useApi({
@@ -54,9 +40,7 @@ export const SiteSettingProvider = ({
 
   const getSettingInterval = useMemo(() => {
     const intervalNumber = Number(interval);
-    return isNaN(intervalNumber) || !intervalNumber
-      ? 1000 * 60
-      : intervalNumber * 1000;
+    return isNaN(intervalNumber) || !intervalNumber ? 1000 * 60 : intervalNumber * 1000;
   }, [interval]);
 
   useEffect(() => {
@@ -76,11 +60,7 @@ export const SiteSettingProvider = ({
     }
   }, [triggerSpiderRefresh]);
 
-  return (
-    <SiteSettingContext.Provider value={{ setting: settingMap }}>
-      {children}
-    </SiteSettingContext.Provider>
-  );
+  return <SiteSettingContext.Provider value={{ setting: settingMap }}>{children}</SiteSettingContext.Provider>;
 };
 
 export const useSiteSettingContext = () => {

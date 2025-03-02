@@ -16,9 +16,7 @@ class VisitorDao {
 
     // 判断是否是今天的访问
     const today = new Date();
-    const isToday =
-      visitor &&
-      new Date(visitor.updatedAt).toDateString() === today.toDateString();
+    const isToday = visitor && new Date(visitor.updatedAt).toDateString() === today.toDateString();
     const newTodayCount = isToday ? visitor.todayCount + 1 : 1;
 
     // 更新或创建访客记录

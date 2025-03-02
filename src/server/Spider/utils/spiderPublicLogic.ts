@@ -35,9 +35,7 @@ async function getSpiderSetting() {
 /**
  * get spider id from ithome and update the time;
  */
-async function getSpiderIdAndUpdateTime(
-  SPIDER_INFO: Pick<HotSpider, 'name' | 'description'>
-): Promise<Pick<HotSpider, 'updatedAt' | 'id'>> {
+async function getSpiderIdAndUpdateTime(SPIDER_INFO: Pick<HotSpider, 'name' | 'description'>): Promise<Pick<HotSpider, 'updatedAt' | 'id'>> {
   // get spider id from database
   const spiderResult = await SpiderDao.get({
     name: SPIDER_INFO.name,
@@ -67,9 +65,7 @@ async function getSpiderIdAndUpdateTime(
   }
 }
 
-export async function spiderPublicLogic(
-  SPIDER_INFO: Pick<HotSpider, 'name' | 'description'>
-) {
+export async function spiderPublicLogic(SPIDER_INFO: Pick<HotSpider, 'name' | 'description'>) {
   const { updatedAt, id } = await getSpiderIdAndUpdateTime(SPIDER_INFO);
   console.log(`spider ${SPIDER_INFO.name} with id ${id} start to working`);
 
@@ -79,9 +75,7 @@ export async function spiderPublicLogic(
   }
 
   // 默认间隔一小时
-  const interval: number = settings.get(`${SITE_SETTING_KEY}.interval`)?.value
-    ? Number(settings.get(`${SITE_SETTING_KEY}.interval`)?.value) * 1000 * 60
-    : 1000 * 60 * 60;
+  const interval: number = settings.get(`${SITE_SETTING_KEY}.interval`)?.value ? Number(settings.get(`${SITE_SETTING_KEY}.interval`)?.value) * 1000 * 60 : 1000 * 60 * 60;
 
   // 检查刷新间隔是否满足 interval
   if (Date.now() - new Date(updatedAt).getTime() < interval && isProd) {
@@ -111,9 +105,7 @@ export async function updateSpiderUpdateTime(id: number) {
  * check if the news is already in database update or create
  * @param data
  */
-export async function checkAndOperateNews(
-  data: Pick<HotNews, 'title' | 'uniqueId' | 'url' | 'image' | 'description'>[]
-) {
+export async function checkAndOperateNews(data: Pick<HotNews, 'title' | 'uniqueId' | 'url' | 'image' | 'description'>[]) {
   // check if the news is already in database update or create
   const tasks = data.map(async (item) => {
     const news = await NewsDao.get({ uniqueId: item.uniqueId });

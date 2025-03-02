@@ -9,19 +9,12 @@ interface InputtingTextProps {
 }
 
 export default function InputtingText(props: InputtingTextProps) {
-  const {
-    text = '',
-    cursorBlinkSpeed = 'slow',
-    align = 'center',
-    hideCursor = false,
-  } = props;
+  const { text = '', cursorBlinkSpeed = 'slow', align = 'center', hideCursor = false } = props;
 
   const [curText, setCurText] = useState<string>('');
   const [displayText, setDisplayText] = useState<string[]>(['']);
 
-  const [displayTextState, setDisplayTextState] = useState<'delete' | 'add'>(
-    'add'
-  );
+  const [displayTextState, setDisplayTextState] = useState<'delete' | 'add'>('add');
 
   const deleteIntervalHandler = useRef<NodeJS.Timeout | null>(null);
   const addIntervalHandler = useRef<NodeJS.Timeout | null>(null);

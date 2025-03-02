@@ -22,14 +22,8 @@ export default function DigitalClock(props: DigitalClockProps) {
 
   return (
     <div className={'items-center grid grid-rows-2 mb-4'}>
-      {showTitle && (
-        <h1 className={'text-2xl font-bold'}>{title || 'Digital Clock'}</h1>
-      )}
-      {showDate && (
-        <span className={'text-2xl font-bold'}>
-          {time.toLocaleDateString()}
-        </span>
-      )}
+      {showTitle && <h1 className={'text-2xl font-bold'}>{title || 'Digital Clock'}</h1>}
+      {showDate && <span className={'text-2xl font-bold'}>{time.toLocaleDateString()}</span>}
       <span className={'text-2xl font-bold'}>{time.toLocaleTimeString()}</span>
     </div>
   );

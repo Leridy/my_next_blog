@@ -1,7 +1,4 @@
-export function mergeHeaderObj(
-  headerObj1: Record<string, string | string[]>,
-  headerObj2: Record<string, string | string[]>
-): Record<string, string | string[]> {
+export function mergeHeaderObj(headerObj1: Record<string, string | string[]>, headerObj2: Record<string, string | string[]>): Record<string, string | string[]> {
   // 如果 两个 object 中有相同的 key 请按下列逻辑处理:
   // 1. 如果它们的 value 都是 string 则合并结果是 string[];
   // 2. 如果它们的 value 中有一个或都是 string[] 则将他们合并成 string[]

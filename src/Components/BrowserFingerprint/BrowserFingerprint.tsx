@@ -136,9 +136,7 @@ export default function BrowserFingerprint() {
     const hash = new TextEncoder().encode(fgp.join(''));
     crypto.subtle.digest('SHA-256', hash).then((result) => {
       const hashArray = Array.from(new Uint8Array(result));
-      const hashHex = hashArray
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('');
+      const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
       setFingerprint(hashHex);
     });
   }, []);
@@ -153,12 +151,5 @@ export default function BrowserFingerprint() {
     setFingerprint('');
   }, [create, fingerprint]);
 
-  return (
-    <canvas
-      id="fingerprint"
-      width="200"
-      height="200"
-      style={{ display: 'none' }}
-    />
-  );
+  return <canvas id="fingerprint" width="200" height="200" style={{ display: 'none' }} />;
 }

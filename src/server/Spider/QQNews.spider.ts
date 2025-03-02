@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface QQNewsDataStructure {
   id: string;
@@ -174,50 +170,24 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'QQNews 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  `https://r.inews.qq.com/gw/event/hot_ranking_list?page_size=50`;
+const URL_GENERATOR = () => `https://r.inews.qq.com/gw/event/hot_ranking_list?page_size=50`;
 
 async function getData(): Promise<QQNewsResponse<QQNewsDataStructure>> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: QQNewsDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: QQNewsDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data
     .filter((item) => Object.keys(item).length >= 60)
     .map((item) => {
       // 从QQ新闻数据结构中提取所需字段
-      const {
-        title,
-        abstract,
-        url,
-        id,
-        hotEvent,
-        fimgUrl,
-        uinnick,
-        labelList,
-      } = item;
+      const { title, abstract, url, id, hotEvent, fimgUrl, uinnick, labelList } = item;
 
       const tags = labelList.map((label) => label.word);
 
       // 构建返回数据
-      const transformedItem: Pick<
-        HotNews,
-        | 'title'
-        | 'url'
-        | 'description'
-        | 'image'
-        | 'spiderId'
-        | 'uniqueId'
-        | 'hotCount'
-        | 'tags'
-      > = {
+      const transformedItem: Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId' | 'hotCount' | 'tags'> = {
         title,
         description: abstract || title,
         image: fimgUrl?.['0'] || '',

@@ -10,9 +10,7 @@ interface EmptyBoardProps {
 export default function EmptyBoard(props: EmptyBoardProps) {
   const { text, icon, loading } = props;
   return (
-    <div
-      className={` select-none h-full w-full flex align-middle justify-center flex-col ${loading ? 'empty-board-loading' : ''}`}
-    >
+    <div className={` select-none h-full w-full flex align-middle justify-center flex-col ${loading ? 'empty-board-loading' : ''}`}>
       <div className={'flex justify-center items-center mb-2'}>
         {icon || (
           <img
@@ -27,9 +25,7 @@ export default function EmptyBoard(props: EmptyBoardProps) {
         )}
       </div>
       <div className={'text-center'}>
-        <p style={{ color: 'var(--color-text-secondary)' }}>
-          {text || 'Nothing here ...'}
-        </p>
+        <p style={{ color: 'var(--color-text-secondary)' }}>{text || 'Nothing here ...'}</p>
       </div>
     </div>
   );

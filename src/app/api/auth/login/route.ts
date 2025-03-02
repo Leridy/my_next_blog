@@ -29,17 +29,11 @@ async function post(req: NextRequest) {
     validateCode: Yup.string().required(),
   });
 
-  const data = (await encryptPwdWithSalt(req)) as Pick<
-    User,
-    'email' | 'password'
-  > & { validateCode: string };
+  const data = (await encryptPwdWithSalt(req)) as Pick<User, 'email' | 'password'> & { validateCode: string };
 
   const sessionId = req.cookies.get('sessionId')?.value || '';
   await schema.validate(data);
-  const validateResult = await checkValidationCode(
-    data.validateCode,
-    sessionId
-  );
+  const validateResult = await checkValidationCode(data.validateCode, sessionId);
   const result = await login(data);
   if (!result) throw new MyNRError('用户不存在或密码错误', 401);
 
@@ -49,13 +43,8 @@ async function post(req: NextRequest) {
   const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET || '');
   const alg = 'HS256';
 
-  const token = await new jose.SignJWT(returnResult)
-    .setProtectedHeader({ alg })
-    .setIssuedAt()
-    .setExpirationTime('30d')
-    .sign(secret);
-  resHeaderOperation['Set-Cookie'] =
-    `token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60};`;
+  const token = await new jose.SignJWT(returnResult).setProtectedHeader({ alg }).setIssuedAt().setExpirationTime('30d').sign(secret);
+  resHeaderOperation['Set-Cookie'] = `token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60};`;
 
   if (validateResult) {
     resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
@@ -72,5 +61,4 @@ async function post(req: NextRequest) {
   );
 }
 
-export const POST = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, post);
+export const POST = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, post);

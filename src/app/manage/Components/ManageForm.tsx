@@ -14,14 +14,7 @@ interface ManageFormProps<T> {
 }
 
 export default function ManageForm<T>(props: ManageFormProps<T>) {
-  const {
-    onSubmit,
-    onCancel,
-    loading,
-    initialValues,
-    children,
-    size = 'small',
-  } = props;
+  const { onSubmit, onCancel, loading, initialValues, children, size = 'small' } = props;
   const [form] = useForm<Partial<T>>();
 
   const handleSubmit = async () => {
@@ -46,25 +39,14 @@ export default function ManageForm<T>(props: ManageFormProps<T>) {
   }, [form, initialValues]);
 
   return (
-    <Form
-      form={form}
-      layout={'horizontal'}
-      wrapperCol={{ span: size === 'small' ? 8 : 20 }}
-      labelCol={{ span: size === 'small' ? 2 : 4 }}
-      initialValues={initialValues || {}}
-    >
+    <Form form={form} layout={'horizontal'} wrapperCol={{ span: size === 'small' ? 8 : 20 }} labelCol={{ span: size === 'small' ? 2 : 4 }} initialValues={initialValues || {}}>
       {children}
 
       <FormItem wrapperCol={{ offset: size === 'small' ? 2 : 4 }}>
         <Button type={'primary'} onClick={handleSubmit} loading={loading}>
           提交
         </Button>
-        <Button
-          type={'default'}
-          className={'ml-2'}
-          onClick={handleCancel}
-          loading={loading}
-        >
+        <Button type={'default'} className={'ml-2'} onClick={handleCancel} loading={loading}>
           取消
         </Button>
       </FormItem>

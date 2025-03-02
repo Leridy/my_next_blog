@@ -18,12 +18,7 @@ const get_app_token = async () => {
   const now = Math.round(Date.now() / 1000);
   const hex_now = '0x' + now.toString(16);
   const md5_now = await md5(now.toString());
-  const s =
-    'token://com.coolapk.market/c67ef5943784d09750dcfbb31020f0ab?' +
-    md5_now +
-    '$' +
-    DEVICE_ID +
-    '&com.coolapk.market';
+  const s = 'token://com.coolapk.market/c67ef5943784d09750dcfbb31020f0ab?' + md5_now + '$' + DEVICE_ID + '&com.coolapk.market';
   const md5_s = await md5(Buffer.from(s).toString('base64'));
   const token = md5_s + DEVICE_ID + hex_now;
   return token;
@@ -43,7 +38,6 @@ export const genHeaders = async () => {
     'X-App-Version': '11.0',
     'X-Api-Version': '11',
     'X-App-Code': '2101202',
-    'User-Agent':
-      'Mozilla/5.0 (Linux; Android 10; Mi 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.5563.15 Mobile Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mi 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.5563.15 Mobile Safari/537.36',
   };
 };

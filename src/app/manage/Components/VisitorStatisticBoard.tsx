@@ -39,10 +39,7 @@ export default function VisitorStatisticBoard() {
 
   const averagePagePerVisitor = useMemo(() => {
     // 注意这里的除数不能为 0，向上取整
-    return Math.ceil(
-      (visitedCount?.todayVisitedCount || 0) /
-        (visitorCount?.todayVisitorCount || 1)
-    );
+    return Math.ceil((visitedCount?.todayVisitedCount || 0) / (visitorCount?.todayVisitorCount || 1));
   }, [visitorCount, visitedCount]);
   useEffect(() => {
     getVisitorCount('count');
@@ -63,45 +60,31 @@ export default function VisitorStatisticBoard() {
   }, [getVisitedCount, getVisitorCount, getVisitorRankList]);
 
   return (
-    <CommonStatisticCard
-      title={'访客统计'}
-      onRefresh={handleRefresh}
-      loading={visitorLoading || visitedLoading || visitorRankLoading}
-    >
+    <CommonStatisticCard title={'访客统计'} onRefresh={handleRefresh} loading={visitorLoading || visitedLoading || visitorRankLoading}>
       <div className="grid grid-cols-5 gap-4 p-4 mb-4">
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日访客</span>
-          <span className="text-2xl font-bold mt-2">
-            {visitorCount?.todayVisitorCount || 0}
-          </span>
+          <span className="text-2xl font-bold mt-2">{visitorCount?.todayVisitorCount || 0}</span>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">新增访客</span>
-          <span className="text-2xl font-bold mt-2">
-            {visitorCount?.newVisitorCount || 0}
-          </span>
+          <span className="text-2xl font-bold mt-2">{visitorCount?.newVisitorCount || 0}</span>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日页面打开次数</span>
-          <span className="text-2xl font-bold mt-2">
-            {visitedCount?.todayVisitedCount || 0}
-          </span>
+          <span className="text-2xl font-bold mt-2">{visitedCount?.todayVisitedCount || 0}</span>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日访客平均次数</span>
-          <span className="text-2xl font-bold mt-2">
-            {averagePagePerVisitor}
-          </span>
+          <span className="text-2xl font-bold mt-2">{averagePagePerVisitor}</span>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">总访问量</span>
-          <span className="text-2xl font-bold mt-2">
-            {visitedCount?.totalVisitedCount || 0}
-          </span>
+          <span className="text-2xl font-bold mt-2">{visitedCount?.totalVisitedCount || 0}</span>
         </div>
       </div>
 
@@ -137,9 +120,7 @@ export default function VisitorStatisticBoard() {
                   { name: '今日访客', value: visitorCount?.todayVisitorCount },
                   {
                     name: '历史访客',
-                    value:
-                      (visitorCount?.totalVisitorCount || 0) -
-                      (visitorCount?.todayVisitorCount || 0),
+                    value: (visitorCount?.totalVisitorCount || 0) - (visitorCount?.todayVisitorCount || 0),
                   },
                 ],
               },
@@ -174,9 +155,7 @@ export default function VisitorStatisticBoard() {
                   },
                   {
                     name: '历史访问次数',
-                    value:
-                      (visitedCount?.totalVisitedCount || 0) -
-                      (visitedCount?.todayVisitedCount || 0),
+                    value: (visitedCount?.totalVisitedCount || 0) - (visitedCount?.todayVisitedCount || 0),
                   },
                 ],
               },
@@ -191,17 +170,8 @@ export default function VisitorStatisticBoard() {
         {visitorRankList.map((item, index) => {
           return (
             <div key={index} className={'flex justify-between items-center'}>
-              <a
-                href={`https://www.ip138.com/iplookup.php?ip=${item.ip}&action=2`}
-                target={'_blank'}
-                rel={'noreferrer'}
-                className={' hover:underline flex'}
-              >
-                <span
-                  className={` w-6 flex items-center justify-center text-sm `}
-                >
-                  {index + 1}.
-                </span>
+              <a href={`https://www.ip138.com/iplookup.php?ip=${item.ip}&action=2`} target={'_blank'} rel={'noreferrer'} className={' hover:underline flex'}>
+                <span className={` w-6 flex items-center justify-center text-sm `}>{index + 1}.</span>
                 {item.ip} - {item.browserSign}
               </a>
               <span>{item.todayCount}</span>

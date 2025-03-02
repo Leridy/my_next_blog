@@ -57,9 +57,7 @@ export default function HotList() {
         width: 100,
         align: 'center',
         render: (spiderId: number) => {
-          const currentSpider = spiders?.find(
-            (item: HotSpider) => item.id === spiderId
-          );
+          const currentSpider = spiders?.find((item: HotSpider) => item.id === spiderId);
           return currentSpider?.name || '未知';
         },
       },

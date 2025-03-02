@@ -1,11 +1,7 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
 import { mergeHeaderObj } from '@/utils/mergeObject';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface SinaDataStructure {
   '@type': string;
@@ -40,8 +36,7 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'sina 爬虫',
 };
 
-const URL_GENERATOR = (type: string) =>
-  `https://newsapp.sina.cn/api/hotlist?newsId=HB-1-snhs%2Ftop_news_list-${type}`;
+const URL_GENERATOR = (type: string) => `https://newsapp.sina.cn/api/hotlist?newsId=HB-1-snhs%2Ftop_news_list-${type}`;
 
 const ListType = {
   all: '新浪热榜',
@@ -61,13 +56,7 @@ async function getData(type: keyof typeof ListType = 'all') {
   return await http.get(url);
 }
 
-function dataTransformer(
-  data: SinaDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: SinaDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     const { info, base } = item;
     return {
@@ -83,9 +72,7 @@ function dataTransformer(
   });
 }
 
-function mergeTypeData(
-  data: Record<keyof typeof ListType, SinaDataStructure[]>
-): SinaDataStructure[] {
+function mergeTypeData(data: Record<keyof typeof ListType, SinaDataStructure[]>): SinaDataStructure[] {
   return Object.keys(data).reduce((acc, cur) => {
     // @ts-expect-error sb 玩意
     return acc.concat(data[cur]);

@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 import getBiliWbi from '@/server/Spider/utils/getToken/bilibili';
 import { AxiosResponse } from 'axios';
 
@@ -113,17 +109,14 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'bilibili 爬虫',
 };
 
-const URL_GENERATOR = (type: number, wbiData: string) =>
-  `https://api.bilibili.com/x/web-interface/ranking/v2?tid=${type}&type=all&${wbiData}`;
-const URL_GENERATOR_BACKUP = (type: number) =>
-  `https://api.bilibili.com/x/web-interface/ranking?jsonp=jsonp?rid=${type}&type=1&callback=__jp0`;
+const URL_GENERATOR = (type: number, wbiData: string) => `https://api.bilibili.com/x/web-interface/ranking/v2?tid=${type}&type=all&${wbiData}`;
+const URL_GENERATOR_BACKUP = (type: number) => `https://api.bilibili.com/x/web-interface/ranking?jsonp=jsonp?rid=${type}&type=1&callback=__jp0`;
 
 const HTTP_CONFIG = {
   method: 'GET',
   headers: {
     Referer: 'https://www.bilibili.com/ranking/all',
-    'User-Agent':
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
   },
 };
 
@@ -142,23 +135,13 @@ const ListType = {
   // "影视" = 181,
 };
 
-async function getData(
-  type: (typeof ListType)[keyof typeof ListType] = 0,
-  spiderId: number
-) {
+async function getData(type: (typeof ListType)[keyof typeof ListType] = 0, spiderId: number) {
   const wbiData = await getBiliWbi();
   const url = URL_GENERATOR(type, wbiData);
   const backupUrl = URL_GENERATOR_BACKUP(type);
-  let res:
-    | AxiosResponse<BilibiliResponse<BilibiliDataStructure1>>
-    | AxiosResponse<BilibiliResponse<BilibiliDataStructure2>> = await http.get<
-    BilibiliResponse<BilibiliDataStructure1>
-  >(url, { headers: HTTP_CONFIG.headers });
+  let res: AxiosResponse<BilibiliResponse<BilibiliDataStructure1>> | AxiosResponse<BilibiliResponse<BilibiliDataStructure2>> = await http.get<BilibiliResponse<BilibiliDataStructure1>>(url, { headers: HTTP_CONFIG.headers });
 
-  let finalData: Pick<
-    HotNews,
-    'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
-  >[] = [];
+  let finalData: Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] = [];
 
   if (!Array.isArray(res.data?.list)) {
     res = await http.get<BilibiliResponse<BilibiliDataStructure2>>(backupUrl, {
@@ -172,13 +155,7 @@ async function getData(
   return finalData;
 }
 
-function dataTransformer1(
-  data: BilibiliDataStructure1[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer1(data: BilibiliDataStructure1[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
       title: item.title,
@@ -193,13 +170,7 @@ function dataTransformer1(
   });
 }
 
-function dataTransformer2(
-  data: BilibiliDataStructure2[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer2(data: BilibiliDataStructure2[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
       title: item.title,

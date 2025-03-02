@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface ToutiaoDataStructure {
   ClusterId: number;
@@ -41,21 +37,14 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'toutiao 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  `https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc`;
+const URL_GENERATOR = () => `https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc`;
 
 async function getData(): Promise<{ data: ToutiaoDataStructure[] }> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: ToutiaoDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: ToutiaoDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
       title: item.Title,

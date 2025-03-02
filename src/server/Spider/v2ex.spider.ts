@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface V2exNode {
   avatar_large: string;
@@ -66,28 +62,19 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'v2ex 爬虫',
 };
 
-const URL_GENERATOR = (type: string | number) =>
-  `https://www.v2ex.com/api/topics/${type}.json`;
+const URL_GENERATOR = (type: string | number) => `https://www.v2ex.com/api/topics/${type}.json`;
 
 const ListType = {
   最热主题: 'hot',
   最新主题: 'latest',
 };
 
-async function getData(
-  type: (typeof ListType)[keyof typeof ListType] = 'hot'
-): Promise<V2exDataStructure[]> {
+async function getData(type: (typeof ListType)[keyof typeof ListType] = 'hot'): Promise<V2exDataStructure[]> {
   const url = URL_GENERATOR(type);
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: V2exDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: V2exDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
       title: item.title,

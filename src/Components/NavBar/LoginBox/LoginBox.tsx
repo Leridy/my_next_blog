@@ -30,15 +30,7 @@ export default function LoginBox() {
       <Button type={'default'} onClick={() => showModal(false)}>
         注册
       </Button>
-      {visible && (
-        <UserModal
-          visible={visible}
-          onClose={handleCancel}
-          onLogin={handleSuccess}
-          onRegister={handleSuccess}
-          defaultType={type}
-        />
-      )}
+      {visible && <UserModal visible={visible} onClose={handleCancel} onLogin={handleSuccess} onRegister={handleSuccess} defaultType={type} />}
     </Space>
   );
 }

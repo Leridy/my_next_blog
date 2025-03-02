@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface SspaiDataStructure {
   id: number;
@@ -82,8 +78,7 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'sspai 爬虫',
 };
 
-const URL_GENERATOR = (type: string) =>
-  `https://sspai.com/api/v1/article/tag/page/get?limit=15&tag=${type}`;
+const URL_GENERATOR = (type: string) => `https://sspai.com/api/v1/article/tag/page/get?limit=15&tag=${type}`;
 
 const ListType = ['热门文章', '应用推荐', '生活方式', '效率技巧', '少数派播客'];
 
@@ -92,13 +87,7 @@ async function getData(type: string): Promise<{ data: SspaiDataStructure[] }> {
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: SspaiDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: SspaiDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   const idSet = new Set<number>();
   return data
     .filter(({ id }) => {
@@ -110,17 +99,7 @@ function dataTransformer(
       return true;
     })
     .map((item) => {
-      const {
-        title,
-        banner,
-        summary,
-        id,
-        like_count,
-        comment_count,
-        view_count,
-        tags,
-        author,
-      } = item;
+      const { title, banner, summary, id, like_count, comment_count, view_count, tags, author } = item;
       return {
         title: title,
         description: summary,
@@ -129,8 +108,7 @@ function dataTransformer(
         uniqueId: `sspai-${id}`,
         spiderId,
         hotCount: like_count + comment_count + view_count || 0,
-        tags:
-          tags.length > 0 ? tags.map((tag) => tag.title) : [author.nickname],
+        tags: tags.length > 0 ? tags.map((tag) => tag.title) : [author.nickname],
       };
     });
 }

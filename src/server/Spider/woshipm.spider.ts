@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface WoshipmDataStructure {
   controlTypeCode: number;
@@ -53,28 +49,14 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'woshipm 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  `https://www.woshipm.com/api2/app/article/popular/daily`;
+const URL_GENERATOR = () => `https://www.woshipm.com/api2/app/article/popular/daily`;
 
 async function getData(): Promise<WoshipmResponse> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: WoshipmDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  | 'title'
-  | 'url'
-  | 'description'
-  | 'image'
-  | 'spiderId'
-  | 'uniqueId'
-  | 'hotCount'
-  | 'tags'
->[] {
+function dataTransformer(data: WoshipmDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId' | 'hotCount' | 'tags'>[] {
   return data.map((item) => {
     const {
       data: { articleTitle, articleSummary, id, imageUrl, tag, articleAuthor },
@@ -83,17 +65,7 @@ function dataTransformer(
 
     const tags = tag.split(' ').filter(Boolean);
 
-    const transformedItem: Pick<
-      HotNews,
-      | 'title'
-      | 'url'
-      | 'description'
-      | 'image'
-      | 'spiderId'
-      | 'uniqueId'
-      | 'hotCount'
-      | 'tags'
-    > = {
+    const transformedItem: Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId' | 'hotCount' | 'tags'> = {
       title: articleTitle,
       description: articleSummary || articleTitle,
       image: imageUrl || '',

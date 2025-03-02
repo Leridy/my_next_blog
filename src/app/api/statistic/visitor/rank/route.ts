@@ -13,5 +13,4 @@ async function get() {
   );
 }
 
-export const GET = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, get);
+export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);

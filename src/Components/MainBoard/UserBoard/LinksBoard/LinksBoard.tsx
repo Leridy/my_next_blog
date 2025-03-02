@@ -12,8 +12,7 @@ export default function LinksBoard() {
     baseKey: SITE_SETTING_KEY,
     setting,
     subKeys: {
-      links:
-        '🪨 网站里程碑 - https://docs.qq.com/doc/DTU5GbEVFTURpT05i\n🙏 特别鸣谢 - https://docs.qq.com/doc/DTVRYd0VXSmV5a2Va',
+      links: '🪨 网站里程碑 - https://docs.qq.com/doc/DTU5GbEVFTURpT05i\n🙏 特别鸣谢 - https://docs.qq.com/doc/DTVRYd0VXSmV5a2Va',
     },
   });
 

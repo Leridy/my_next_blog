@@ -2,15 +2,7 @@
 import { message, Modal } from 'antd';
 import ManageForm from '@/app/manage/Components/ManageForm';
 import useEditCard from '@/app/manage/hooks/useEditCard';
-import {
-  forwardRef,
-  Ref,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, Ref, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 interface ManageFormModalProps {
   titleGroup: {
@@ -25,10 +17,7 @@ export interface ManageFormModalRef {
   open: (id?: string) => Promise<void | boolean>;
 }
 
-function ManageFormModal<T>(
-  props: ManageFormModalProps,
-  ref: Ref<ManageFormModalRef>
-) {
+function ManageFormModal<T>(props: ManageFormModalProps, ref: Ref<ManageFormModalRef>) {
   const { titleGroup, apiURL, children } = props;
   const [id, setId] = useState<string | undefined>(undefined);
 
@@ -94,19 +83,8 @@ function ManageFormModal<T>(
   }, []);
 
   return (
-    <Modal
-      open={visible}
-      footer={null}
-      onCancel={handleFormCancel}
-      title={cardTitle}
-      destroyOnClose
-    >
-      <ManageForm
-        onSubmit={handleFormSubmit}
-        onCancel={handleFormCancel}
-        initialValues={initialValues}
-        size={'large'}
-      >
+    <Modal open={visible} footer={null} onCancel={handleFormCancel} title={cardTitle} destroyOnClose>
+      <ManageForm onSubmit={handleFormSubmit} onCancel={handleFormCancel} initialValues={initialValues} size={'large'}>
         {children}
       </ManageForm>
     </Modal>
@@ -115,6 +93,4 @@ function ManageFormModal<T>(
 
 // export forwards
 
-export default forwardRef<ManageFormModalRef, ManageFormModalProps>(
-  ManageFormModal
-);
+export default forwardRef<ManageFormModalRef, ManageFormModalProps>(ManageFormModal);

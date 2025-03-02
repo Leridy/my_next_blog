@@ -5,17 +5,13 @@ import { useState } from 'react';
 import './UserModal.style.scss';
 
 interface LoginFormProps {
-  onLogin: (
-    data: Pick<User, 'email' | 'password'> & { validateCode: string }
-  ) => void;
+  onLogin: (data: Pick<User, 'email' | 'password'> & { validateCode: string }) => void;
   loading?: boolean;
 }
 
 export default function LoginForm(props: LoginFormProps) {
   const { onLogin, loading } = props;
-  const [form] = Form.useForm<
-    Pick<User, 'email' | 'password'> & { validateCode: string }
-  >();
+  const [form] = Form.useForm<Pick<User, 'email' | 'password'> & { validateCode: string }>();
   const [randomKey, setRandomKey] = useState(Math.random());
 
   const handleChangeValidateCode = () => {
@@ -45,28 +41,18 @@ export default function LoginForm(props: LoginFormProps) {
         <Input placeholder={'请输入邮箱'} type={'email'} />
       </FormItem>
 
-      <FormItem
-        label={'密码'}
-        name={'password'}
-        rules={[{ required: true, message: '请输入密码' }]}
-      >
+      <FormItem label={'密码'} name={'password'} rules={[{ required: true, message: '请输入密码' }]}>
         <Input placeholder={'请输入密码'} type={'password'} />
       </FormItem>
 
       <Space>
-        <FormItem
-          label={'验证码'}
-          name={'validateCode'}
-          rules={[{ required: true, message: '请输入验证码' }]}
-        >
+        <FormItem label={'验证码'} name={'validateCode'} rules={[{ required: true, message: '请输入验证码' }]}>
           <Input placeholder={'请输入验证码, 区分大小写'} />
         </FormItem>
 
         <FormItem label={' '}>
           <div
-            className={
-              'cursor-pointer user-modal-validate-code rounded-md overflow-hidden'
-            }
+            className={'cursor-pointer user-modal-validate-code rounded-md overflow-hidden'}
             onClick={handleChangeValidateCode}
             style={{
               backgroundImage: `url(/api/image/validationCode?k=${randomKey})`,

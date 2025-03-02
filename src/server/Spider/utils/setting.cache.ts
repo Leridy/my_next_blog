@@ -34,10 +34,7 @@ export const updateSetting = (settings: Map<string, setting> | null) => {
 export const getSetting = (): Map<string, setting> | null | undefined => {
   if (isProd) {
     // @ts-expect-error – Prisma Client Type
-    return globalThis.innerSpiderSetting as
-      | Map<string, setting>
-      | null
-      | undefined;
+    return globalThis.innerSpiderSetting as Map<string, setting> | null | undefined;
   } else {
     // @ts-expect-error – Prisma Client Type
     return global.innerSpiderSetting as Map<string, setting> | null | undefined;

@@ -2,9 +2,7 @@ import { User as UserModel } from '../models/user';
 import { User } from '@prisma/client';
 
 export class UserDao {
-  public async createUser(
-    data: Pick<User, 'email' | 'name' | 'password'>
-  ): Promise<Partial<User>> {
+  public async createUser(data: Pick<User, 'email' | 'name' | 'password'>): Promise<Partial<User>> {
     // some logic to get user from database
     return UserModel.create({
       data,
@@ -30,9 +28,7 @@ export class UserDao {
     });
   }
 
-  public async login(
-    data: Pick<User, 'email' | 'password'>
-  ): Promise<User | null> {
+  public async login(data: Pick<User, 'email' | 'password'>): Promise<User | null> {
     // some logic to login user
     return UserModel.findUnique({
       where: {

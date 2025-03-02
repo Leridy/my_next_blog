@@ -1,14 +1,6 @@
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useCallback,
-  useEffect,
-} from 'react';
+import React, { createContext, useContext, ReactNode, useCallback, useEffect } from 'react';
 import { User } from '@prisma/client';
-import useUserAuthData, {
-  UserInfo,
-} from '@/Components/UserComponents/hooks/useUserAuthData';
+import useUserAuthData, { UserInfo } from '@/Components/UserComponents/hooks/useUserAuthData';
 import { message } from 'antd';
 
 interface UserContextType {
@@ -19,12 +11,7 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({
-  children,
-}: {
-  children: ReactNode;
-  initialState?: UserInfo | null;
-}) => {
+export const UserProvider = ({ children }: { children: ReactNode; initialState?: UserInfo | null }) => {
   const { requestLogout, requestUserInfo, user } = useUserAuthData();
 
   const handleUserLogout = useCallback(async () => {
@@ -42,13 +29,7 @@ export const UserProvider = ({
     }
   }, [requestUserInfo, user]);
 
-  return (
-    <UserContext.Provider
-      value={{ user, requestLogout: handleUserLogout, requestUserInfo }}
-    >
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ user, requestLogout: handleUserLogout, requestUserInfo }}>{children}</UserContext.Provider>;
 };
 
 export const useUserContext = () => {

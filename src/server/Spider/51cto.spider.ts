@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 import { getToken, sign } from '@/server/Spider/utils/getToken/51cto';
 
 interface FiveOneCTODataStructure {
@@ -68,21 +64,9 @@ async function getData(): Promise<{
   });
 }
 
-function dataTransformer(
-  data: FiveOneCTODataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: FiveOneCTODataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
-    const {
-      title,
-      abstract: description,
-      cover: image,
-      url,
-      article_id: uniqueId,
-    } = item;
+    const { title, abstract: description, cover: image, url, article_id: uniqueId } = item;
     return {
       title,
       description,
@@ -104,9 +88,7 @@ export default async function main() {
 
   const requestedData = await getData();
 
-  const result = requestedData.data.data.list.filter(
-    (ele) => Object.keys(ele).length > 20
-  );
+  const result = requestedData.data.data.list.filter((ele) => Object.keys(ele).length > 20);
   //
   const transformedData = dataTransformer(result, id);
   //

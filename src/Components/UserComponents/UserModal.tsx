@@ -25,13 +25,9 @@ export default function UserModal(props: UserModalProps) {
 
   const { loading, requestRegister, requestLogin } = useUserAuthData();
 
-  const [type, setType] = useState<'login' | 'register'>(
-    defaultType || 'login'
-  );
+  const [type, setType] = useState<'login' | 'register'>(defaultType || 'login');
 
-  const handleLogin = async (
-    data: Pick<User, 'email' | 'password'> & { validateCode: string }
-  ) => {
+  const handleLogin = async (data: Pick<User, 'email' | 'password'> & { validateCode: string }) => {
     try {
       const result = await requestLogin(data);
       onLogin(result);
@@ -39,9 +35,7 @@ export default function UserModal(props: UserModalProps) {
       message.success('登录成功');
     } catch (e) {
       console.error(e);
-      message.error(
-        (e as NetworkError).bizMessage || (e as Error).message || '登录失败'
-      );
+      message.error((e as NetworkError).bizMessage || (e as Error).message || '登录失败');
     }
   };
 
@@ -52,34 +46,18 @@ export default function UserModal(props: UserModalProps) {
       onClose();
       message.success('注册成功');
     } catch (e) {
-      message.error(
-        (e as NetworkError).bizMessage || (e as Error).message || '注册失败'
-      );
+      message.error((e as NetworkError).bizMessage || (e as Error).message || '注册失败');
     }
   };
 
   return (
-    <Modal
-      title={type === 'login' ? '登录' : '注册'}
-      open={visible}
-      onCancel={onClose}
-      footer={null}
-      destroyOnClose
-    >
-      {type === 'login' ? (
-        <LoginForm loading={loading} onLogin={handleLogin} />
-      ) : (
-        <RegisterForm loading={loading} onRegister={handleRegister} />
-      )}
+    <Modal title={type === 'login' ? '登录' : '注册'} open={visible} onCancel={onClose} footer={null} destroyOnClose>
+      {type === 'login' ? <LoginForm loading={loading} onLogin={handleLogin} /> : <RegisterForm loading={loading} onRegister={handleRegister} />}
       {/* 已有账户？点击登录 */}
       {onRegister && (
         <p className={'text-center cursor-pointer'}>
           {type === 'login' ? '没有账户？' : '已有账户？'}
-          <Button
-            type={'link'}
-            size={'small'}
-            onClick={() => setType(type === 'login' ? 'register' : 'login')}
-          >
+          <Button type={'link'} size={'small'} onClick={() => setType(type === 'login' ? 'register' : 'login')}>
             {type === 'login' ? '点击注册' : '点击登录'}
           </Button>
         </p>

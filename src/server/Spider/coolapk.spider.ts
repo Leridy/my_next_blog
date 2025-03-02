@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 import { genHeaders } from '@/server/Spider/utils/getToken/coolapk';
 
 interface CoolApkDataStructure {
@@ -202,8 +198,7 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'coolapk 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  `https://api.coolapk.com/v6/page/dataList?url=/feed/statList?cacheExpires=300&statType=day&sortField=detailnum&title=今日热门&title=今日热门&subTitle=&page=1`;
+const URL_GENERATOR = () => `https://api.coolapk.com/v6/page/dataList?url=/feed/statList?cacheExpires=300&statType=day&sortField=detailnum&title=今日热门&title=今日热门&subTitle=&page=1`;
 
 async function getData(): Promise<{ data: CoolApkDataStructure[] }> {
   const url = URL_GENERATOR();
@@ -212,23 +207,9 @@ async function getData(): Promise<{ data: CoolApkDataStructure[] }> {
   });
 }
 
-function dataTransformer(
-  data: CoolApkDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: CoolApkDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
-    const {
-      id,
-      message: title,
-      ttitle: description,
-      tpic: image,
-      shareUrl: url,
-      likenum: hotCount,
-      tags,
-    } = item;
+    const { id, message: title, ttitle: description, tpic: image, shareUrl: url, likenum: hotCount, tags } = item;
     return {
       title,
       description,

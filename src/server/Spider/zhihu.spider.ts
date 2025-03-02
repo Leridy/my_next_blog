@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface ZhihuDataStructure {
   type: string;
@@ -54,21 +50,14 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'zhihu 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=50&desktop=true`;
+const URL_GENERATOR = () => `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=50&desktop=true`;
 
 async function getData(): Promise<{ data: ZhihuDataStructure[] }> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: ZhihuDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: ZhihuDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
       title: item.target.title,

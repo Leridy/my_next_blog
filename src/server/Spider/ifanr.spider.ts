@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface IfanrDataStructure {
   buzz_original_url: string;
@@ -22,24 +18,16 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'ifanr 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  `https://sso.ifanr.com/api/v5/wp/buzz/?limit=50&offset=0`;
+const URL_GENERATOR = () => `https://sso.ifanr.com/api/v5/wp/buzz/?limit=50&offset=0`;
 
 async function getData(): Promise<{ objects: IfanrDataStructure[] }> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: IfanrDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: IfanrDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
-    const { post_title, buzz_original_url, id, like_count, comment_count } =
-      item;
+    const { post_title, buzz_original_url, id, like_count, comment_count } = item;
     return {
       title: post_title,
       description: post_title,

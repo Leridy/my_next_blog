@@ -61,9 +61,7 @@ export default function MainBoard(props: MainBoardProps) {
     (id: number) => {
       const newSetting = {
         ...topicSetting,
-        exclude: exclude.includes(id)
-          ? exclude.filter((ele) => ele !== id)
-          : [...exclude, id],
+        exclude: exclude.includes(id) ? exclude.filter((ele) => ele !== id) : [...exclude, id],
       };
       updateTopicSetting(newSetting);
     },
@@ -126,34 +124,24 @@ export default function MainBoard(props: MainBoardProps) {
   }, []);
 
   const renderHotBoard = useMemo(() => {
-    return TopicItemsToRender.filter((topic) => topic.enable).map(
-      (topic, i) => (
-        <HotBoard
-          index={i}
-          title={topic.name}
-          key={topic.id}
-          keyword={keyword}
-          {...topic}
-          onOpenFrame={handleOpenLink}
-          onFocus={setFocus}
-          isFocus={focus === topic.id}
-          colSpan={focus === topic.id ? 2 : undefined}
-          rowSpan={focus === topic.id ? 2 : undefined}
-          show={!exclude.includes(topic.id)}
-          onMoveItem={handleItemMove}
-          onToggleShow={handleToggleShow}
-        />
-      )
-    );
-  }, [
-    TopicItemsToRender,
-    keyword,
-    handleOpenLink,
-    focus,
-    exclude,
-    handleItemMove,
-    handleToggleShow,
-  ]);
+    return TopicItemsToRender.filter((topic) => topic.enable).map((topic, i) => (
+      <HotBoard
+        index={i}
+        title={topic.name}
+        key={topic.id}
+        keyword={keyword}
+        {...topic}
+        onOpenFrame={handleOpenLink}
+        onFocus={setFocus}
+        isFocus={focus === topic.id}
+        colSpan={focus === topic.id ? 2 : undefined}
+        rowSpan={focus === topic.id ? 2 : undefined}
+        show={!exclude.includes(topic.id)}
+        onMoveItem={handleItemMove}
+        onToggleShow={handleToggleShow}
+      />
+    ));
+  }, [TopicItemsToRender, keyword, handleOpenLink, focus, exclude, handleItemMove, handleToggleShow]);
 
   useEffect(() => {
     get();
@@ -176,20 +164,10 @@ export default function MainBoard(props: MainBoardProps) {
   return (
     // 使用 grid 布局将 HotBoard 和 UserBoard 放在一起
     <div className={'grid grid-cols-5 pt-16 h-full main-board'}>
-      <div
-        className={'relative col-span-5 md:col-span-4 h-full hot-board-wrapper'}
-      >
+      <div className={'relative col-span-5 md:col-span-4 h-full hot-board-wrapper'}>
         <div
           ref={HotBoardRef}
-          className={
-            'relative grid grid-cols-1  gap-6 p-4   ' +
-            'sm:grid-cols-2 ' +
-            'md:grid-cols-2 ' +
-            'lg:grid-cols-3 ' +
-            'xl:grid-cols-5 ' +
-            'h-full ' +
-            'overflow-y-auto'
-          }
+          className={'relative grid grid-cols-1  gap-6 p-4   ' + 'sm:grid-cols-2 ' + 'md:grid-cols-2 ' + 'lg:grid-cols-3 ' + 'xl:grid-cols-5 ' + 'h-full ' + 'overflow-y-auto'}
           style={{
             height: 'calc(100vh - 4rem)',
             overflowY: 'scroll',
@@ -197,28 +175,14 @@ export default function MainBoard(props: MainBoardProps) {
         >
           {renderHotBoard}
         </div>
-        <ScrollController
-          onScrollUp={handleScrollUp}
-          onScrollDown={handleScrollDown}
-        />
+        <ScrollController onScrollUp={handleScrollUp} onScrollDown={handleScrollDown} />
       </div>
 
-      <div
-        className={
-          'hidden md:block col-span-1 pl-0 pr-4 pt-4 pb-4 h-full ' +
-          'gap-6 overflow-y-scroll relative'
-        }
-      >
+      <div className={'hidden md:block col-span-1 pl-0 pr-4 pt-4 pb-4 h-full ' + 'gap-6 overflow-y-scroll relative'}>
         <UserBoard />
       </div>
 
-      {openedLink && (
-        <LinkFrame
-          url={openedLink}
-          onClose={() => setOpenedLink('')}
-          title={'Opened Link'}
-        />
-      )}
+      {openedLink && <LinkFrame url={openedLink} onClose={() => setOpenedLink('')} title={'Opened Link'} />}
       <BrowserFingerprint />
     </div>
   );

@@ -93,11 +93,7 @@ export default function HotSpiderList() {
         key: 'name',
         render: (name) => {
           return (
-            <Button
-              type={'link'}
-              size={'small'}
-              onClick={() => handleRefresh(name)}
-            >
+            <Button type={'link'} size={'small'} onClick={() => handleRefresh(name)}>
               更新
             </Button>
           );
@@ -108,13 +104,7 @@ export default function HotSpiderList() {
   );
 
   return (
-    <ManageList
-      title={'爬虫管理'}
-      apiURL={'spider'}
-      columns={columns}
-      showCreate={false}
-      showOperation={false}
-    >
+    <ManageList title={'爬虫管理'} apiURL={'spider'} columns={columns} showCreate={false} showOperation={false}>
       <FormItem label={'爬虫名称'} name={'name'}>
         <Input />
       </FormItem>

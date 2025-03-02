@@ -10,12 +10,7 @@ export const getToken = async () => {
   return result.data.data.data.token;
 };
 
-export const sign = (
-  requestPath: string,
-  payload: Record<string, unknown> = {},
-  timestamp: number,
-  token: string
-) => {
+export const sign = (requestPath: string, payload: Record<string, unknown> = {}, timestamp: number, token: string) => {
   payload.timestamp = timestamp;
   payload.token = token;
   const sortedParams = Object.keys(payload).sort();

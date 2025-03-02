@@ -3,10 +3,7 @@ import { APIErrorHandler, MyNRError } from '@/utils/MyNRError';
 import NewsStatisticsDao from '@/server/db/dao/newsStatistics.dao';
 import NewsDao from '@/server/db/dao/news.dao';
 
-async function put(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function put(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // check whether newsId existed in the table
   const { id } = await params;
 
@@ -34,10 +31,7 @@ async function put(
   );
 }
 
-async function get(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string[] }> }
-) {
+async function get(req: NextRequest, { params }: { params: Promise<{ id: string[] }> }) {
   const [id] = (await params).id;
 
   if (id === 'top20News') {
@@ -73,9 +67,7 @@ async function get(
       { status: 200 }
     );
   } else if (id === 'visitor') {
-    const todayClickCount = await NewsStatisticsDao.getClickCount(
-      new Date(Date.now() - 24 * 60 * 60 * 1000)
-    );
+    const todayClickCount = await NewsStatisticsDao.getClickCount(new Date(Date.now() - 24 * 60 * 60 * 1000));
     const allClickCount = await NewsStatisticsDao.getClickCount();
     return NextResponse.json(
       {
@@ -89,7 +81,5 @@ async function get(
   }
 }
 
-export const GET = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, get);
-export const PUT = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, put);
+export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);
+export const PUT = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, put);

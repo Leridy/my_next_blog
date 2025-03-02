@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface HupuDataStructure {
   tid: number;
@@ -22,8 +18,7 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'hupu 爬虫',
 };
 
-const URL_GENERATOR = (type: string | number) =>
-  `https://m.hupu.com/api/v2/bbs/topicThreads?topicId=${type}&page=1`;
+const URL_GENERATOR = (type: string | number) => `https://m.hupu.com/api/v2/bbs/topicThreads?topicId=${type}&page=1`;
 
 const ListType = {
   主干道: 1,
@@ -38,13 +33,7 @@ async function getData(type: (typeof ListType)[keyof typeof ListType] = 1) {
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: HupuDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: HupuDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     return {
       title: item.title,
@@ -54,11 +43,7 @@ function dataTransformer(
       uniqueId: `hupu-${item.tid}`,
       spiderId,
       hotCount: item.replies + item.recommendNum || 0,
-      tags: [
-        item.username.length < 6
-          ? item.username
-          : item.username.slice(0, 3) + '...',
-      ],
+      tags: [item.username.length < 6 ? item.username : item.username.slice(0, 3) + '...'],
     };
   });
 }
@@ -81,12 +66,9 @@ export default async function main() {
     return await getData(type);
   });
 
-  const requestedData: { data: { topicThreads: HupuDataStructure } }[] =
-    await Promise.all(tasks);
+  const requestedData: { data: { topicThreads: HupuDataStructure } }[] = await Promise.all(tasks);
 
-  const result = mergeTypeData(
-    requestedData.map((item) => item.data.topicThreads)
-  );
+  const result = mergeTypeData(requestedData.map((item) => item.data.topicThreads));
 
   const transformedData = dataTransformer(result, id);
 

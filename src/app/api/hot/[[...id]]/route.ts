@@ -5,10 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readableStreamToJSON } from '@/utils/readableStreamToJSON';
 import { APIErrorHandler, MyNRError } from '@/utils/MyNRError';
 
-async function get(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function get(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // 从 req 中获取 headers 的 'x-no-cache'
   // 如果为 true 则不设置缓存头
   const { headers } = req;
@@ -51,28 +48,21 @@ async function post(req: NextRequest) {
     url: Yup.string().required(),
   });
 
-  const data = await readableStreamToJSON<Omit<HotTopic, 'newsList' | 'id'>>(
-    req.body
-  );
+  const data = await readableStreamToJSON<Omit<HotTopic, 'newsList' | 'id'>>(req.body);
   if (typeof data !== 'object') throw new MyNRError('无效数据', 401, { data });
   await schema.validate(data);
   const result = await hotDao.create(data);
   return NextResponse.json(result, { status: 200 });
 }
 
-async function put(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function put(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const schema = Yup.object().shape({
     name: Yup.string().required(),
     url: Yup.string().required(),
   });
   const pathname = req.nextUrl.pathname;
   const id = (await params).id;
-  const data = await readableStreamToJSON<Omit<HotTopic, 'newsList' | 'id'>>(
-    req.body
-  );
+  const data = await readableStreamToJSON<Omit<HotTopic, 'newsList' | 'id'>>(req.body);
   if (typeof data !== 'object') throw new MyNRError('无效数据', 401, { data });
   await schema.validateSync(data);
   if (!id)
@@ -84,10 +74,7 @@ async function put(
   return NextResponse.json(result, { status: 200 });
 }
 
-async function del(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function del(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const pathname = req.nextUrl.pathname;
   const id = (await params).id;
   if (!id) throw new MyNRError('无效的 id', 401, { id, request: { pathname } });
@@ -95,11 +82,7 @@ async function del(
   return NextResponse.json(result, { status: 200 });
 }
 
-export const GET = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, get);
-export const POST = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, post);
-export const PUT = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, put);
-export const DELETE = (req: NextRequest, res: NextResponse) =>
-  APIErrorHandler(req, res, del);
+export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);
+export const POST = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, post);
+export const PUT = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, put);
+export const DELETE = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, del);

@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface GeekParkDataStructure {
   comments_count: number;
@@ -58,27 +54,11 @@ async function getData(): Promise<GeekParkResponse> {
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: GeekParkDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: GeekParkDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     const { title, abstract, id, cover_url, link, tags, views } = item;
 
-    const transformedItem: Pick<
-      HotNews,
-      | 'title'
-      | 'url'
-      | 'description'
-      | 'image'
-      | 'spiderId'
-      | 'uniqueId'
-      | 'hotCount'
-      | 'tags'
-    > = {
+    const transformedItem: Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId' | 'hotCount' | 'tags'> = {
       title,
       description: abstract || title,
       image: cover_url || '',

@@ -86,9 +86,7 @@ export default function HotStatisticBoard() {
           },
           {
             name: '早前总点击量',
-            value:
-              (visitorData?.allClickCount || 0) -
-              (visitorData?.todayClickCount || 0),
+            value: (visitorData?.allClickCount || 0) - (visitorData?.todayClickCount || 0),
           },
         ],
       },
@@ -112,8 +110,7 @@ export default function HotStatisticBoard() {
           },
           {
             name: '往日数据',
-            value:
-              (countData?.allNewsCount || 0) - (countData?.todayNewsCount || 0),
+            value: (countData?.allNewsCount || 0) - (countData?.todayNewsCount || 0),
           },
         ],
       },
@@ -133,13 +130,7 @@ export default function HotStatisticBoard() {
     getVisitorStatistic('visitor');
     getClickedTopic('todayClickedNewsCount');
     getTopicClickStatistic('');
-  }, [
-    getClickedTopic,
-    getNewsRank,
-    getNewsStatistic,
-    getTopicClickStatistic,
-    getVisitorStatistic,
-  ]);
+  }, [getClickedTopic, getNewsRank, getNewsStatistic, getTopicClickStatistic, getVisitorStatistic]);
 
   const handleManage = useCallback(() => {
     router.push('/manage/hot');
@@ -166,52 +157,31 @@ export default function HotStatisticBoard() {
   }, [getTopicClickStatistic]);
 
   return (
-    <CommonStatisticCard
-      title={'热门数据统计'}
-      loading={
-        loading ||
-        newsStatLoading ||
-        visitorStatLoading ||
-        topicLoading ||
-        topicClickLoading
-      }
-      onRefresh={handleRefresh}
-      onGoManage={handleManage}
-    >
+    <CommonStatisticCard title={'热门数据统计'} loading={loading || newsStatLoading || visitorStatLoading || topicLoading || topicClickLoading} onRefresh={handleRefresh} onGoManage={handleManage}>
       <div className="grid grid-cols-5 gap-4 p-4 mb-4">
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日新增话题</span>
-          <span className="text-2xl font-bold mt-2">
-            {countData?.todayNewsCount || 0}
-          </span>
+          <span className="text-2xl font-bold mt-2">{countData?.todayNewsCount || 0}</span>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日热门话题</span>
-          <span className="text-2xl font-bold mt-2">
-            {topicData?.todayClickedNewsCount || 0}
-          </span>
+          <span className="text-2xl font-bold mt-2">{topicData?.todayClickedNewsCount || 0}</span>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日话题点击次数</span>
-          <span className="text-2xl font-bold mt-2">
-            {visitorData?.todayClickCount || 0}
-          </span>
+          <span className="text-2xl font-bold mt-2">{visitorData?.todayClickCount || 0}</span>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">总点击次数</span>
-          <span className="text-2xl font-bold mt-2">
-            {visitorData?.allClickCount || 0}
-          </span>
+          <span className="text-2xl font-bold mt-2">{visitorData?.allClickCount || 0}</span>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">总话题数</span>
-          <span className="text-2xl font-bold mt-2">
-            {countData?.allNewsCount || 0}
-          </span>
+          <span className="text-2xl font-bold mt-2">{countData?.allNewsCount || 0}</span>
         </div>
       </div>
 
@@ -269,17 +239,8 @@ export default function HotStatisticBoard() {
         {NewsRank.map((item, index) => {
           return (
             <div key={index} className={'flex justify-between items-center'}>
-              <a
-                href={item.url}
-                target={'_blank'}
-                rel={'noreferrer'}
-                className={' hover:underline flex'}
-              >
-                <span
-                  className={` w-6 flex items-center justify-center text-sm `}
-                >
-                  {index + 1}.
-                </span>
+              <a href={item.url} target={'_blank'} rel={'noreferrer'} className={' hover:underline flex'}>
+                <span className={` w-6 flex items-center justify-center text-sm `}>{index + 1}.</span>
                 {item.title}
               </a>
               <span>{item.clickCount}</span>

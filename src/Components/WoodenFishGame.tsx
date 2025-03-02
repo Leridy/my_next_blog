@@ -11,14 +11,10 @@ const WoodenFishGame: React.FC = () => {
   // 加载历史记录和今日计数
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
-    const savedHistory = JSON.parse(
-      localStorage.getItem('woodenFishHistory') || '[]'
-    );
+    const savedHistory = JSON.parse(localStorage.getItem('woodenFishHistory') || '[]');
     setHistory(savedHistory);
 
-    const todayRecord = savedHistory.find(
-      (item: { date: string; count: number }) => item.date === today
-    );
+    const todayRecord = savedHistory.find((item: { date: string; count: number }) => item.date === today);
     if (todayRecord) {
       setCount(todayRecord.count);
     } else {
@@ -55,30 +51,14 @@ const WoodenFishGame: React.FC = () => {
     // 绘制木鱼顶部
     ctx.fillStyle = '#A0522D';
     ctx.beginPath();
-    ctx.ellipse(
-      canvas.width / 2,
-      canvas.height / 2 - 10,
-      70,
-      30,
-      0,
-      0,
-      Math.PI
-    );
+    ctx.ellipse(canvas.width / 2, canvas.height / 2 - 10, 70, 30, 0, 0, Math.PI);
     ctx.fill();
 
     // 绘制木鱼底部细节
     ctx.strokeStyle = '#5D4037';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.ellipse(
-      canvas.width / 2,
-      canvas.height / 2 + 5,
-      60,
-      35,
-      0,
-      0,
-      2 * Math.PI
-    );
+    ctx.ellipse(canvas.width / 2, canvas.height / 2 + 5, 60, 35, 0, 0, 2 * Math.PI);
     ctx.stroke();
   };
 
@@ -108,44 +88,20 @@ const WoodenFishGame: React.FC = () => {
       // 绘制木鱼
       ctx.fillStyle = '#8B4513';
       ctx.beginPath();
-      ctx.ellipse(
-        canvas.width / 2,
-        canvas.height / 2,
-        80,
-        50,
-        0,
-        0,
-        2 * Math.PI
-      );
+      ctx.ellipse(canvas.width / 2, canvas.height / 2, 80, 50, 0, 0, 2 * Math.PI);
       ctx.fill();
 
       // 绘制木鱼顶部
       ctx.fillStyle = '#A0522D';
       ctx.beginPath();
-      ctx.ellipse(
-        canvas.width / 2,
-        canvas.height / 2 - 10,
-        70,
-        30,
-        0,
-        0,
-        Math.PI
-      );
+      ctx.ellipse(canvas.width / 2, canvas.height / 2 - 10, 70, 30, 0, 0, Math.PI);
       ctx.fill();
 
       // 绘制木鱼底部细节
       ctx.strokeStyle = '#5D4037';
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.ellipse(
-        canvas.width / 2,
-        canvas.height / 2 + 5,
-        60,
-        35,
-        0,
-        0,
-        2 * Math.PI
-      );
+      ctx.ellipse(canvas.width / 2, canvas.height / 2 + 5, 60, 35, 0, 0, 2 * Math.PI);
       ctx.stroke();
 
       // 恢复状态
@@ -215,19 +171,10 @@ const WoodenFishGame: React.FC = () => {
             transform: isAnimating ? 'scale(0.95)' : 'scale(1)',
           }}
         >
-          <canvas
-            ref={canvasRef}
-            width={200}
-            height={150}
-            className="mx-auto"
-          />
-          <div className="absolute top-4 right-4 bg-yellow-500 text-white px-2 py-1 rounded-full">
-            今日功德: {count}
-          </div>
+          <canvas ref={canvasRef} width={200} height={150} className="mx-auto" />
+          <div className="absolute top-4 right-4 bg-yellow-500 text-white px-2 py-1 rounded-full">今日功德: {count}</div>
         </div>
-        <Typography.Text className="block mt-4 text-gray-600">
-          点击木鱼积累功德
-        </Typography.Text>
+        <Typography.Text className="block mt-4 text-gray-600">点击木鱼积累功德</Typography.Text>
       </div>
 
       <Typography.Title level={4}>历史功德</Typography.Title>
@@ -237,15 +184,11 @@ const WoodenFishGame: React.FC = () => {
           maxWidth: 300,
           maxHeight: 200,
         }}
-        dataSource={history.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        )}
+        dataSource={history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())}
         renderItem={(item) => (
           <List.Item className="flex justify-between">
             <span>{item.date}</span>
-            <span className="text-yellow-600 font-semibold">
-              {item.count} 功德
-            </span>
+            <span className="text-yellow-600 font-semibold">{item.count} 功德</span>
           </List.Item>
         )}
         locale={{ emptyText: '暂无历史记录' }}

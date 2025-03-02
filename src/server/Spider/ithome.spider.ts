@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 import { load } from 'cheerio';
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
@@ -19,9 +15,7 @@ const replaceLink = (url: string, getId: boolean = false) => {
   const match = url.match(/[html|live]\/(\d+)\.htm/);
   // 是否匹配成功
   if (match && match[1]) {
-    return getId
-      ? match[1]
-      : `https://www.ithome.com/0/${match[1].slice(0, 3)}/${match[1].slice(3)}.htm`;
+    return getId ? match[1] : `https://www.ithome.com/0/${match[1].slice(0, 3)}/${match[1].slice(3)}.htm`;
   }
   // 返回原始 URL
   return url;
@@ -47,17 +41,7 @@ export default async function main() {
   const $ = load(requestedData as unknown as string);
 
   const listDom = $('.rank-box .placeholder');
-  const result: Pick<
-    HotNews,
-    | 'title'
-    | 'description'
-    | 'image'
-    | 'url'
-    | 'uniqueId'
-    | 'spiderId'
-    | 'hotCount'
-    | 'tags'
-  >[] = listDom.toArray().map((item) => {
+  const result: Pick<HotNews, 'title' | 'description' | 'image' | 'url' | 'uniqueId' | 'spiderId' | 'hotCount' | 'tags'>[] = listDom.toArray().map((item) => {
     const dom = $(item);
     const href = dom.find('a').attr('href');
     return {

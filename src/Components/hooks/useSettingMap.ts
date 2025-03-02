@@ -7,21 +7,14 @@ interface UseSettingMapProps<T> {
   subKeys: Array<keyof T> | Record<keyof T, string | number | boolean>;
 }
 
-type UseSettingMapReturn<T> = Record<
-  keyof T,
-  boolean | string | number | null | undefined
->;
+type UseSettingMapReturn<T> = Record<keyof T, boolean | string | number | null | undefined>;
 
-export default function useSettingMap<T>(
-  props: UseSettingMapProps<T>
-): UseSettingMapReturn<T> {
+export default function useSettingMap<T>(props: UseSettingMapProps<T>): UseSettingMapReturn<T> {
   const { setting, baseKey, subKeys } = props;
 
   return useMemo(() => {
     const res: UseSettingMapReturn<T> | null = {} as UseSettingMapReturn<T>;
-    const subKeysArray = Array.isArray(subKeys)
-      ? subKeys
-      : Object.keys(subKeys);
+    const subKeysArray = Array.isArray(subKeys) ? subKeys : Object.keys(subKeys);
 
     // every key is make up of baseKey + '.' + subKey
 

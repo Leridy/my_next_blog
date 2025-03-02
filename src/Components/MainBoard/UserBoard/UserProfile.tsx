@@ -6,12 +6,7 @@ import './UserProfile.style.scss';
 import InputtingText from '@/Components/InputtingText/InputtingText';
 import { sayings, someEmoji, politeWords2 } from '@/mock/emojiAndSayings';
 import { Button, message, Space } from 'antd';
-import {
-  DesktopOutlined,
-  LoadingOutlined,
-  LogoutOutlined,
-  SettingFilled,
-} from '@ant-design/icons';
+import { DesktopOutlined, LoadingOutlined, LogoutOutlined, SettingFilled } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { Role } from '@/server/middlewares';
 import { UserInfo } from '@/Components/UserComponents/hooks/useUserAuthData';
@@ -47,9 +42,7 @@ export default function UserProfile() {
   const [oldSaying, setOldSaying] = useState<string>('你好 👋');
 
   const { name, createdAt, role } = useMemo<UserInfo>(() => {
-    return (
-      user || ({ name: '', createdAt: new Date(), role: Role.USER } as UserInfo)
-    );
+    return user || ({ name: '', createdAt: new Date(), role: Role.USER } as UserInfo);
   }, [user]);
 
   const joinedDays = useMemo(() => {
@@ -64,16 +57,9 @@ export default function UserProfile() {
   const generateSaying = useCallback(() => {
     let oldSaying = '';
     if (!name) {
-      const prefixEmoji =
-        someEmoji[Math.floor(Math.random() * someEmoji.length)];
-      const suffixEmoji =
-        someEmoji[Math.floor(Math.random() * someEmoji.length)];
-      oldSaying =
-        prefixEmoji +
-        ' ' +
-        sayings[Math.floor(Math.random() * sayings.length)] +
-        ' ' +
-        suffixEmoji;
+      const prefixEmoji = someEmoji[Math.floor(Math.random() * someEmoji.length)];
+      const suffixEmoji = someEmoji[Math.floor(Math.random() * someEmoji.length)];
+      oldSaying = prefixEmoji + ' ' + sayings[Math.floor(Math.random() * sayings.length)] + ' ' + suffixEmoji;
     } else {
       oldSaying = politeWords2[Math.floor(Math.random() * politeWords2.length)];
     }
@@ -128,11 +114,7 @@ export default function UserProfile() {
         ) : (
           <div className={'flex justify-center flex-col items-center w-full'}>
             这里有登录后才有的功能哦
-            <InputtingText
-              text={oldSaying}
-              cursorBlinkSpeed={'fast'}
-              key={'old-saying'}
-            />
+            <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={'old-saying'} />
           </div>
         )}
       </Space>
@@ -153,51 +135,32 @@ export default function UserProfile() {
     getVisitorCount('count');
   }, [getVisitorCount]);
 
-  const renderUserInfo = useCallback(
-    (data: { label: string; value: number | ReactNode }[]) => {
-      return (
-        <>
-          {data.map(({ label, value }) => (
-            <div
-              key={label}
-              style={{ gridColumn: 'span 1' }}
-              className={'grid grid-rows-2 gap-2 justify-center items-center'}
-            >
-              <span className={'font-bold'}>{label}</span>
-              <span className={'text-center'}>{value}</span>
-            </div>
-          ))}
-        </>
-      );
-    },
-    []
-  );
+  const renderUserInfo = useCallback((data: { label: string; value: number | ReactNode }[]) => {
+    return (
+      <>
+        {data.map(({ label, value }) => (
+          <div key={label} style={{ gridColumn: 'span 1' }} className={'grid grid-rows-2 gap-2 justify-center items-center'}>
+            <span className={'font-bold'}>{label}</span>
+            <span className={'text-center'}>{value}</span>
+          </div>
+        ))}
+      </>
+    );
+  }, []);
 
   const visitorInfoData = useMemo(() => {
     return [
       {
         label: '新水友',
-        value: visitorLoading ? (
-          <LoadingOutlined spin={true} />
-        ) : (
-          visitorCount?.newVisitorCount || 0
-        ),
+        value: visitorLoading ? <LoadingOutlined spin={true} /> : visitorCount?.newVisitorCount || 0,
       },
       {
         label: '今日上线水友',
-        value: visitorLoading ? (
-          <LoadingOutlined spin={true} />
-        ) : (
-          visitorCount?.todayVisitorCount || 0
-        ),
+        value: visitorLoading ? <LoadingOutlined spin={true} /> : visitorCount?.todayVisitorCount || 0,
       },
       {
         label: '所有水友',
-        value: visitorLoading ? (
-          <LoadingOutlined spin={true} />
-        ) : (
-          visitorCount?.totalVisitorCount || 0
-        ),
+        value: visitorLoading ? <LoadingOutlined spin={true} /> : visitorCount?.totalVisitorCount || 0,
       },
     ];
   }, [visitorCount, visitorLoading]);
@@ -219,45 +182,19 @@ export default function UserProfile() {
     ];
   }, [joinedDays]);
 
-  const renderVisitorInfo = useMemo(
-    () => renderUserInfo(visitorInfoData),
-    [visitorInfoData, renderUserInfo]
-  );
-  const renderInfo = useMemo(
-    () => renderUserInfo(userInfoData),
-    [userInfoData, renderUserInfo]
-  );
+  const renderVisitorInfo = useMemo(() => renderUserInfo(visitorInfoData), [visitorInfoData, renderUserInfo]);
+  const renderInfo = useMemo(() => renderUserInfo(userInfoData), [userInfoData, renderUserInfo]);
 
   return (
     <Card header={<h1>用户</h1>} actions={renderActions}>
       {/*使用grid 布局， 将内容分为 三行三列，其中第一 二个项目占 三列，*/}
       <div className={'h-full grid grid-rows-3 grid-cols-3 gap-2'}>
-        <div
-          className={'flex justify-center items-center user-profile-avatar'}
-          style={{ gridColumn: 'span 3' }}
-        >
+        <div className={'flex justify-center items-center user-profile-avatar'} style={{ gridColumn: 'span 3' }}>
           <Avatar size={'medium'} name={name || '客人'} />
         </div>
 
-        <div
-          className={'flex justify-center items-center'}
-          style={{ gridColumn: 'span 3' }}
-        >
-          <strong className={'text-lg'}>
-            {name ? (
-              <InputtingText
-                text={`${name},${oldSaying}`}
-                cursorBlinkSpeed={'fast'}
-                key={name}
-              />
-            ) : (
-              <InputtingText
-                text={oldSaying}
-                cursorBlinkSpeed={'fast'}
-                key={'old-saying'}
-              />
-            )}
-          </strong>
+        <div className={'flex justify-center items-center'} style={{ gridColumn: 'span 3' }}>
+          <strong className={'text-lg'}>{name ? <InputtingText text={`${name},${oldSaying}`} cursorBlinkSpeed={'fast'} key={name} /> : <InputtingText text={oldSaying} cursorBlinkSpeed={'fast'} key={'old-saying'} />}</strong>
         </div>
 
         {name ? renderInfo : renderVisitorInfo}

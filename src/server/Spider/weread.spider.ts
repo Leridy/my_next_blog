@@ -1,10 +1,6 @@
 import http from './http';
 import { HotNews, HotSpider } from '@prisma/client';
-import {
-  checkAndOperateNews,
-  spiderPublicLogic,
-  updateSpiderUpdateTime,
-} from '@/server/Spider/utils/spiderPublicLogic';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 import getWereadID from '@/server/Spider/utils/getToken/weread';
 
 interface WereadDataStructure {
@@ -70,32 +66,17 @@ const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   description: 'weread 爬虫',
 };
 
-const URL_GENERATOR = () =>
-  `https://weread.qq.com/web/bookListInCategory/rising?rank=1`;
+const URL_GENERATOR = () => `https://weread.qq.com/web/bookListInCategory/rising?rank=1`;
 
 async function getData(): Promise<{ books: WereadDataStructure[] }> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
 
-function dataTransformer(
-  data: WereadDataStructure[],
-  spiderId: number
-): Pick<
-  HotNews,
-  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
->[] {
+function dataTransformer(data: WereadDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     const {
-      bookInfo: {
-        author,
-        category,
-        title,
-        intro,
-        cover,
-        bookId,
-        newRatingDetail = { title: undefined },
-      },
+      bookInfo: { author, category, title, intro, cover, bookId, newRatingDetail = { title: undefined } },
       readingCount = 0,
       searchCount = 0,
     } = item;
