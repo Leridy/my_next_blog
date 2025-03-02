@@ -8,9 +8,7 @@ import { filter } from 'sensitive-words-js';
 
 // 检查敏感词
 const checkSensitiveWords = (str: string) => {
-  const { text, words } = filter.filter(str, {
-    replace: true,
-  });
+  const { text, words } = filter.filter(str, { replace: true });
 
   message.error(`评论中包含敏感词：${words.join(', ')}`);
   return text;
@@ -225,36 +223,33 @@ const CommentSystem: React.FC = () => {
             <Input.TextArea placeholder="请输入您的留言内容..." maxLength={200} showCount rows={4} disabled={!canComment} onClick={!canComment ? showTimeModal : undefined} />
           </Form.Item>
 
-          <Form.Item name="knownFrom" label="您从何处知道这个网站">
-            <AutoComplete options={[{ value: 'Google' }, { value: 'Bing' }, { value: '百度' }, { value: '其他搜索引擎' }, { value: '朋友推荐' }, { value: '社交媒体' }, { value: '其他' }]}>
-              <Input placeholder="请选择或输入" />
-            </AutoComplete>
-          </Form.Item>
+          {messages.length === 0 && (
+            <Form.Item name="knownFrom" label="您从何处知道这个网站">
+              <AutoComplete options={[{ value: 'Google' }, { value: 'Bing' }, { value: '百度' }, { value: '其他搜索引擎' }, { value: '朋友推荐' }, { value: '社交媒体' }, { value: '其他' }]}>
+                <Input placeholder="请选择或输入" />
+              </AutoComplete>
+            </Form.Item>
+          )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+          <div className="grid grid-cols-1 gap-4 w-full">
             <Form.Item name="captcha" label="验证码" rules={[{ required: true, message: '请输入验证码' }]} className={'w-full'}>
               <div className="flex items-center space-x-2 w-full">
                 <Input prefix={<SafetyCertificateOutlined className="site-form-item-icon" />} placeholder="输入验证码" value={userCaptcha} onChange={(e) => setUserCaptcha(e.target.value)} maxLength={6} disabled={!canComment} />
-                <div className="w-[120px] h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-800 font-mono text-lg cursor-pointer select-none" onClick={refreshCaptcha}>
+                <div className="w-[120px] rounded h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-800 font-mono text-lg cursor-pointer select-none" onClick={refreshCaptcha}>
                   {captchaCode}
                 </div>
               </div>
             </Form.Item>
-
-            <Form.Item name="pageUrl" hidden>
-              <Input value={window.location.href} />
-            </Form.Item>
-
-            <Form.Item name="userAgent" hidden>
-              <Input value={navigator.userAgent} />
-            </Form.Item>
           </div>
 
-          {!canComment && (
-            <div className="mr-4 text-yellow-600 dark:text-yellow-400 text-sm cursor-pointer" onClick={showTimeModal}>
-              等待 {remainingHours}h
-            </div>
-          )}
+          <Form.Item name="pageUrl" hidden>
+            <Input value={window.location.href} />
+          </Form.Item>
+
+          <Form.Item name="userAgent" hidden>
+            <Input value={navigator.userAgent} />
+          </Form.Item>
+
           <Button
             type="primary"
             htmlType="submit"
@@ -269,6 +264,12 @@ const CommentSystem: React.FC = () => {
           >
             提交留言
           </Button>
+
+          {!canComment && (
+            <div className="mt-4 mr-4 text-yellow-600 dark:text-yellow-400 text-sm cursor-pointer" onClick={showTimeModal}>
+              距离下次评论还需等待 {remainingHours} 小时
+            </div>
+          )}
         </Form>
       </div>
 
