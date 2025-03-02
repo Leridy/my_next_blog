@@ -79,6 +79,7 @@ const weatherDescriptions: Record<string, string> = {
   'clear sky': '晴朗',
   'few clouds': '少云',
   'scattered clouds': '多云',
+  'partly cloudy': '局部多云',
   'broken clouds': '阴',
   'overcast clouds': '阴天',
   'light rain': '小雨',
@@ -108,7 +109,7 @@ const WeatherForecast: React.FC = () => {
       setLoading(true);
 
       // 检查本地存储中是否有今天的天气数据
-      const today = new Date().toISOString().split('T')[0]; // 获取当前日期，格式为 YYYY-MM-DD
+      const today = new Date().toLocaleDateString().split('T')[0]; // 获取当前日期，格式为 YYYY-MM-DD
       const cachedData = localStorage.getItem('weatherData');
       const cachedGeo = localStorage.getItem('geoData');
       const cachedDate = localStorage.getItem('weatherDate');
