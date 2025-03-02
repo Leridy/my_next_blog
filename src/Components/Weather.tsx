@@ -144,7 +144,7 @@ const WeatherForecast: React.FC = () => {
           longitude = position.coords.longitude;
 
           // 使用高德地图API进行逆地理编码
-          const geoResponse = await fetch(`https://restapi.amap.com/v3/geocode/regeo?key=553e8829d9e0f61d184830bf50106138&location=${longitude},${latitude}&extensions=base`);
+          const geoResponse = await fetch(`https://restapi.amap.com/v3/geocode/regeo?key=2c52fb4b04e6d26830212c17ef7f4ff8&location=${longitude},${latitude}&extensions=base`);
           const geoResult = await geoResponse.json();
 
           if (geoResult.status !== '1') {
@@ -263,7 +263,7 @@ const WeatherForecast: React.FC = () => {
             pressure: parseFloat(nowWeatherData.now.pressure),
             humidity: parseFloat(nowWeatherData.now.humidity),
             dew_point: nowWeatherData.now.dew,
-            uvi: dailyForecast[0]?.uvi || 0,
+            uvi: dailyWeatherData?.daily[0]?.uvi || 0,
             clouds: parseInt(nowWeatherData.now.cloud || '0'),
             visibility: parseFloat(nowWeatherData.now.vis),
             wind_speed: parseFloat(nowWeatherData.now.windSpeed),
@@ -279,7 +279,7 @@ const WeatherForecast: React.FC = () => {
           },
           daily: dailyWeatherData.daily.map(
             (day: {
-              cloud: any;
+              cloud: 'string';
               wind360Day: string;
               uvIndex: string;
               fxDate: string | number | Date;
