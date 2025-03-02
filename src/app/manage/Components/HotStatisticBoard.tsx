@@ -1,11 +1,11 @@
-import MyPieChart from "@/app/manage/Components/MyPieChart";
-import useApi from "@/app/manage/hooks/useApi";
-import {useCallback, useEffect, useMemo} from "react";
-import {useRouter} from "next/navigation";
-import CommonStatisticCard from "./CommonStatisticCard";
+import MyPieChart from '@/app/manage/Components/MyPieChart';
+import useApi from '@/app/manage/hooks/useApi';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import CommonStatisticCard from './CommonStatisticCard';
 
 const headers = {
-  "x-no-cache": "true",
+  'x-no-cache': 'true',
 };
 
 interface NewsRankItem {
@@ -22,7 +22,7 @@ export default function HotStatisticBoard() {
     items: NewsRank,
     loading,
   } = useApi<NewsRankItem>({
-    apiURL: "statistic/news/top20News",
+    apiURL: 'statistic/news/top20News',
     headers,
   });
 
@@ -34,7 +34,7 @@ export default function HotStatisticBoard() {
     todayNewsCount: number;
     allNewsCount: number;
   }>({
-    apiURL: "statistic/news",
+    apiURL: 'statistic/news',
     headers,
   });
 
@@ -46,7 +46,7 @@ export default function HotStatisticBoard() {
     todayClickCount: number;
     allClickCount: number;
   }>({
-    apiURL: "statistic/news",
+    apiURL: 'statistic/news',
     headers,
   });
 
@@ -57,7 +57,7 @@ export default function HotStatisticBoard() {
   } = useApi<{
     todayClickedNewsCount: number;
   }>({
-    apiURL: "statistic/news",
+    apiURL: 'statistic/news',
     headers,
   });
 
@@ -67,12 +67,12 @@ export default function HotStatisticBoard() {
     loading: topicClickLoading,
   } = useApi<{
     topicTodayVisitedInfo: {
-      name: string,
-      clickCount: number
-      topicId: number
-    }[]
+      name: string;
+      clickCount: number;
+      topicId: number;
+    }[];
   }>({
-    apiURL: "statistic/news/topic",
+    apiURL: 'statistic/news/topic',
     headers,
   });
 
@@ -81,58 +81,68 @@ export default function HotStatisticBoard() {
       {
         data: [
           {
-            name: "近24小时点击量",
+            name: '近24小时点击量',
             value: visitorData?.todayClickCount,
           },
           {
-            name: "早前总点击量",
-            value: (visitorData?.allClickCount || 0) - (visitorData?.todayClickCount || 0),
+            name: '早前总点击量',
+            value:
+              (visitorData?.allClickCount || 0) -
+              (visitorData?.todayClickCount || 0),
           },
-        ]
+        ],
       },
       {
         data: [
           {
-            name: "今日访问主题数",
+            name: '今日访问主题数',
             value: topicData?.todayClickedNewsCount,
           },
           {
-            name: "今日总主题数",
-            value: countData?.todayNewsCount
+            name: '今日总主题数',
+            value: countData?.todayNewsCount,
           },
-        ]
+        ],
       },
       {
         data: [
           {
-            name: "今日数据",
-            value: countData?.todayNewsCount
+            name: '今日数据',
+            value: countData?.todayNewsCount,
           },
           {
-            name: "往日数据",
-            value: (countData?.allNewsCount || 0) - (countData?.todayNewsCount || 0),
+            name: '往日数据',
+            value:
+              (countData?.allNewsCount || 0) - (countData?.todayNewsCount || 0),
           },
-        ]
+        ],
       },
       {
-        data: topicClickData?.topicTodayVisitedInfo.map(item => ({
-          name: item.name,
-          value: item.clickCount
-        })) || []
-      }
-    ]
-  }, [countData, topicClickData, topicData, visitorData])
+        data:
+          topicClickData?.topicTodayVisitedInfo.map((item) => ({
+            name: item.name,
+            value: item.clickCount,
+          })) || [],
+      },
+    ];
+  }, [countData, topicClickData, topicData, visitorData]);
 
   const handleRefresh = useCallback(() => {
     getNewsRank();
-    getNewsStatistic("count");
-    getVisitorStatistic("visitor");
-    getClickedTopic("todayClickedNewsCount");
-    getTopicClickStatistic("");
-  }, [getClickedTopic, getNewsRank, getNewsStatistic, getTopicClickStatistic, getVisitorStatistic]);
+    getNewsStatistic('count');
+    getVisitorStatistic('visitor');
+    getClickedTopic('todayClickedNewsCount');
+    getTopicClickStatistic('');
+  }, [
+    getClickedTopic,
+    getNewsRank,
+    getNewsStatistic,
+    getTopicClickStatistic,
+    getVisitorStatistic,
+  ]);
 
   const handleManage = useCallback(() => {
-    router.push("/manage/hot");
+    router.push('/manage/hot');
   }, [router]);
 
   useEffect(() => {
@@ -140,11 +150,11 @@ export default function HotStatisticBoard() {
   }, [getNewsRank]);
 
   useEffect(() => {
-    getNewsStatistic("count");
+    getNewsStatistic('count');
   }, [getNewsStatistic]);
 
   useEffect(() => {
-    getVisitorStatistic("visitor");
+    getVisitorStatistic('visitor');
   }, [getVisitorStatistic]);
 
   useEffect(() => {
@@ -152,13 +162,19 @@ export default function HotStatisticBoard() {
   }, [getClickedTopic]);
 
   useEffect(() => {
-    getTopicClickStatistic("");
+    getTopicClickStatistic('');
   }, [getTopicClickStatistic]);
 
   return (
     <CommonStatisticCard
-      title={"热门数据统计"}
-      loading={loading || newsStatLoading || visitorStatLoading || topicLoading || topicClickLoading}
+      title={'热门数据统计'}
+      loading={
+        loading ||
+        newsStatLoading ||
+        visitorStatLoading ||
+        topicLoading ||
+        topicClickLoading
+      }
       onRefresh={handleRefresh}
       onGoManage={handleManage}
     >
@@ -200,48 +216,48 @@ export default function HotStatisticBoard() {
       </div>
 
       <div
-        className={"grid grid-cols-4 gap-4 p-4 mb-4"}
+        className={'grid grid-cols-4 gap-4 p-4 mb-4'}
         style={{
-          width: "100%",
-          minHeight: "200px",
-          flexWrap: "wrap",
+          width: '100%',
+          minHeight: '200px',
+          flexWrap: 'wrap',
         }}
       >
-        {chartData.map(({data}, index) => (
+        {chartData.map(({ data }, index) => (
           <MyPieChart
             key={index}
             style={{
-              height: "200px",
+              height: '200px',
             }}
             options={{
               tooltip: {
                 trigger: 'item',
-                formatter: "{b}: {c} ({d}%)",
+                formatter: '{b}: {c} ({d}%)',
               },
               legend: {
                 orient: 'horizontal',
                 textStyle: {
-                  fontSize: 10
+                  fontSize: 10,
                 },
-                
+
                 bottom: 0,
               },
               series: [
                 {
-                  type: "pie",
-                  radius: "70%",
+                  type: 'pie',
+                  radius: '70%',
                   label: {
                     show: false,
                     position: 'center',
-                    formatter: "{b}: {c} ({d}%)",
+                    formatter: '{b}: {c} ({d}%)',
                   },
                   avoidLabelOverlap: false,
                   itemStyle: {
                     borderRadius: 5,
-                    borderColor: "#fff",
+                    borderColor: '#fff',
                     borderWidth: 2,
                   },
-                  data: data
+                  data: data,
                 },
               ],
             }}
@@ -252,13 +268,12 @@ export default function HotStatisticBoard() {
       <div className="max-h-[200px] overflow-auto">
         {NewsRank.map((item, index) => {
           return (
-            <div key={index} className={"flex justify-between items-center"}>
-
+            <div key={index} className={'flex justify-between items-center'}>
               <a
                 href={item.url}
-                target={"_blank"}
-                rel={"noreferrer"}
-                className={" hover:underline flex"}
+                target={'_blank'}
+                rel={'noreferrer'}
+                className={' hover:underline flex'}
               >
                 <span
                   className={` w-6 flex items-center justify-center text-sm `}

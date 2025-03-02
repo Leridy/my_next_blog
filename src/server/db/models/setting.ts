@@ -1,3 +1,3 @@
-import {db} from '../utils';
+import { db } from '../utils';
 
-export const Setting = db.setting
+export const Setting = db.setting;

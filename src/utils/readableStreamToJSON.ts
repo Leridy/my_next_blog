@@ -1,10 +1,12 @@
-export async function readableStreamToJSON<T>(readableStream: ReadableStream<Uint8Array> | null): Promise<T | string> {
-  if (!readableStream) return "";
+export async function readableStreamToJSON<T>(
+  readableStream: ReadableStream<Uint8Array> | null
+): Promise<T | string> {
+  if (!readableStream) return '';
 
   const reader = readableStream.getReader();
-  let result = "";
+  let result = '';
   while (true) {
-    const {done, value} = await reader.read();
+    const { done, value } = await reader.read();
     if (done) {
       break;
     }
@@ -14,6 +16,6 @@ export async function readableStreamToJSON<T>(readableStream: ReadableStream<Uin
     return JSON.parse(result);
   } catch (e) {
     console.error(e);
-    return result
+    return result;
   }
 }

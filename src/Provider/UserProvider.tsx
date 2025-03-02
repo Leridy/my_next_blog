@@ -1,7 +1,15 @@
-import React, {createContext, useContext, ReactNode, useCallback, useEffect} from 'react';
-import {User} from '@prisma/client';
-import useUserAuthData, {UserInfo} from "@/Components/UserComponents/hooks/useUserAuthData";
-import {message} from "antd";
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+} from 'react';
+import { User } from '@prisma/client';
+import useUserAuthData, {
+  UserInfo,
+} from '@/Components/UserComponents/hooks/useUserAuthData';
+import { message } from 'antd';
 
 interface UserContextType {
   user: Omit<User, 'password'> | null;
@@ -11,11 +19,13 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({children}: {
-  children: ReactNode,
-  initialState?: UserInfo | null
+export const UserProvider = ({
+  children,
+}: {
+  children: ReactNode;
+  initialState?: UserInfo | null;
 }) => {
-  const {requestLogout, requestUserInfo, user} = useUserAuthData();
+  const { requestLogout, requestUserInfo, user } = useUserAuthData();
 
   const handleUserLogout = useCallback(async () => {
     try {
@@ -24,8 +34,6 @@ export const UserProvider = ({children}: {
       console.error(e);
       message.error('登出失败');
     }
-
-
   }, [requestLogout]);
 
   useEffect(() => {
@@ -35,7 +43,9 @@ export const UserProvider = ({children}: {
   }, [requestUserInfo, user]);
 
   return (
-    <UserContext.Provider value={{user, requestLogout: handleUserLogout, requestUserInfo}}>
+    <UserContext.Provider
+      value={{ user, requestLogout: handleUserLogout, requestUserInfo }}
+    >
       {children}
     </UserContext.Provider>
   );

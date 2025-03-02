@@ -1,4 +1,3 @@
-import {db} from "../utils";
+import { db } from '../utils';
 
-
-export const ValidateCode  = db.validateCode;
+export const ValidateCode = db.validateCode;

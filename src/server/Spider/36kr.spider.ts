@@ -1,7 +1,11 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {mergeHeaderObj} from "@/utils/mergeObject";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { mergeHeaderObj } from '@/utils/mergeObject';
+import {
+  checkAndOperateNews,
+  spiderPublicLogic,
+  updateSpiderUpdateTime,
+} from '@/server/Spider/utils/spiderPublicLogic';
 
 interface KrDataStructure {
   itemId: number;
@@ -20,21 +24,21 @@ interface KrDataStructure {
     statComment: number;
     statPraise: number;
     statFormat: string;
-  }
+  };
 }
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: '36kr',
   description: '36kr 爬虫',
-}
+};
 
-const URL_GENERATOR = (type: string) => `https://gateway.36kr.com/api/mis/nav/home/nav/rank/${type}`;
-
+const URL_GENERATOR = (type: string) =>
+  `https://gateway.36kr.com/api/mis/nav/home/nav/rank/${type}`;
 
 const HTTP_CONFIG = {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   },
   body: {
     partner_id: 'wap',
@@ -43,8 +47,8 @@ const HTTP_CONFIG = {
       platformId: 2,
     },
     timestamp: Date.now(),
-  }
-}
+  },
+};
 
 enum ListType {
   hot = 'hotRankList',
@@ -55,11 +59,15 @@ enum ListType {
 
 async function getData(type: keyof typeof ListType = 'hot') {
   const url = URL_GENERATOR(type);
-  return await http.post(url, {
-    ...HTTP_CONFIG.body
-  }, {
-    headers: HTTP_CONFIG.headers
-  });
+  return await http.post(
+    url,
+    {
+      ...HTTP_CONFIG.body,
+    },
+    {
+      headers: HTTP_CONFIG.headers,
+    }
+  );
 }
 
 function genTagsForNews(data: KrDataStructure['templateMaterial']): string[] {
@@ -68,13 +76,19 @@ function genTagsForNews(data: KrDataStructure['templateMaterial']): string[] {
     const curData = data[cur as keyof KrDataStructure['templateMaterial']];
 
     if (curData === 'string' && curData.length < 6) {
-      acc.push(curData)
+      acc.push(curData);
     }
     return acc;
   }, [] as string[]);
 }
 
-function dataTransformer(data: KrDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
+function dataTransformer(
+  data: KrDataStructure[],
+  spiderId: number
+): Pick<
+  HotNews,
+  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
+>[] {
   return data.map((item) => {
     return {
       title: item.templateMaterial.widgetTitle,
@@ -84,26 +98,25 @@ function dataTransformer(data: KrDataStructure[], spiderId: number): Pick<HotNew
       uniqueId: `36kr-${item.itemId}`,
       spiderId,
       hotCount: item.templateMaterial.statRead,
-      tags: genTagsForNews(item.templateMaterial)
-    }
+      tags: genTagsForNews(item.templateMaterial),
+    };
   });
 }
 
-function mergeTypeData(data: Record<keyof typeof ListType, KrDataStructure[]>): KrDataStructure[] {
+function mergeTypeData(
+  data: Record<keyof typeof ListType, KrDataStructure[]>
+): KrDataStructure[] {
   return Object.keys(data).reduce((acc, cur) => {
     // @ts-expect-error sb 玩意
     return acc.concat(data[cur]);
   }, []);
 }
 
-
-
 /**
  * main logic of getData from 36kr
  */
-export default async function main () {
+export default async function main() {
   const { id } = await spiderPublicLogic(SPIDER_INFO);
-
 
   const tasks = Object.keys(ListType).map(async (key) => {
     const type = key as keyof typeof ListType;
@@ -112,20 +125,18 @@ export default async function main () {
 
   const requestedData = await Promise.all(tasks);
 
-  const result = mergeTypeData(requestedData.reduce((acc, cur) => {
-    return mergeHeaderObj(acc, cur.data);
-  }, {}) as Record<keyof typeof ListType, KrDataStructure[]>);
+  const result = mergeTypeData(
+    requestedData.reduce((acc, cur) => {
+      return mergeHeaderObj(acc, cur.data);
+    }, {}) as Record<keyof typeof ListType, KrDataStructure[]>
+  );
 
   const transformedData = dataTransformer(result, id);
-
 
   // data transform to your own format
   await checkAndOperateNews(transformedData);
 
   await updateSpiderUpdateTime(id);
 
-
   return transformedData;
 }
-
-

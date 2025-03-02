@@ -1,16 +1,16 @@
-'use client'
-import React, {useState, useEffect, useCallback} from "react";
-import {useDrag, useDrop,} from 'react-dnd';
-import Card from "../../Card";
-import UserProfile from "@/Components/MainBoard/UserBoard/UserProfile";
-import TipsAndNotification from "@/Components/MainBoard/UserBoard/TipsAndNotification/TipsAndNotification";
-import LinksBoard from "@/Components/MainBoard/UserBoard/LinksBoard/LinksBoard";
-import CopyrightBoard from "@/Components/MainBoard/UserBoard/CopyrightBoard/CopyrightBoard";
-import WoodenFishGame from "@/Components/WoodenFishGame";
-import TodoList from "@/Components/TodoList";
-import FoodPicker from "@/Components/FoodPicker";
-import CommentSystem from "@/Components/CommentsBoard";
-import {useUserSettingContext} from "@/Provider/UserSettingProvider";
+'use client';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
+import Card from '../../Card';
+import UserProfile from '@/Components/MainBoard/UserBoard/UserProfile';
+import TipsAndNotification from '@/Components/MainBoard/UserBoard/TipsAndNotification/TipsAndNotification';
+import LinksBoard from '@/Components/MainBoard/UserBoard/LinksBoard/LinksBoard';
+import CopyrightBoard from '@/Components/MainBoard/UserBoard/CopyrightBoard/CopyrightBoard';
+import WoodenFishGame from '@/Components/WoodenFishGame';
+import TodoList from '@/Components/TodoList';
+import FoodPicker from '@/Components/FoodPicker';
+import CommentSystem from '@/Components/CommentsBoard';
+import { useUserSettingContext } from '@/Provider/UserSettingProvider';
 
 const BOARD_ORDER_KEY = 'userBoardOrder';
 
@@ -24,10 +24,18 @@ interface DraggableCardProps {
   style?: React.CSSProperties;
 }
 
-const DraggableCard = ({id, index, moveCard, isDraggable, children, header, style}: DraggableCardProps) => {
-  const [{isDragging}, drag] = useDrag({
+const DraggableCard = ({
+  id,
+  index,
+  moveCard,
+  isDraggable,
+  children,
+  header,
+  style,
+}: DraggableCardProps) => {
+  const [{ isDragging }, drag] = useDrag({
     type: 'CARD',
-    item: () => ({id, index}),
+    item: () => ({ id, index }),
     canDrag: () => isDraggable,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -36,7 +44,7 @@ const DraggableCard = ({id, index, moveCard, isDraggable, children, header, styl
 
   // @ts-expect-error handlerId可能为null
 
-  const [{handlerId}, drop] = useDrop({
+  const [{ handlerId }, drop] = useDrop({
     accept: 'CARD',
     collect(monitor) {
       return {
@@ -62,11 +70,10 @@ const DraggableCard = ({id, index, moveCard, isDraggable, children, header, styl
     },
   });
 
-
   return (
     <div
       // @ts-expect-error drag可能为null
-      ref={(node) => isDraggable ? drop(drag(node)) : null}
+      ref={(node) => (isDraggable ? drop(drag(node)) : null)}
       style={{
         opacity: isDragging ? 0.5 : 1,
         cursor: isDraggable ? 'move' : 'default',
@@ -84,12 +91,11 @@ const DraggableCard = ({id, index, moveCard, isDraggable, children, header, styl
               backgroundColor: 'rgba(0,0,0,0.03)',
             }}
           >
-
             <span className="font-medium text-gray-700">点击拖动此卡片</span>
-
           </div>
-        ) : children
-        }
+        ) : (
+          children
+        )}
       </Card>
     </div>
   );
@@ -109,55 +115,55 @@ type CardItem = {
  */
 export default function UserBoard() {
   const [cards, setCards] = useState<CardItem[]>([]);
-  const {topicSettingMode: isDraggable} = useUserSettingContext();
+  const { topicSettingMode: isDraggable } = useUserSettingContext();
 
   // 初始化卡片数据
   useEffect(() => {
     const initialCards: CardItem[] = [
       {
         id: 'tips',
-        component: <TipsAndNotification/>,
+        component: <TipsAndNotification />,
         header: '',
       },
       {
         id: 'profile',
-        component: <UserProfile/>,
+        component: <UserProfile />,
         header: '',
       },
       {
         id: 'links',
-        component: <LinksBoard/>,
+        component: <LinksBoard />,
         header: '友情链接',
       },
       {
         id: 'foodPicker',
-        component: <FoodPicker/>,
+        component: <FoodPicker />,
         header: '今天吃什么？',
-        style: {minHeight: '530px'}
+        style: { minHeight: '530px' },
       },
       {
         id: 'woodenFish',
-        component: <WoodenFishGame/>,
+        component: <WoodenFishGame />,
         header: '敲木鱼',
-        style: {minHeight: '400px'}
+        style: { minHeight: '400px' },
       },
       {
         id: 'todoList',
-        component: <TodoList/>,
+        component: <TodoList />,
         header: 'Todo List',
-        style: {minHeight: '500px'}
+        style: { minHeight: '500px' },
       },
       {
         id: 'comments',
-        component: <CommentSystem/>,
+        component: <CommentSystem />,
         header: '留言板',
-        style: {minHeight: '850px', overflowY: 'auto'}
+        style: { minHeight: '850px', overflowY: 'auto' },
       },
       {
         id: 'copyright',
-        component: <CopyrightBoard/>,
+        component: <CopyrightBoard />,
         header: '',
-      }
+      },
     ];
 
     // 从localStorage读取排序
@@ -167,12 +173,12 @@ export default function UserBoard() {
         const orderIds = JSON.parse(savedOrder) as string[];
         // 按保存的顺序重排卡片
         const orderedCards = orderIds
-          .map(id => initialCards.find(card => card.id === id))
+          .map((id) => initialCards.find((card) => card.id === id))
           .filter(Boolean) as CardItem[];
 
         // 确保所有卡片都被包含，可能有新增的卡片
-        initialCards.forEach(card => {
-          if (!orderedCards.some(c => c.id === card.id)) {
+        initialCards.forEach((card) => {
+          if (!orderedCards.some((c) => c.id === card.id)) {
             orderedCards.push(card);
           }
         });
@@ -188,14 +194,14 @@ export default function UserBoard() {
   }, []);
 
   const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
-    setCards(prevCards => {
+    setCards((prevCards) => {
       const newCards = [...prevCards];
       const draggedCard = newCards[dragIndex];
       newCards.splice(dragIndex, 1);
       newCards.splice(hoverIndex, 0, draggedCard);
 
       // 保存新顺序到localStorage
-      const orderIds = newCards.map(card => card.id);
+      const orderIds = newCards.map((card) => card.id);
       localStorage.setItem(BOARD_ORDER_KEY, JSON.stringify(orderIds));
 
       return newCards;
@@ -207,9 +213,8 @@ export default function UserBoard() {
   }
 
   return (
-
     <div className={'grid gap-6 h-full overflow-y-scroll user-board'}>
-      {cards.map((card, index) => (
+      {cards.map((card, index) =>
         card.header ? (
           <DraggableCard
             key={card.id}
@@ -226,7 +231,7 @@ export default function UserBoard() {
           // 没有header的组件不使用Card包装
           <div key={card.id}>{card.component}</div>
         )
-      ))}
+      )}
     </div>
   );
 }

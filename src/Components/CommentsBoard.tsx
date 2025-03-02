@@ -1,30 +1,39 @@
-import React, {useState, useEffect} from 'react';
-import {Form, Input, Button, Spin, message, Divider, Modal, AutoComplete} from 'antd';
-import {SendOutlined, MailOutlined, UserOutlined, SafetyCertificateOutlined} from '@ant-design/icons';
-import {format} from 'date-fns';
+import React, { useState, useEffect } from 'react';
+import {
+  Form,
+  Input,
+  Button,
+  Spin,
+  message,
+  Divider,
+  Modal,
+  AutoComplete,
+} from 'antd';
+import {
+  SendOutlined,
+  MailOutlined,
+  UserOutlined,
+  SafetyCertificateOutlined,
+} from '@ant-design/icons';
+import { format } from 'date-fns';
 import axios from 'axios';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { filter } from 'sensitive-words-js';
-
-
 
 // 检查敏感词
 const checkSensitiveWords = (str: string) => {
-  const {text, words} = filter.filter(str, {
+  const { text, words } = filter.filter(str, {
     replace: true,
   });
 
   message.error(`评论中包含敏感词：${words.join(', ')}`);
   return text;
-}
-
+};
 
 // 处理字符串，防止 XSS 攻击，数据库注入等
 const sanitizeString = (str: string) => {
-
   return checkSensitiveWords(str.replace(/</g, '&lt;').replace(/>/g, '&gt;'));
 };
-
 
 // Tailwind颜色配置
 const tailwindColors = {
@@ -51,7 +60,7 @@ const STORAGE_KEY = 'user_comments';
 const LAST_NAME_KEY = 'last_user_name';
 const LAST_EMAIL_KEY = 'last_user_email';
 const LAST_COMMENT_DATE = 'last_comment_date';
-const FORM_ENDPOINT = "https://formspree.io/f/mnnjezjr"; // 你的Formspree ID
+const FORM_ENDPOINT = 'https://formspree.io/f/mnnjezjr'; // 你的Formspree ID
 
 const CommentSystem: React.FC = () => {
   const [form] = Form.useForm();
@@ -64,7 +73,8 @@ const CommentSystem: React.FC = () => {
 
   // 生成随机验证码
   const generateCaptcha = () => {
-    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const chars =
+      '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     let result = '';
     for (let i = 0; i < 6; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -110,10 +120,10 @@ const CommentSystem: React.FC = () => {
     const savedEmail = localStorage.getItem(LAST_EMAIL_KEY);
 
     if (savedName) {
-      form.setFieldsValue({name: savedName});
+      form.setFieldsValue({ name: savedName });
     }
     if (savedEmail) {
-      form.setFieldsValue({email: savedEmail});
+      form.setFieldsValue({ email: savedEmail });
     }
 
     // 检查评论权限
@@ -124,7 +134,15 @@ const CommentSystem: React.FC = () => {
   }, [form]);
 
   // 提交表单
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: {
+    name: string;
+    email: string;
+    content: string;
+    knownFrom: string;
+    captcha: string;
+    pageUrl: string;
+    userAgent: string;
+  }) => {
     if (!canComment) {
       message.error(`评论太频繁，请等待 ${remainingHours} 小时后再试`);
       return;
@@ -155,7 +173,7 @@ const CommentSystem: React.FC = () => {
       content: values.content,
       timestamp: new Date().toISOString(),
       avatar: `https://api.dicebear.com/6.x/avataaars/svg?seed=${nameSeed}`,
-      isLocal: true
+      isLocal: true,
     };
 
     try {
@@ -175,7 +193,7 @@ const CommentSystem: React.FC = () => {
       setMessages(updatedMessages);
 
       // 保存到localStorage
-      const localMessages = updatedMessages.filter(msg => msg.isLocal);
+      const localMessages = updatedMessages.filter((msg) => msg.isLocal);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(localMessages));
       localStorage.setItem(LAST_NAME_KEY, values.name);
       if (values.email) localStorage.setItem(LAST_EMAIL_KEY, values.email);
@@ -191,7 +209,6 @@ const CommentSystem: React.FC = () => {
       form.resetFields(['content', 'captcha']);
       setUserCaptcha('');
       generateCaptcha();
-
     } catch (error) {
       console.error('提交留言失败', error);
       message.error('提交失败，请稍后再试');
@@ -211,13 +228,14 @@ const CommentSystem: React.FC = () => {
     Modal.info({
       title: '评论限制',
       content: `根据设置，每位用户24小时内只能发表一条评论。您需要等待 ${remainingHours} 小时后才能再次评论。`,
-      okText: '知道了'
+      okText: '知道了',
     });
   };
 
   return (
-    <div className={`w-full ${tailwindColors.bg} ${tailwindColors.text} rounded-lg px-4 py-5 h-[780px]`}>
-
+    <div
+      className={`w-full ${tailwindColors.bg} ${tailwindColors.text} rounded-lg px-4 py-5 h-[780px]`}
+    >
       <div className="mb-5">
         <Form
           form={form}
@@ -229,10 +247,10 @@ const CommentSystem: React.FC = () => {
             <Form.Item
               name="name"
               label="昵称"
-              rules={[{required: true, message: '请输入您的昵称'}]}
+              rules={[{ required: true, message: '请输入您的昵称' }]}
             >
               <Input
-                prefix={<UserOutlined className="site-form-item-icon"/>}
+                prefix={<UserOutlined className="site-form-item-icon" />}
                 placeholder="您的昵称"
                 maxLength={20}
               />
@@ -241,10 +259,10 @@ const CommentSystem: React.FC = () => {
             <Form.Item
               name="email"
               label="邮箱 (选填)"
-              rules={[{type: 'email', message: '请输入有效的邮箱地址'}]}
+              rules={[{ type: 'email', message: '请输入有效的邮箱地址' }]}
             >
               <Input
-                prefix={<MailOutlined className="site-form-item-icon"/>}
+                prefix={<MailOutlined className="site-form-item-icon" />}
                 placeholder="您的邮箱，非必填"
               />
             </Form.Item>
@@ -253,7 +271,7 @@ const CommentSystem: React.FC = () => {
           <Form.Item
             name="content"
             label="留言内容"
-            rules={[{required: true, message: '请输入留言内容'}]}
+            rules={[{ required: true, message: '请输入留言内容' }]}
           >
             <Input.TextArea
               placeholder="请输入您的留言内容..."
@@ -265,36 +283,34 @@ const CommentSystem: React.FC = () => {
             />
           </Form.Item>
 
-
-          <Form.Item
-            name="knownFrom"
-            label="您从何处知道这个网站"
-          >
+          <Form.Item name="knownFrom" label="您从何处知道这个网站">
             <AutoComplete
               options={[
-                {value: 'Google'},
-                {value: 'Bing'},
-                {value: '百度'},
-                {value: '其他搜索引擎'},
-                {value: '朋友推荐'},
-                {value: '社交媒体'},
-                {value: '其他'},]}
+                { value: 'Google' },
+                { value: 'Bing' },
+                { value: '百度' },
+                { value: '其他搜索引擎' },
+                { value: '朋友推荐' },
+                { value: '社交媒体' },
+                { value: '其他' },
+              ]}
             >
-              <Input placeholder="请选择或输入"/>
+              <Input placeholder="请选择或输入" />
             </AutoComplete>
           </Form.Item>
-
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
             <Form.Item
               name="captcha"
               label="验证码"
-              rules={[{required: true, message: '请输入验证码'}]}
+              rules={[{ required: true, message: '请输入验证码' }]}
               className={'w-full'}
             >
               <div className="flex items-center space-x-2 w-full">
                 <Input
-                  prefix={<SafetyCertificateOutlined className="site-form-item-icon"/>}
+                  prefix={
+                    <SafetyCertificateOutlined className="site-form-item-icon" />
+                  }
                   placeholder="输入验证码"
                   value={userCaptcha}
                   onChange={(e) => setUserCaptcha(e.target.value)}
@@ -310,54 +326,64 @@ const CommentSystem: React.FC = () => {
               </div>
             </Form.Item>
 
-
             <Form.Item name="pageUrl" hidden>
-              <Input value={window.location.href}/>
+              <Input value={window.location.href} />
             </Form.Item>
 
             <Form.Item name="userAgent" hidden>
-              <Input value={navigator.userAgent}/>
+              <Input value={navigator.userAgent} />
             </Form.Item>
-
-
           </div>
 
           {!canComment && (
-            <div className="mr-4 text-yellow-600 dark:text-yellow-400 text-sm cursor-pointer" onClick={showTimeModal}>
+            <div
+              className="mr-4 text-yellow-600 dark:text-yellow-400 text-sm cursor-pointer"
+              onClick={showTimeModal}
+            >
               等待 {remainingHours}h
             </div>
           )}
           <Button
             type="primary"
             htmlType="submit"
-            icon={<SendOutlined/>}
+            icon={<SendOutlined />}
             loading={loading}
             disabled={!canComment}
             style={{
               backgroundColor: 'rgba(40,167,69,0.9)',
-              borderColor: 'rgba(40,167,69,0.9)'
+              borderColor: 'rgba(40,167,69,0.9)',
             }}
             block
           >
             提交留言
           </Button>
-
         </Form>
       </div>
 
       <div className="text-xs opacity-60 mb-4">
-        <MailOutlined className="mr-1"/>
+        <MailOutlined className="mr-1" />
         留言功能由
-        <a href="https://formspree.io/" target="_blank" rel="noreferrer" className="underline">
+        <a
+          href="https://formspree.io/"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
           Formspree
         </a>
         提供，您的留言将不会被公开
       </div>
 
-      <Divider className="my-4" orientation="left">你的全部留言</Divider>
+      <Divider className="my-4" orientation="left">
+        你的全部留言
+      </Divider>
 
       <div className="space-y-4 max-h-[220px] overflow-y-auto">
-        {loading && <div className="py-4 flex justify-center"><Spin tip="提交中..."/></div>}
+        {loading && (
+          <div className="py-4 flex justify-center">
+            <Spin tip="提交中..." />
+          </div>
+        )}
 
         {messages.length > 0 ? (
           messages.map((message) => (
@@ -375,8 +401,7 @@ const CommentSystem: React.FC = () => {
                   <div className="flex items-center flex-wrap">
                     <span className="font-medium mr-2">{message.name}</span>
                     {message.isLocal && (
-                      <span
-                        className="text-xs bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-1.5 py-0.5 rounded-full">
+                      <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-1.5 py-0.5 rounded-full">
                         你
                       </span>
                     )}
@@ -384,13 +409,17 @@ const CommentSystem: React.FC = () => {
                       {format(new Date(message.timestamp), 'yyyy-MM-dd HH:mm')}
                     </span>
                   </div>
-                  <div className="mt-2 text-sm whitespace-pre-wrap break-words">{message.content}</div>
+                  <div className="mt-2 text-sm whitespace-pre-wrap break-words">
+                    {message.content}
+                  </div>
                 </div>
               </div>
             </div>
           ))
         ) : (
-          <div className="text-center py-6 opacity-60">暂无留言，成为第一个留言的人吧！</div>
+          <div className="text-center py-6 opacity-60">
+            暂无留言，成为第一个留言的人吧！
+          </div>
         )}
       </div>
     </div>

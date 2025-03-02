@@ -1,8 +1,8 @@
 // client component
-'use client'
-import {useMemo} from "react";
+'use client';
+import { useMemo } from 'react';
 import './index.style.scss';
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 
 interface AvatarProps {
   name: string;
@@ -27,31 +27,36 @@ const generateColorByString = (str: string = 'ABC') => {
   hash = str.split('').reduce((acc, char) => {
     return char.charCodeAt(0) + ((acc << 5) - acc);
   }, 0);
-  const c = (hash & 0x00FFFFFF)
-    .toString(16)
-    .toUpperCase();
+  const c = (hash & 0x00ffffff).toString(16).toUpperCase();
 
   return `#${'00000'.substring(0, 6 - c.length)}${c}`;
-}
+};
 
 const avatarFontColor = () => {
   return '#fff';
-}
+};
 
 const avatarFontFamily = () => {
-  const fontFamily = ['Microsoft Yahei', 'SimHei', 'KaiTi', 'FangSong', 'Arial', 'sans-serif'];
+  const fontFamily = [
+    'Microsoft Yahei',
+    'SimHei',
+    'KaiTi',
+    'FangSong',
+    'Arial',
+    'sans-serif',
+  ];
   return fontFamily[hash % fontFamily.length];
-}
+};
 
 const avatarFontWeight = () => {
   const fontWeight = ['normal', 'bold', 'bolder', 'lighter'];
   return fontWeight[hash % fontWeight.length];
-}
+};
 
 const avatarFontStyle = () => {
   const fontStyle = ['normal', 'italic', 'oblique'];
   return fontStyle[hash % fontStyle.length];
-}
+};
 
 /**
  * Avatar component
@@ -64,7 +69,7 @@ const avatarFontStyle = () => {
  *
  */
 function Avatar(props: AvatarProps) {
-  const {name, src, size, onClick} = props;
+  const { name, src, size, onClick } = props;
 
   const avatarSize = useMemo(() => {
     return AvatarSize[size || 'small'];
@@ -91,23 +96,31 @@ function Avatar(props: AvatarProps) {
     context.fillStyle = avatarFontColor();
     context.textAlign = 'center';
 
-    context.fillText((name || '客')[0].toUpperCase(), avatarSize * 4, avatarSize * 6.1);
+    context.fillText(
+      (name || '客')[0].toUpperCase(),
+      avatarSize * 4,
+      avatarSize * 6.1
+    );
     return canvas.toDataURL();
   }, [name, src, avatarSize]);
 
   return (
     <div
       className="flex items-center justify-center rounded-full avatar"
-      style={{width: avatarSize, height: avatarSize}}
+      style={{ width: avatarSize, height: avatarSize }}
       onClick={onClick}
     >
       <img
         className="cursor-pointer rounded"
-        src={avatarSrc} alt={name} width={avatarSize} height={avatarSize}/>
+        src={avatarSrc}
+        alt={name}
+        width={avatarSize}
+        height={avatarSize}
+      />
     </div>
   );
 }
 
 export default dynamic(() => Promise.resolve(Avatar), {
   ssr: false,
-})
+});

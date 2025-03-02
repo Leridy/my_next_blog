@@ -1,10 +1,13 @@
-export function mergeHeaderObj(headerObj1: Record<string, string | string[]>, headerObj2: Record<string, string | string[]>): Record<string, string | string[]> {
+export function mergeHeaderObj(
+  headerObj1: Record<string, string | string[]>,
+  headerObj2: Record<string, string | string[]>
+): Record<string, string | string[]> {
   // 如果 两个 object 中有相同的 key 请按下列逻辑处理:
   // 1. 如果它们的 value 都是 string 则合并结果是 string[];
   // 2. 如果它们的 value 中有一个或都是 string[] 则将他们合并成 string[]
   // 如果 key 不相同，则按照原有的值做合并
 
-  const obj = {...headerObj1};
+  const obj = { ...headerObj1 };
 
   Object.keys(headerObj2).forEach((key) => {
     if (obj[key] === undefined) {
@@ -24,7 +27,7 @@ export function mergeHeaderObj(headerObj1: Record<string, string | string[]>, he
         }
       }
     }
-  })
+  });
 
   return obj;
 }

@@ -1,5 +1,9 @@
-import axios, {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
-import {notification} from "antd";
+import axios, {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
+import { notification } from 'antd';
 
 const requestHandler = (request: InternalAxiosRequestConfig) => {
   // add jwt token to request header
@@ -8,9 +12,9 @@ const requestHandler = (request: InternalAxiosRequestConfig) => {
     request.headers['Authorization'] = `${token}`;
   }
   return request;
-}
+};
 
-const responseHandler = (response: AxiosResponse): AxiosResponse["data"] => {
+const responseHandler = (response: AxiosResponse): AxiosResponse['data'] => {
   // add response handler
   /**
    * if response status code starts with 2, return response.
@@ -20,13 +24,12 @@ const responseHandler = (response: AxiosResponse): AxiosResponse["data"] => {
   if (response.status.toString().startsWith('2')) {
     return response.data;
   }
-
-}
+};
 
 const errorHandler = (error: AxiosError) => {
   // add error handler
   throw axiosErrorToNetworkError(error);
-}
+};
 
 // create an axios instance with handler above
 const instance = axios.create({
@@ -37,7 +40,6 @@ instance.interceptors.request.use(requestHandler);
 instance.interceptors.response.use(responseHandler, errorHandler);
 
 export default instance;
-
 
 /**
  * 定义一个自己的 网络错误 error 类
@@ -53,7 +55,13 @@ export class NetworkError extends Error {
   extraData: unknown;
   originError: AxiosError | undefined;
 
-  constructor(message: string, status: number, bizMessage: string, extraData: unknown, originError?: AxiosError) {
+  constructor(
+    message: string,
+    status: number,
+    bizMessage: string,
+    extraData: unknown,
+    originError?: AxiosError
+  ) {
     super(message);
     this.status = status;
     this.bizMessage = bizMessage;
@@ -67,10 +75,16 @@ export function axiosErrorToNetworkError(error: AxiosError) {
   const status = error.response?.status || 500;
   // @ts-expect-error error response may not exist
   const bizMessage = error.response?.data?.message;
-  const message = error.message
+  const message = error.message;
   const extraData = error.response?.data;
 
-  const newError = new NetworkError(message, status, bizMessage, extraData, error);
+  const newError = new NetworkError(
+    message,
+    status,
+    bizMessage,
+    extraData,
+    error
+  );
 
   if (error.config?.headers?.['x-ignore-error']) throw newError;
 
@@ -78,7 +92,8 @@ export function axiosErrorToNetworkError(error: AxiosError) {
     case 400:
       notification.error({
         message: '请求错误',
-        description: newError.bizMessage || newError.message || '请求错误，请检查参数',
+        description:
+          newError.bizMessage || newError.message || '请求错误，请检查参数',
       });
       break;
     case 401:
@@ -90,19 +105,22 @@ export function axiosErrorToNetworkError(error: AxiosError) {
     case 403:
       notification.error({
         message: '权限不足',
-        description: newError.bizMessage || newError.message || '您没有权限访问该资源',
+        description:
+          newError.bizMessage || newError.message || '您没有权限访问该资源',
       });
       break;
     case 404:
       notification.error({
         message: '资源不存在',
-        description: newError.bizMessage || newError.message || '您访问的资源不存在',
+        description:
+          newError.bizMessage || newError.message || '您访问的资源不存在',
       });
       break;
     case 500:
       notification.error({
         message: '服务器错误',
-        description: newError.bizMessage || newError.message || '服务器错误，请稍后再试',
+        description:
+          newError.bizMessage || newError.message || '服务器错误，请稍后再试',
       });
       break;
     default:
@@ -114,8 +132,3 @@ export function axiosErrorToNetworkError(error: AxiosError) {
   }
   throw newError;
 }
-
-
-
-
-

@@ -1,7 +1,3 @@
 export default function LoadingPanel() {
-  return (
-    <div>
-      loading here
-    </div>
-  )
+  return <div>loading here</div>;
 }

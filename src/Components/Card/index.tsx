@@ -1,5 +1,12 @@
-import {CSSProperties, ReactNode, useCallback, useMemo, useRef, useState} from "react";
-import './Card.style.scss'
+import {
+  CSSProperties,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import './Card.style.scss';
 
 export interface CardProps {
   header?: ReactNode;
@@ -11,10 +18,10 @@ export interface CardProps {
 }
 
 export default function UserCard(props: CardProps) {
-  const {header, style, actions, children, className} = props;
+  const { header, style, actions, children, className } = props;
 
   // 鼠标交互状态
-  const [position, setPosition] = useState({x: 0, y: 0});
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
   const boardRef = useRef<HTMLDivElement>(null);
@@ -34,13 +41,10 @@ export default function UserCard(props: CardProps) {
 
     if (!requestRef.current) {
       requestRef.current = requestAnimationFrame(() => {
-        setPosition({x, y});
+        setPosition({ x, y });
         requestRef.current = null;
       });
     }
-
-
-
   }, []);
 
   // 计算卡片变换样式
@@ -63,12 +67,12 @@ export default function UserCard(props: CardProps) {
       transition: 'all 0.2s ease-out',
       boxShadow: isHovered
         ? `
-            ${((position.x - width / 2) / 40)}px 
+            ${(position.x - width / 2) / 40}px 
            ${(position.y - height / 2) / 40}px 
            30px rgba(0,0,0,0.5)`
         : '0px 5px 15px rgba(0,0,0,0.1)',
     };
-  }, [ position, isHovered]);
+  }, [position, isHovered]);
 
   const renderHeader = useMemo(() => {
     return (
@@ -80,20 +84,20 @@ export default function UserCard(props: CardProps) {
       >
         {header}
       </div>
-    )
+    );
   }, [header]);
 
-  const renderAction = useMemo(
-    () => {
-      return (
-        <div
-          className={'flex justify-center items-center absolute bottom-0 left-0 w-full rounded-b-lg overflow-hidden card-action-part'}
-        >
-          {actions}
-        </div>
-      )
-    }, [actions]
-  )
+  const renderAction = useMemo(() => {
+    return (
+      <div
+        className={
+          'flex justify-center items-center absolute bottom-0 left-0 w-full rounded-b-lg overflow-hidden card-action-part'
+        }
+      >
+        {actions}
+      </div>
+    );
+  }, [actions]);
 
   return (
     <div
@@ -103,17 +107,15 @@ export default function UserCard(props: CardProps) {
         background: 'var(--color-card-background)',
         minHeight: '20vh',
         ...cardStyle,
-        ...style
+        ...style,
       }}
-        onMouseMove={handleMouseMove}
+      onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {header && renderHeader}
-      <div className={'pt-2 pb-2 flex-1'}>
-        {children}
-      </div>
+      <div className={'pt-2 pb-2 flex-1'}>{children}</div>
       {actions && renderAction}
     </div>
-  )
+  );
 }

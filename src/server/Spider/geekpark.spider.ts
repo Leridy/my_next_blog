@@ -1,6 +1,10 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import {
+  checkAndOperateNews,
+  spiderPublicLogic,
+  updateSpiderUpdateTime,
+} from '@/server/Spider/utils/spiderPublicLogic';
 
 interface GeekParkDataStructure {
   comments_count: number;
@@ -45,28 +49,36 @@ interface GeekParkResponse {
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'geekpark',
   description: 'geekpark 爬虫',
-}
+};
 
-const URL_GENERATOR = () => `https://mainssl.geekpark.net/api/v2`
+const URL_GENERATOR = () => `https://mainssl.geekpark.net/api/v2`;
 
 async function getData(): Promise<GeekParkResponse> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
 
-function dataTransformer(data: GeekParkDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
+function dataTransformer(
+  data: GeekParkDataStructure[],
+  spiderId: number
+): Pick<
+  HotNews,
+  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
+>[] {
   return data.map((item) => {
-    const {
-      title,
-      abstract,
-      id,
-      cover_url,
-      link,
-      tags,
-      views
-    } = item;
+    const { title, abstract, id, cover_url, link, tags, views } = item;
 
-    const transformedItem: Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId' | 'hotCount' | 'tags'> = {
+    const transformedItem: Pick<
+      HotNews,
+      | 'title'
+      | 'url'
+      | 'description'
+      | 'image'
+      | 'spiderId'
+      | 'uniqueId'
+      | 'hotCount'
+      | 'tags'
+    > = {
       title,
       description: abstract || title,
       image: cover_url || '',
@@ -74,8 +86,8 @@ function dataTransformer(data: GeekParkDataStructure[], spiderId: number): Pick<
       uniqueId: `geekpark-${id}`,
       spiderId,
       hotCount: views || 0,
-      tags: Array.from(new Set([...tags]))
-    }
+      tags: Array.from(new Set([...tags])),
+    };
 
     return transformedItem;
   });
@@ -85,7 +97,7 @@ function dataTransformer(data: GeekParkDataStructure[], spiderId: number): Pick<
  * main logic of getData from GeekPark
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   // 获取极客公园数据
   const rawData = await getData();
@@ -101,7 +113,7 @@ export default async function main() {
     throw new Error('获取极客公园数据失败');
   }
 
-  const transformedResult = result.map(({post}) => post);
+  const transformedResult = result.map(({ post }) => post);
 
   // 转换数据格式
   const transformedData = dataTransformer(transformedResult, id);

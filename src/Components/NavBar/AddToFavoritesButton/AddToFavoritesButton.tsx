@@ -7,13 +7,13 @@
  * @note 注意：该组件仅在浏览器环境下有效, 并且需要支持多种主流浏览器
  */
 
-import {Button, Tooltip} from "antd";
-import {useCallback} from "react";
-import {StarFilled} from "@ant-design/icons";
+import { Button, Tooltip } from 'antd';
+import { useCallback } from 'react';
+import { StarFilled } from '@ant-design/icons';
 
 export default function AddToFavoritesButton() {
   const handleAddToFavorites = useCallback(() => {
-    if (window.external && ('AddFavorite' in window.external)) {
+    if (window.external && 'AddFavorite' in window.external) {
       // IE Favorite
       // @ts-expect-error IE Favorite
       window.external.AddFavorite(window.location.href, document.title);
@@ -35,21 +35,14 @@ export default function AddToFavoritesButton() {
       } else {
         alert('请按 Ctrl + D 添加到收藏夹');
       }
-
     }
   }, []);
 
   return (
-    <Tooltip
-      title={'添加到收藏夹'}
-      key={'add-to-favorites'}
-    >
-      <Button
-        type={"link"}
-        onClick={handleAddToFavorites}
-      >
-        <StarFilled/>
+    <Tooltip title={'添加到收藏夹'} key={'add-to-favorites'}>
+      <Button type={'link'} onClick={handleAddToFavorites}>
+        <StarFilled />
       </Button>
     </Tooltip>
-  )
+  );
 }

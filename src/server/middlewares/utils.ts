@@ -1,11 +1,15 @@
 // 日志中间件 记录请求的方法和路径
-import {NextApiRequest, NextApiResponse} from "next";
-import {MiddlewareHandler, Role} from "@/server/middlewares";
-import {NextRequest, NextResponse} from "next/server";
+import { NextApiRequest, NextApiResponse } from 'next';
+import { MiddlewareHandler, Role } from '@/server/middlewares';
+import { NextRequest, NextResponse } from 'next/server';
 import * as jose from 'jose';
-import {User} from "@prisma/client";
+import { User } from '@prisma/client';
 
-type LogLevel = 'info' | 'warn' | 'error' | { method?: boolean, url?: boolean, headers?: boolean, payload?: boolean }
+type LogLevel =
+  | 'info'
+  | 'warn'
+  | 'error'
+  | { method?: boolean; url?: boolean; headers?: boolean; payload?: boolean };
 
 /**
  * 日志中间件
@@ -16,24 +20,25 @@ export function logger(handler: MiddlewareHandler, level?: LogLevel) {
   return async function (req: NextApiRequest, res: NextApiResponse) {
     // if you use an object as log level
     if (typeof level === 'object') {
-      if (level.method) console.log('req.method', req.method)
-      if (level.url) console.log('req.url', req.url)
-      if (level.payload) console.log('payload', {body: req.body, query: req.query});
+      if (level.method) console.log('req.method', req.method);
+      if (level.url) console.log('req.url', req.url);
+      if (level.payload)
+        console.log('payload', { body: req.body, query: req.query });
       if (level.headers) console.log('req.headers', req.headers);
     } else if (level === 'info') {
       // make method and url in one line
-      console.log(req.url, req.method)
-      console.log('payload', {body: req.body, query: req.query});
+      console.log(req.url, req.method);
+      console.log('payload', { body: req.body, query: req.query });
     } else if (level === 'warn') {
-      console.warn(req.url, req.method)
-      console.warn('payload', {body: req.body, query: req.query});
+      console.warn(req.url, req.method);
+      console.warn('payload', { body: req.body, query: req.query });
     } else if (level === 'error') {
-      console.error(req.url, req.method)
-      console.error('payload', {body: req.body, query: req.query});
+      console.error(req.url, req.method);
+      console.error('payload', { body: req.body, query: req.query });
       console.error('req.headers[authorization]', req.headers['authorization']);
     }
-    return handler(req, res)
-  }
+    return handler(req, res);
+  };
 }
 
 export async function checkTokenRole(req: NextRequest) {
@@ -42,7 +47,7 @@ export async function checkTokenRole(req: NextRequest) {
     const token = req.cookies.get('token')?.value || '';
     const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET || '');
     // const user = jwt.verify(token, secret) as { exp: number, iat: number };
-    const {payload: result} = await jose.jwtVerify<User>(token, secret);
+    const { payload: result } = await jose.jwtVerify<User>(token, secret);
 
     if (result.role >= Role.ADMIN) {
       NextResponse.next();
@@ -53,5 +58,4 @@ export async function checkTokenRole(req: NextRequest) {
     console.error(e);
     NextResponse.rewrite('/');
   }
-
 }

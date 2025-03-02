@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { APIErrorHandler } from "@/utils/MyNRError";
-import VisitorDao from "@/server/db/dao/visitor.dao";
+import { NextRequest, NextResponse } from 'next/server';
+import { APIErrorHandler } from '@/utils/MyNRError';
+import VisitorDao from '@/server/db/dao/visitor.dao';
 
 async function get() {
   // 获取今日访客数

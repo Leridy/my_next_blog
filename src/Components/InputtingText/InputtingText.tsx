@@ -1,28 +1,30 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './InputtingText.style.scss';
 
 interface InputtingTextProps {
-  text?: string,
-  cursorBlinkSpeed?: 'slow' | 'fast'
-  align?: 'left' | 'center' | 'right'
-  hideCursor?: boolean
+  text?: string;
+  cursorBlinkSpeed?: 'slow' | 'fast';
+  align?: 'left' | 'center' | 'right';
+  hideCursor?: boolean;
 }
 
 export default function InputtingText(props: InputtingTextProps) {
   const {
     text = '',
-    cursorBlinkSpeed = 'slow', align = 'center',
-    hideCursor = false
+    cursorBlinkSpeed = 'slow',
+    align = 'center',
+    hideCursor = false,
   } = props;
 
   const [curText, setCurText] = useState<string>('');
   const [displayText, setDisplayText] = useState<string[]>(['']);
 
-  const [displayTextState, setDisplayTextState] = useState<'delete' | 'add'>('add');
+  const [displayTextState, setDisplayTextState] = useState<'delete' | 'add'>(
+    'add'
+  );
 
   const deleteIntervalHandler = useRef<NodeJS.Timeout | null>(null);
   const addIntervalHandler = useRef<NodeJS.Timeout | null>(null);
-
 
   const alignType = useMemo(() => {
     switch (align) {
@@ -44,32 +46,38 @@ export default function InputtingText(props: InputtingTextProps) {
   const updateDisplayText = useCallback(() => {
     if (displayTextState === 'delete') {
       clearInterval(addIntervalHandler.current as NodeJS.Timeout);
-      deleteIntervalHandler.current = setInterval(() => {
-        setDisplayText((prev) => {
-          if (prev.length === 0) {
-            clearInterval(deleteIntervalHandler.current as NodeJS.Timeout);
-            return prev;
-          } else {
-            const next = [...prev];
-            next.pop();
-            return next;
-          }
-        });
-      }, cursorBlinkSpeed === 'slow' ? 100 : 50);
+      deleteIntervalHandler.current = setInterval(
+        () => {
+          setDisplayText((prev) => {
+            if (prev.length === 0) {
+              clearInterval(deleteIntervalHandler.current as NodeJS.Timeout);
+              return prev;
+            } else {
+              const next = [...prev];
+              next.pop();
+              return next;
+            }
+          });
+        },
+        cursorBlinkSpeed === 'slow' ? 100 : 50
+      );
     } else {
       clearInterval(deleteIntervalHandler.current as NodeJS.Timeout);
-      addIntervalHandler.current = setInterval(() => {
-        setDisplayText((prev) => {
-          if (prev.length >= curText.length || prev.join('') === curText) {
-            clearInterval(addIntervalHandler.current as NodeJS.Timeout);
-            return prev;
-          } else {
-            const next = [...prev];
-            next.push(curText[next.length]);
-            return next;
-          }
-        });
-      }, cursorBlinkSpeed === 'slow' ? 250 : 100);
+      addIntervalHandler.current = setInterval(
+        () => {
+          setDisplayText((prev) => {
+            if (prev.length >= curText.length || prev.join('') === curText) {
+              clearInterval(addIntervalHandler.current as NodeJS.Timeout);
+              return prev;
+            } else {
+              const next = [...prev];
+              next.push(curText[next.length]);
+              return next;
+            }
+          });
+        },
+        cursorBlinkSpeed === 'slow' ? 250 : 100
+      );
     }
   }, [curText, cursorBlinkSpeed, displayTextState]);
 
@@ -90,16 +98,16 @@ export default function InputtingText(props: InputtingTextProps) {
     return () => {
       clearInterval(deleteIntervalHandler.current as NodeJS.Timeout);
       clearInterval(addIntervalHandler.current as NodeJS.Timeout);
-    }
+    };
   }, []);
 
   return (
     <p
       className={`input-blink ${hideCursor ? 'hide-cursor' : ''}`}
       style={{
-        justifyContent: alignType
+        justifyContent: alignType,
       }}
-      dangerouslySetInnerHTML={{__html: displayText.join('')}}
+      dangerouslySetInnerHTML={{ __html: displayText.join('') }}
     />
-  )
+  );
 }

@@ -1,10 +1,10 @@
-'use client'
-import {Button, Input} from "antd";
-import {useCallback, useEffect, useMemo, useState} from "react";
-import './FakeMask.style.scss'
-import {useSiteSettingContext} from "@/Provider/SiteSettingProvider";
-import useSettingMap from "@/Components/hooks/useSettingMap";
-import InputtingText from "@/Components/InputtingText/InputtingText";
+'use client';
+import { Button, Input } from 'antd';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import './FakeMask.style.scss';
+import { useSiteSettingContext } from '@/Provider/SiteSettingProvider';
+import useSettingMap from '@/Components/hooks/useSettingMap';
+import InputtingText from '@/Components/InputtingText/InputtingText';
 
 const SITE_SETTING_KEY = 'FakeMask';
 
@@ -15,12 +15,14 @@ const SITE_SETTING_KEY = 'FakeMask';
  */
 export default function FakeMask() {
   const [searchValue, setSearchValue] = useState<string>('');
-  const [logoAnimation, setLogoAnimation] = useState<string>('shakeAndUpDown .3s ease-in-out infinite');
+  const [logoAnimation, setLogoAnimation] = useState<string>(
+    'shakeAndUpDown .3s ease-in-out infinite'
+  );
   const [fakeMode, setFakeMode] = useState<boolean>(false);
 
-  const {setting} = useSiteSettingContext();
+  const { setting } = useSiteSettingContext();
 
-  const {enable, MaintainedMode, MaintainedContent} = useSettingMap<{
+  const { enable, MaintainedMode, MaintainedContent } = useSettingMap<{
     enable: boolean;
     MaintainedMode: boolean;
     MaintainedContent: string;
@@ -31,34 +33,36 @@ export default function FakeMask() {
       enable: true,
       MaintainedMode: false,
       MaintainedContent: '网站维护中，请稍后再试...',
-    }
-  })
+    },
+  });
 
   const toggleFakeMode = useCallback(() => {
     if (!MaintainedMode) {
       setFakeMode((prev) => !prev);
     }
-  }, [MaintainedMode])
+  }, [MaintainedMode]);
 
   const changeToFakeMode = useCallback(() => {
     setFakeMode(true);
-  }, [])
+  }, []);
 
-  const handlePressEsc = useCallback((e: { key: string; }) => {
-    if (e.key === 'Escape') {
-      toggleFakeMode();
-    }
-  }, [toggleFakeMode]);
+  const handlePressEsc = useCallback(
+    (e: { key: string }) => {
+      if (e.key === 'Escape') {
+        toggleFakeMode();
+      }
+    },
+    [toggleFakeMode]
+  );
 
   useEffect(() => {
     if (MaintainedMode && fakeMode && enable) {
       document.title = String(MaintainedContent);
     } else {
-      document.title = fakeMode && enable ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
+      document.title =
+        fakeMode && enable ? '必应搜索' : '🚣‍♀️划水网 - 一个划水的网站';
     }
-
   }, [MaintainedContent, MaintainedMode, enable, fakeMode]);
-
 
   const handleSearch = useCallback(() => {
     if (searchValue) window.open(`https://cn.bing.com/search?q=${searchValue}`);
@@ -72,13 +76,15 @@ export default function FakeMask() {
         '',
         '',
         '',
-      ]
-      setLogoAnimation(animations[Math.floor(Math.random() * animations.length)]);
+      ];
+      setLogoAnimation(
+        animations[Math.floor(Math.random() * animations.length)]
+      );
     }, 20000);
 
     return () => {
       clearInterval(handler);
-    }
+    };
   }, []);
 
   const renderSearch = useMemo(() => {
@@ -93,7 +99,8 @@ export default function FakeMask() {
         >
           <img
             className={'w-60'}
-            src={'/icons/bing.svg'} alt={'bing'}
+            src={'/icons/bing.svg'}
+            alt={'bing'}
             title={'双击 logo 关闭'}
           />
         </div>
@@ -101,21 +108,22 @@ export default function FakeMask() {
         <div>
           <Input
             placeholder={''}
-            style={{width: '400px'}}
+            style={{ width: '400px' }}
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             onPressEnter={handleSearch}
           />
           <Button
             type={'primary'}
-            style={{marginLeft: '1rem'}}
+            style={{ marginLeft: '1rem' }}
             onClick={handleSearch}
-          >必应搜索</Button>
+          >
+            必应搜索
+          </Button>
         </div>
-
       </>
-    )
-  }, [handleSearch, logoAnimation, searchValue, toggleFakeMode])
+    );
+  }, [handleSearch, logoAnimation, searchValue, toggleFakeMode]);
 
   useEffect(() => {
     if (MaintainedMode && enable) {
@@ -126,17 +134,25 @@ export default function FakeMask() {
     // while press esc key, enter fake mode
     window.addEventListener('keydown', handlePressEsc);
 
-
     return () => {
       window.removeEventListener('blur', changeToFakeMode);
       window.removeEventListener('keydown', handlePressEsc);
-    }
-  }, [MaintainedContent, MaintainedMode, changeToFakeMode, enable, handlePressEsc]);
+    };
+  }, [
+    MaintainedContent,
+    MaintainedMode,
+    changeToFakeMode,
+    enable,
+    handlePressEsc,
+  ]);
 
   return (
-    fakeMode && enable && (
+    fakeMode &&
+    enable && (
       <div
-        className={'fixed top-0 left-0 w-full h-full bg-white flex items-center justify-center fake-mask'}
+        className={
+          'fixed top-0 left-0 w-full h-full bg-white flex items-center justify-center fake-mask'
+        }
         style={{
           zIndex: 9999,
           transition: 'all 0.5s',
@@ -148,7 +164,6 @@ export default function FakeMask() {
             transform: 'translateY(-220px)',
           }}
         >
-
           {MaintainedMode ? (
             <div className={'text-red-500 text-lg'}>
               <InputtingText
@@ -157,11 +172,11 @@ export default function FakeMask() {
                 hideCursor={String(MaintainedContent).includes('<br/>')}
               />
             </div>
-          ) : renderSearch}
-
+          ) : (
+            renderSearch
+          )}
         </div>
-
       </div>
     )
-  )
+  );
 }

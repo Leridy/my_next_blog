@@ -1,11 +1,11 @@
-import {Button, message, Modal} from "antd";
-import {useState} from "react";
-import LoginForm from "./LoginForm";
-import RegisterForm from "./RegisterForm";
-import useUserAuthData, {UserInfo} from "./hooks/useUserAuthData";
-import {User} from "@prisma/client";
-import {RegisterData} from "./type";
-import {NetworkError} from "@/http";
+import { Button, message, Modal } from 'antd';
+import { useState } from 'react';
+import LoginForm from './LoginForm';
+import RegisterForm from './RegisterForm';
+import useUserAuthData, { UserInfo } from './hooks/useUserAuthData';
+import { User } from '@prisma/client';
+import { RegisterData } from './type';
+import { NetworkError } from '@/http';
 
 /**
  * UserModal component·
@@ -20,15 +20,18 @@ interface UserModalProps {
   onRegister?: (user: UserInfo | null) => void;
 }
 
-
 export default function UserModal(props: UserModalProps) {
-  const {visible, onClose, onLogin, onRegister, defaultType} = props;
+  const { visible, onClose, onLogin, onRegister, defaultType } = props;
 
-  const {loading, requestRegister, requestLogin} = useUserAuthData();
+  const { loading, requestRegister, requestLogin } = useUserAuthData();
 
-  const [type, setType] = useState<'login' | 'register'>(defaultType || 'login');
+  const [type, setType] = useState<'login' | 'register'>(
+    defaultType || 'login'
+  );
 
-  const handleLogin = async (data: Pick<User, 'email' | 'password'> & { validateCode: string }) => {
+  const handleLogin = async (
+    data: Pick<User, 'email' | 'password'> & { validateCode: string }
+  ) => {
     try {
       const result = await requestLogin(data);
       onLogin(result);
@@ -36,9 +39,11 @@ export default function UserModal(props: UserModalProps) {
       message.success('登录成功');
     } catch (e) {
       console.error(e);
-      message.error((e as NetworkError).bizMessage || (e as Error).message || '登录失败');
+      message.error(
+        (e as NetworkError).bizMessage || (e as Error).message || '登录失败'
+      );
     }
-  }
+  };
 
   const handleRegister = async (data: RegisterData) => {
     try {
@@ -47,9 +52,11 @@ export default function UserModal(props: UserModalProps) {
       onClose();
       message.success('注册成功');
     } catch (e) {
-      message.error((e as NetworkError).bizMessage || (e as Error).message || '注册失败');
+      message.error(
+        (e as NetworkError).bizMessage || (e as Error).message || '注册失败'
+      );
     }
-  }
+  };
 
   return (
     <Modal
@@ -59,27 +66,24 @@ export default function UserModal(props: UserModalProps) {
       footer={null}
       destroyOnClose
     >
-      {
-        type === 'login' ? <LoginForm loading={loading} onLogin={handleLogin}/> :
-          <RegisterForm loading={loading} onRegister={handleRegister}/>
-      }
+      {type === 'login' ? (
+        <LoginForm loading={loading} onLogin={handleLogin} />
+      ) : (
+        <RegisterForm loading={loading} onRegister={handleRegister} />
+      )}
       {/* 已有账户？点击登录 */}
-      {
-        onRegister && (
-          <p
-            className={'text-center cursor-pointer'}>
-            {type === 'login' ? '没有账户？' : '已有账户？'}
-            <Button
-              type={'link'}
-              size={'small'}
-              onClick={() => setType(type === 'login' ? 'register' : 'login')}
-            >
-              {type === 'login' ? '点击注册' : '点击登录'}
-            </Button>
-          </p>
-        )
-      }
+      {onRegister && (
+        <p className={'text-center cursor-pointer'}>
+          {type === 'login' ? '没有账户？' : '已有账户？'}
+          <Button
+            type={'link'}
+            size={'small'}
+            onClick={() => setType(type === 'login' ? 'register' : 'login')}
+          >
+            {type === 'login' ? '点击注册' : '点击登录'}
+          </Button>
+        </p>
+      )}
     </Modal>
-  )
-
+  );
 }

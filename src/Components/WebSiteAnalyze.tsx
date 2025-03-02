@@ -10,10 +10,6 @@ export default function WebSiteAnalyze() {
       s.parentNode.insertBefore(hm, s);
     })();
   
-  `
-  return (
-    <script
-      dangerouslySetInnerHTML={{__html: code}}
-    />
-  );
+  `;
+  return <script dangerouslySetInnerHTML={{ __html: code }} />;
 }

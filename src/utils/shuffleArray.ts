@@ -7,4 +7,4 @@ export const shuffleArray = <T>(array: T[]) => {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
-}
+};

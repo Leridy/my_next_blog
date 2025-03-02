@@ -1,6 +1,10 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import {
+  checkAndOperateNews,
+  spiderPublicLogic,
+  updateSpiderUpdateTime,
+} from '@/server/Spider/utils/spiderPublicLogic';
 
 interface V2exNode {
   avatar_large: string;
@@ -60,22 +64,30 @@ interface V2exDataStructure {
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'v2ex',
   description: 'v2ex 爬虫',
-}
+};
 
-const URL_GENERATOR = (type: string | number) => `https://www.v2ex.com/api/topics/${type}.json`;
-
+const URL_GENERATOR = (type: string | number) =>
+  `https://www.v2ex.com/api/topics/${type}.json`;
 
 const ListType = {
-  "最热主题": 'hot',
-  "最新主题": 'latest',
-}
+  最热主题: 'hot',
+  最新主题: 'latest',
+};
 
-async function getData(type: typeof ListType[keyof typeof ListType] = 'hot'): Promise<V2exDataStructure[]> {
+async function getData(
+  type: (typeof ListType)[keyof typeof ListType] = 'hot'
+): Promise<V2exDataStructure[]> {
   const url = URL_GENERATOR(type);
   return await http.get(url, {});
 }
 
-function dataTransformer(data: V2exDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
+function dataTransformer(
+  data: V2exDataStructure[],
+  spiderId: number
+): Pick<
+  HotNews,
+  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
+>[] {
   return data.map((item) => {
     return {
       title: item.title,
@@ -85,8 +97,8 @@ function dataTransformer(data: V2exDataStructure[], spiderId: number): Pick<HotN
       uniqueId: `v2ex-${item.id}`,
       spiderId,
       hotCount: item.replies || 0,
-      tags: [item.node.title]
-    }
+      tags: [item.node.title],
+    };
   });
 }
 
@@ -96,13 +108,11 @@ function mergeTypeData(data: V2exDataStructure[][]): V2exDataStructure[] {
   }, []);
 }
 
-
 /**
  * main logic of getData from 36kr
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
-
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const tasks = Object.keys(ListType).map(async (key) => {
     const type = ListType[key as keyof typeof ListType];
@@ -115,14 +125,10 @@ export default async function main() {
 
   const transformedData = dataTransformer(result, id);
 
-
   // data transform to your own format
   await checkAndOperateNews(transformedData);
   // update spider update time
   await updateSpiderUpdateTime(id);
 
-
   return transformedData;
 }
-
-

@@ -4,7 +4,6 @@
   justify-content: center;
   align-items: baseline;
 
-
   &.hide-cursor {
     &::after {
       display: none;
@@ -18,6 +17,6 @@
     margin-left: 2px;
     background-color: var(--color-text);
     color: transparent;
-    animation: blink .5s infinite;
+    animation: blink 0.5s infinite;
   }
 }

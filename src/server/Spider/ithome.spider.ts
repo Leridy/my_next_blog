@@ -1,14 +1,18 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
-import {load} from "cheerio";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import {
+  checkAndOperateNews,
+  spiderPublicLogic,
+  updateSpiderUpdateTime,
+} from '@/server/Spider/utils/spiderPublicLogic';
+import { load } from 'cheerio';
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'ithome',
   description: 'ithome 爬虫',
-}
+};
 
-const URL_GENERATOR = 'https://m.ithome.com/rankm/'
+const URL_GENERATOR = 'https://m.ithome.com/rankm/';
 
 // 链接处理
 const replaceLink = (url: string, getId: boolean = false) => {
@@ -23,7 +27,6 @@ const replaceLink = (url: string, getId: boolean = false) => {
   return url;
 };
 
-
 async function getData() {
   return await http.get(URL_GENERATOR, {});
 }
@@ -37,26 +40,35 @@ function genTagsForNews(title: string): string[] {
  * main logic of getData from 36kr
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
-
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const [requestedData] = await Promise.all([getData()]);
 
   const $ = load(requestedData as unknown as string);
 
-  const listDom = $(".rank-box .placeholder");
-  const result: Pick<HotNews, 'title' | 'description' | 'image' | 'url' | 'uniqueId' | 'spiderId' | 'hotCount' | 'tags'>[] = listDom.toArray().map((item) => {
+  const listDom = $('.rank-box .placeholder');
+  const result: Pick<
+    HotNews,
+    | 'title'
+    | 'description'
+    | 'image'
+    | 'url'
+    | 'uniqueId'
+    | 'spiderId'
+    | 'hotCount'
+    | 'tags'
+  >[] = listDom.toArray().map((item) => {
     const dom = $(item);
-    const href = dom.find("a").attr("href");
+    const href = dom.find('a').attr('href');
     return {
-      title: dom.find(".plc-title").text().trim(),
-      description: dom.find(".plc-title").text().trim(),
-      image: dom.find("img").attr("data-original") || '',
+      title: dom.find('.plc-title').text().trim(),
+      description: dom.find('.plc-title').text().trim(),
+      image: dom.find('img').attr('data-original') || '',
       url: href ? replaceLink(href) : '',
       uniqueId: `ithome-${href ? replaceLink(href, true) : 100000}`,
       spiderId: id,
-      hotCount: Number(dom.find(".review-num").text().replace(/\D/g, "")),
-      tags: genTagsForNews(dom.find(".plc-title").text().trim()),
+      hotCount: Number(dom.find('.review-num').text().replace(/\D/g, '')),
+      tags: genTagsForNews(dom.find('.plc-title').text().trim()),
     };
   });
   await checkAndOperateNews(result);
@@ -64,5 +76,3 @@ export default async function main() {
 
   return result;
 }
-
-

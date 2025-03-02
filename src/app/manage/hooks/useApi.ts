@@ -1,6 +1,6 @@
 import http from '@/http';
-import {useCallback, useState} from "react";
-import {OrderByApiQuery, Page, PageApiQuery} from "@/server/db/dao/type";
+import { useCallback, useState } from 'react';
+import { OrderByApiQuery, Page, PageApiQuery } from '@/server/db/dao/type';
 
 export type UseApiProps = {
   apiURL: string;
@@ -8,92 +8,108 @@ export type UseApiProps = {
   // 例外情况
   exception?: boolean;
   headers?: Record<string, string>;
-}
+};
 
 export type UseApiReturn<T> = {
   items: T[];
   pagedItems: Page<T>;
   loading: boolean;
   data: T | null;
-  get: (params?: Partial<T & PageApiQuery & OrderByApiQuery>) => Promise<T[] | Page<T>>;
+  get: (
+    params?: Partial<T & PageApiQuery & OrderByApiQuery>
+  ) => Promise<T[] | Page<T>>;
   getOne: (id: string) => Promise<T>;
   create: (data: Partial<T>) => Promise<T>;
   edit: (id: string, data: Partial<T>) => Promise<T>;
   del: (id: string) => Promise<void>;
   clearData: () => void;
-}
+};
 
 export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
-  const {apiURL, exception, headers} = props;
+  const { apiURL, exception, headers } = props;
   const [items, setItems] = useState<T[]>([]);
   const [pagedItems, setPagedItems] = useState<Page<T>>({
     data: [],
     page: {
       page: 0,
       pageSize: 10,
-      total: 0
-    }
+      total: 0,
+    },
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<T | null>(null);
 
-  const get = useCallback(async (params?: Partial<T>) => {
-    let finalURL = apiURL;
+  const get = useCallback(
+    async (params?: Partial<T>) => {
+      let finalURL = apiURL;
 
-    if (exception) finalURL = apiURL + '/all'; // 任何时候都会有个例外情况
+      if (exception) finalURL = apiURL + '/all'; // 任何时候都会有个例外情况
 
-    try {
-      setLoading(true);
-      const res = await http.get(finalURL, {params, headers}) as T[] | Page<T>;
-      if (Array.isArray(res)) {
-        setItems(res);
-      } else {
-        setPagedItems(res);
-        setItems(res.data);
+      try {
+        setLoading(true);
+        const res = (await http.get(finalURL, { params, headers })) as
+          | T[]
+          | Page<T>;
+        if (Array.isArray(res)) {
+          setItems(res);
+        } else {
+          setPagedItems(res);
+          setItems(res.data);
+        }
+        return res;
+      } finally {
+        setLoading(false);
       }
-      return res;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiURL, exception, headers]);
+    },
+    [apiURL, exception, headers]
+  );
 
-  const getOne = useCallback(async (id: string): Promise<T> => {
-    try {
-      setLoading(true);
-      const res = await http.get(`${apiURL}/${id}`) as T;
-      setData(res);
-      return res;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiURL]);
+  const getOne = useCallback(
+    async (id: string): Promise<T> => {
+      try {
+        setLoading(true);
+        const res = (await http.get(`${apiURL}/${id}`)) as T;
+        setData(res);
+        return res;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiURL]
+  );
 
   const create = async (data: Partial<T>) => {
     try {
       setLoading(true);
-      return await http.post(apiURL, data, {headers}) as T;
+      return (await http.post(apiURL, data, { headers })) as T;
     } finally {
       setLoading(false);
     }
   };
 
-  const edit = useCallback(async (id: string, data: Partial<T>): Promise<T> => {
-    try {
-      setLoading(true);
-      return await http.put(`${apiURL}/${id}`, data, {headers}) as T;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiURL, headers]);
+  const edit = useCallback(
+    async (id: string, data: Partial<T>): Promise<T> => {
+      try {
+        setLoading(true);
+        return (await http.put(`${apiURL}/${id}`, data, { headers })) as T;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiURL, headers]
+  );
 
-  const del = useCallback(async (id: string): Promise<void> => {
-    try {
-      setLoading(true);
-      return await http.delete(`${apiURL}/${id}`, {headers});
-    } finally {
-      setLoading(false);
-    }
-  }, [apiURL, headers]);
+  const del = useCallback(
+    async (id: string): Promise<void> => {
+      try {
+        setLoading(true);
+        return await http.delete(`${apiURL}/${id}`, { headers });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiURL, headers]
+  );
 
   const clearData = useCallback(() => {
     setData(null);
@@ -109,7 +125,6 @@ export default function useApi<T>(props: UseApiProps): UseApiReturn<T> {
     create,
     edit,
     del,
-    clearData
-  }
+    clearData,
+  };
 }
-

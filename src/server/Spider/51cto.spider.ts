@@ -1,12 +1,16 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
-import {getToken, sign} from "@/server/Spider/utils/getToken/51cto";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import {
+  checkAndOperateNews,
+  spiderPublicLogic,
+  updateSpiderUpdateTime,
+} from '@/server/Spider/utils/spiderPublicLogic';
+import { getToken, sign } from '@/server/Spider/utils/getToken/51cto';
 
 interface FiveOneCTODataStructure {
   _id: {
-    "$oid": string;
-  }
+    $oid: string;
+  };
   article_id: number;
   parent_topic_ids: number[];
   topic_ids: number[];
@@ -37,19 +41,20 @@ interface FiveOneCTODataStructure {
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: '51cto',
   description: '51cto 爬虫',
-}
+};
 
 const URL_GENERATOR = () => `https://api-media.51cto.com/index/index/recommend`;
 
-
-async function getData(): Promise<{data:{data: {list: FiveOneCTODataStructure[]}}}> {
+async function getData(): Promise<{
+  data: { data: { list: FiveOneCTODataStructure[] } };
+}> {
   const url = URL_GENERATOR();
   const params = {
     page: 1,
     page_size: 50,
     limit_time: 0,
-    name_en: "",
-  }
+    name_en: '',
+  };
   const timestamp = Date.now();
   const token = await getToken();
 
@@ -58,19 +63,25 @@ async function getData(): Promise<{data:{data: {list: FiveOneCTODataStructure[]}
       ...params,
       timestamp,
       token,
-      sign: sign(url, params, timestamp, token)
-    }
+      sign: sign(url, params, timestamp, token),
+    },
   });
 }
 
-function dataTransformer(data: FiveOneCTODataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
+function dataTransformer(
+  data: FiveOneCTODataStructure[],
+  spiderId: number
+): Pick<
+  HotNews,
+  'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'
+>[] {
   return data.map((item) => {
     const {
-        title,
-        abstract: description,
-        cover: image,
-        url,
-        article_id: uniqueId,
+      title,
+      abstract: description,
+      cover: image,
+      url,
+      article_id: uniqueId,
     } = item;
     return {
       title,
@@ -80,8 +91,8 @@ function dataTransformer(data: FiveOneCTODataStructure[], spiderId: number): Pic
       uniqueId: `51cto-${uniqueId}`,
       spiderId,
       hotCount: 0,
-      tags: item.keyword.map(tag => tag.name)
-    }
+      tags: item.keyword.map((tag) => tag.name),
+    };
   });
 }
 
@@ -89,12 +100,13 @@ function dataTransformer(data: FiveOneCTODataStructure[], spiderId: number): Pic
  * main logic of getData from 51cto
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
-
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const requestedData = await getData();
 
-  const result = requestedData.data.data.list.filter(ele => Object.keys(ele).length > 20);
+  const result = requestedData.data.data.list.filter(
+    (ele) => Object.keys(ele).length > 20
+  );
   //
   const transformedData = dataTransformer(result, id);
   //
@@ -104,8 +116,5 @@ export default async function main() {
   // update spider update time
   await updateSpiderUpdateTime(id);
 
-
-  return {transformedData, result};
+  return { transformedData, result };
 }
-
-

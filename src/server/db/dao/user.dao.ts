@@ -1,12 +1,13 @@
-import {User as UserModel} from '../models/user';
-import {User} from "@prisma/client";
-
+import { User as UserModel } from '../models/user';
+import { User } from '@prisma/client';
 
 export class UserDao {
-  public async createUser(data: Pick<User, 'email' | 'name' | 'password'>): Promise<Partial<User>> {
+  public async createUser(
+    data: Pick<User, 'email' | 'name' | 'password'>
+  ): Promise<Partial<User>> {
     // some logic to get user from database
     return UserModel.create({
-      data
+      data,
     });
   }
 
@@ -14,9 +15,9 @@ export class UserDao {
     // some logic to update user in database
     return UserModel.update({
       where: {
-        id: user.id
+        id: user.id,
       },
-      data: user
+      data: user,
     });
   }
 
@@ -24,17 +25,19 @@ export class UserDao {
     // some logic to delete user from database
     return UserModel.delete({
       where: {
-        id: Number(id)
-      }
+        id: Number(id),
+      },
     });
   }
 
-  public async login(data: Pick<User, 'email' | 'password'>): Promise<User | null> {
+  public async login(
+    data: Pick<User, 'email' | 'password'>
+  ): Promise<User | null> {
     // some logic to login user
     return UserModel.findUnique({
       where: {
         email: data.email,
-        password: data.password
+        password: data.password,
       },
     });
   }
@@ -52,42 +55,40 @@ export class UserDao {
         lastLogin: true,
       },
       where: {
-        id
-      }
+        id,
+      },
     });
   }
 
   public async getUsers(query: Partial<User>): Promise<User[]> {
     // some logic to get users from database
-    return UserModel.findMany(
-      {
-        where: {
-          ...query,
-          name: {
-            contains: query.name,
-            mode: 'insensitive'
-          },
-          email: {
-            contains: query.email,
-            mode: 'insensitive'
-          },
+    return UserModel.findMany({
+      where: {
+        ...query,
+        name: {
+          contains: query.name,
+          mode: 'insensitive',
         },
-        orderBy: {
-          id: 'asc'
-        }
-      }
-    );
+        email: {
+          contains: query.email,
+          mode: 'insensitive',
+        },
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
   }
 
   public async updateLastLoginData(data: Pick<User, 'id'>): Promise<void> {
     // some logic to update user last login data
     await UserModel.update({
       where: {
-        id: data.id
+        id: data.id,
       },
       data: {
-        lastLogin: new Date()
-      }
+        lastLogin: new Date(),
+      },
     });
   }
 }

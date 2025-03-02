@@ -1,4 +1,4 @@
-import {config} from "dotenv";
+import { config } from 'dotenv';
 
 config();
 
@@ -19,20 +19,19 @@ const nextConfig = {
   experimental: {
     turbo: {
       rules: {
-        'scss': {
+        scss: {
           loaders: [
             {
               loader: 'sass-loader',
               options: {
                 api: 'modern',
-              }
-            }
-          ]
-
+              },
+            },
+          ],
         },
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 export default nextConfig;

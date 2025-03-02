@@ -1,13 +1,13 @@
 'use client';
-import {Menu, MenuProps} from "antd";
-import {useMemo} from "react";
-import {usePathname, useRouter} from "next/navigation";
-import Sider from "antd/es/layout/Sider";
-import {MenuInfo} from "rc-menu/lib/interface";
+import { Menu, MenuProps } from 'antd';
+import { useMemo } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import Sider from 'antd/es/layout/Sider';
+import { MenuInfo } from 'rc-menu/lib/interface';
 
 type SideMenuType = 'hot' | 'user' | 'setting';
 
-export type SideMenuItem = Record<SideMenuType, MenuProps['items']>
+export type SideMenuItem = Record<SideMenuType, MenuProps['items']>;
 
 export const sideMenuData: SideMenuItem = {
   hot: [
@@ -26,7 +26,7 @@ export const sideMenuData: SideMenuItem = {
     {
       key: 'hot/news',
       label: '新闻管理',
-    }
+    },
   ],
   user: [
     {
@@ -36,7 +36,7 @@ export const sideMenuData: SideMenuItem = {
     {
       key: 'user/create',
       label: '创建用户',
-    }
+    },
   ],
   setting: [
     {
@@ -44,7 +44,7 @@ export const sideMenuData: SideMenuItem = {
       label: '设置',
     },
   ],
-}
+};
 
 export default function SideMenu() {
   const pathname = usePathname();
@@ -71,27 +71,21 @@ export default function SideMenu() {
   function handleClick(e: MenuInfo) {
     // use router to navigate
     router.push(`/manage/${e.key}`);
-
   }
 
-  return (
-    currentMenu ? (
-        <Sider
-          width={200}
-          className="bg-white"
-          style={{height: 'calc(100vh - 64px)'}}
-        >
-
-          <Menu
-            onClick={handleClick}
-            mode="inline"
-            selectedKeys={selectedKeys}
-            style={{height: '100%', borderRight: 0, padding: 4}}
-            items={currentMenu}
-          />
-        </Sider>
-      ) :
-      null
-  )
-    ;
+  return currentMenu ? (
+    <Sider
+      width={200}
+      className="bg-white"
+      style={{ height: 'calc(100vh - 64px)' }}
+    >
+      <Menu
+        onClick={handleClick}
+        mode="inline"
+        selectedKeys={selectedKeys}
+        style={{ height: '100%', borderRight: 0, padding: 4 }}
+        items={currentMenu}
+      />
+    </Sider>
+  ) : null;
 }

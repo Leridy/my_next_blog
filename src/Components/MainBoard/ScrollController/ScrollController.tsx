@@ -3,9 +3,9 @@
  * 点击按钮后抛出 onScrollDown 和 onScrollUp 事件
  * 不需要考虑滚动条的位置
  */
-import React, {useCallback, useEffect, useRef, useState} from "react";
-import {Button} from "antd";
-import {ArrowDownOutlined, ArrowUpOutlined} from "@ant-design/icons";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Button } from 'antd';
+import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 
 interface ScrollControllerProps {
   onScrollDown?: () => void;
@@ -13,7 +13,7 @@ interface ScrollControllerProps {
 }
 
 export default function ScrollController(props: ScrollControllerProps) {
-  const {onScrollDown, onScrollUp} = props;
+  const { onScrollDown, onScrollUp } = props;
   const [isScrolling, setIsScrolling] = useState(false);
   const timer = useRef<number | null>(null);
 
@@ -40,22 +40,26 @@ export default function ScrollController(props: ScrollControllerProps) {
       if (timer.current) {
         clearTimeout(timer.current);
       }
-    }
+    };
   }, []);
 
   return (
-    <div className={'absolute right-0 top-1/2 flex-col flex scroll-controller z-20'}>
+    <div
+      className={
+        'absolute right-0 top-1/2 flex-col flex scroll-controller z-20'
+      }
+    >
       <Button
         shape={'circle'}
-        icon={<ArrowUpOutlined/>}
+        icon={<ArrowUpOutlined />}
         onClick={handleScrollUp}
         className={'mb-2'}
       />
       <Button
         shape={'circle'}
-        icon={<ArrowDownOutlined/>}
+        icon={<ArrowDownOutlined />}
         onClick={handleScrollDown}
       />
     </div>
-  )
+  );
 }
