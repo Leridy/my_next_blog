@@ -119,6 +119,11 @@ export default function UserBoard() {
   useEffect(() => {
     const initialCards: CardItem[] = [
       {
+        id: 'weather',
+        component: <WeatherForecast />,
+        header: '天气预报',
+      },
+      {
         id: 'tips',
         component: <TipsAndNotification />,
         header: '',
@@ -128,11 +133,7 @@ export default function UserBoard() {
         component: <UserProfile />,
         header: '',
       },
-      {
-        id: 'weather',
-        component: <WeatherForecast />,
-        header: '天气预报',
-      },
+
       {
         id: 'BuyMeCoffee',
         component: <BuyMeCoffee />,
