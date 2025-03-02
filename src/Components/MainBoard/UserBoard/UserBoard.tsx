@@ -12,6 +12,7 @@ import FoodPicker from '@/Components/FoodPicker';
 import CommentSystem from '@/Components/CommentsBoard';
 import { useUserSettingContext } from '@/Provider/UserSettingProvider';
 import BuyMeCoffee from '@/Components/BuyMeCoffee';
+import WeatherForecast from '@/Components/Weather';
 
 const BOARD_ORDER_KEY = 'userBoardOrder';
 
@@ -126,6 +127,11 @@ export default function UserBoard() {
         id: 'profile',
         component: <UserProfile />,
         header: '',
+      },
+      {
+        id: 'weather',
+        component: <WeatherForecast />,
+        header: '天气预报',
       },
       {
         id: 'BuyMeCoffee',
