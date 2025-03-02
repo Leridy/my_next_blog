@@ -97,9 +97,14 @@ const FoodPicker: FC = () => {
           onChange={(e) => setNewFood(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="添加你喜欢的食物..."
+          /* eslint-disable-next-line max-len */
           className="flex-1 border border-[rgba(204,204,204,0.6)] dark:border-[rgba(51,51,51,0.8)] bg-white dark:bg-[rgba(26,54,54,1)] text-[rgba(40,44,52,0.9)] dark:text-[rgba(226,226,226,0.9)] rounded-l-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[rgba(185,229,232,0.9)]"
         />
-        <button onClick={addFood} className="bg-[rgba(185,229,232,0.9)] hover:bg-[rgba(122,178,211,0.85)] dark:bg-[rgba(103,125,106,0.85)] dark:hover:bg-[rgba(64,83,76,0.9)] text-[rgba(40,44,52,0.9)] dark:text-[rgba(255,255,255,0.95)] rounded-r-lg px-3 py-1.5 transition-colors">
+        <button
+          onClick={addFood}
+          /* eslint-disable-next-line max-len */
+          className="bg-[rgba(185,229,232,0.9)] hover:bg-[rgba(122,178,211,0.85)] dark:bg-[rgba(103,125,106,0.85)] dark:hover:bg-[rgba(64,83,76,0.9)] text-[rgba(40,44,52,0.9)] dark:text-[rgba(255,255,255,0.95)] rounded-r-lg px-3 py-1.5 transition-colors"
+        >
           <FiPlus />
         </button>
       </div>
@@ -111,9 +116,16 @@ const FoodPicker: FC = () => {
         {foods.length > 0 ? (
           <ul className="space-y-1.5 max-h-48 overflow-y-auto">
             {foods.map((food, index) => (
-              <li key={index} className="bg-[rgba(255,255,255,0.6)] dark:bg-[rgba(0,0,0,0.6)] p-2 rounded-lg shadow-sm flex justify-between items-center group">
+              <li
+                key={index}
+                className="bg-[rgba(255,255,255,0.6)] dark:bg-[rgba(0,0,0,0.6)] p-2 rounded-lg shadow-sm flex justify-between items-center group"
+              >
                 <span className="text-[rgba(40,44,52,0.9)] dark:text-[rgba(226,226,226,0.9)] text-sm">{food}</span>
-                <button onClick={() => deleteFood(index)} className="text-[rgba(102,102,102,0.75)] hover:text-[rgba(40,167,69,0.9)] dark:text-[rgba(204,204,204,0.8)] dark:hover:text-[rgba(40,167,69,0.75)] transition-colors" aria-label="删除食物">
+                <button
+                  onClick={() => deleteFood(index)}
+                  className="text-[rgba(102,102,102,0.75)] hover:text-[rgba(40,167,69,0.9)] dark:text-[rgba(204,204,204,0.8)] dark:hover:text-[rgba(40,167,69,0.75)] transition-colors"
+                  aria-label="删除食物"
+                >
                   <FiTrash2 size={16} />
                 </button>
               </li>

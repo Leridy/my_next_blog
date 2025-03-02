@@ -45,8 +45,17 @@ export default function ScrollController(props: ScrollControllerProps) {
 
   return (
     <div className={'absolute right-0 top-1/2 flex-col flex scroll-controller z-20'}>
-      <Button shape={'circle'} icon={<ArrowUpOutlined />} onClick={handleScrollUp} className={'mb-2'} />
-      <Button shape={'circle'} icon={<ArrowDownOutlined />} onClick={handleScrollDown} />
+      <Button
+        shape={'circle'}
+        icon={<ArrowUpOutlined />}
+        onClick={handleScrollUp}
+        className={'mb-2'}
+      />
+      <Button
+        shape={'circle'}
+        icon={<ArrowDownOutlined />}
+        onClick={handleScrollDown}
+      />
     </div>
   );
 }

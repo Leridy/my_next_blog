@@ -83,8 +83,19 @@ function ManageFormModal<T>(props: ManageFormModalProps, ref: Ref<ManageFormModa
   }, []);
 
   return (
-    <Modal open={visible} footer={null} onCancel={handleFormCancel} title={cardTitle} destroyOnClose>
-      <ManageForm onSubmit={handleFormSubmit} onCancel={handleFormCancel} initialValues={initialValues} size={'large'}>
+    <Modal
+      open={visible}
+      footer={null}
+      onCancel={handleFormCancel}
+      title={cardTitle}
+      destroyOnClose
+    >
+      <ManageForm
+        onSubmit={handleFormSubmit}
+        onCancel={handleFormCancel}
+        initialValues={initialValues}
+        size={'large'}
+      >
         {children}
       </ManageForm>
     </Modal>

@@ -28,8 +28,15 @@ export default function RegisterForm(props: RegisterFormProps) {
   };
 
   return (
-    <Form form={form} layout={'vertical'}>
-      <FormItem label={'用户名'} name={'name'} rules={[{ required: true, message: '请输入用户名' }]}>
+    <Form
+      form={form}
+      layout={'vertical'}
+    >
+      <FormItem
+        label={'用户名'}
+        name={'name'}
+        rules={[{ required: true, message: '请输入用户名' }]}
+      >
         <Input placeholder={'请输入用户名'} />
       </FormItem>
 
@@ -41,7 +48,10 @@ export default function RegisterForm(props: RegisterFormProps) {
           { type: 'email', message: '请输入正确的邮箱' },
         ]}
       >
-        <Input placeholder={'请输入邮箱'} type={'email'} />
+        <Input
+          placeholder={'请输入邮箱'}
+          type={'email'}
+        />
       </FormItem>
 
       <FormItem
@@ -57,7 +67,10 @@ export default function RegisterForm(props: RegisterFormProps) {
           },
         ]}
       >
-        <Input placeholder={'请输入密码'} type={'password'} />
+        <Input
+          placeholder={'请输入密码'}
+          type={'password'}
+        />
       </FormItem>
 
       <FormItem
@@ -75,11 +88,18 @@ export default function RegisterForm(props: RegisterFormProps) {
           },
         ]}
       >
-        <Input placeholder={'请再次输入密码'} type={'password'} />
+        <Input
+          placeholder={'请再次输入密码'}
+          type={'password'}
+        />
       </FormItem>
 
       <Space>
-        <FormItem label={'验证码'} name={'validateCode'} rules={[{ required: true, message: '请输入验证码' }]}>
+        <FormItem
+          label={'验证码'}
+          name={'validateCode'}
+          rules={[{ required: true, message: '请输入验证码' }]}
+        >
           <Input placeholder={'请输入验证码, 区分大小写'} />
         </FormItem>
 
@@ -96,7 +116,11 @@ export default function RegisterForm(props: RegisterFormProps) {
 
       <FormItem>
         <Space>
-          <Button loading={loading} type={'primary'} onClick={handleSubmit}>
+          <Button
+            loading={loading}
+            type={'primary'}
+            onClick={handleSubmit}
+          >
             注册
           </Button>
           <Button

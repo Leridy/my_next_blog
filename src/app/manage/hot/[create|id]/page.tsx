@@ -32,27 +32,61 @@ export default function HotEditor() {
   }, [get]);
 
   return (
-    <Card title={cardTitle} size={'small'} className={'h-full'}>
-      <ManageForm onSubmit={handleSubmit} onCancel={handleCancel} initialValues={initialValues} size={'small'}>
-        <FormItem label={'名称'} name={'name'} required rules={[{ required: true, message: '请输入名称' }]} validateTrigger={['onBlur']}>
+    <Card
+      title={cardTitle}
+      size={'small'}
+      className={'h-full'}
+    >
+      <ManageForm
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        initialValues={initialValues}
+        size={'small'}
+      >
+        <FormItem
+          label={'名称'}
+          name={'name'}
+          required
+          rules={[{ required: true, message: '请输入名称' }]}
+          validateTrigger={['onBlur']}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'图标'} name={'icon'}>
+        <FormItem
+          label={'图标'}
+          name={'icon'}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'描述'} name={'description'}>
+        <FormItem
+          label={'描述'}
+          name={'description'}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'链接'} name={'url'} rules={[{ required: true, type: 'url', message: '请输入正确的链接' }]}>
+        <FormItem
+          label={'链接'}
+          name={'url'}
+          rules={[{ required: true, type: 'url', message: '请输入正确的链接' }]}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'图片'} name={'image'}>
+        <FormItem
+          label={'图片'}
+          name={'image'}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'绑定爬虫'} name={'spiderId'}>
+        <FormItem
+          label={'绑定爬虫'}
+          name={'spiderId'}
+        >
           <Select allowClear>
             {spiders.map((spider) => (
-              <Select.Option key={spider.id} value={spider.id}>
+              <Select.Option
+                key={spider.id}
+                value={spider.id}
+              >
                 <Space className={'flex justify-start align-middle'}>
                   <BrandIcon src={spider.name} /> {spider.name}
                 </Space>
@@ -60,7 +94,10 @@ export default function HotEditor() {
             ))}
           </Select>
         </FormItem>
-        <FormItem label={'状态'} name={'enable'}>
+        <FormItem
+          label={'状态'}
+          name={'enable'}
+        >
           <Select>
             <Select.Option value={true}>启用</Select.Option>
             <Select.Option value={false}>禁用</Select.Option>

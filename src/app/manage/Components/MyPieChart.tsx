@@ -81,5 +81,10 @@ export default function MyPieChart<T>(props: MyPieChartProps<T>) {
     };
   }, [data]);
 
-  return <div style={style} ref={ref} />;
+  return (
+    <div
+      style={style}
+      ref={ref}
+    />
+  );
 }

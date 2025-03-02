@@ -28,8 +28,15 @@ export default function LinksBoard() {
   const renderLinks = useMemo(() => {
     return linkList.map(({ title, url, desc }) => {
       return (
-        <Tooltip title={desc} key={title}>
-          <a href={url} rel={'noreferrer'} target={'_blank'}>
+        <Tooltip
+          title={desc}
+          key={title}
+        >
+          <a
+            href={url}
+            rel={'noreferrer'}
+            target={'_blank'}
+          >
             {title}
           </a>
         </Tooltip>

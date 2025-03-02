@@ -70,7 +70,10 @@ export default function HotList() {
         title: '链接',
         dataIndex: 'url',
         render: (url: string) => (
-          <Button type={'link'} href={url}>
+          <Button
+            type={'link'}
+            href={url}
+          >
             {url}
           </Button>
         ),
@@ -85,14 +88,27 @@ export default function HotList() {
   }, [getSpider]);
 
   return (
-    <ManageList title={'热门栏目管理'} apiURL={'hot'} columns={columns}>
-      <FormItem label={'栏目名称'} name={'name'}>
+    <ManageList
+      title={'热门栏目管理'}
+      apiURL={'hot'}
+      columns={columns}
+    >
+      <FormItem
+        label={'栏目名称'}
+        name={'name'}
+      >
         <Input />
       </FormItem>
-      <FormItem label={'栏目描述'} name={'description'}>
+      <FormItem
+        label={'栏目描述'}
+        name={'description'}
+      >
         <Input />
       </FormItem>
-      <FormItem label={'使用状态'} name={'enable'}>
+      <FormItem
+        label={'使用状态'}
+        name={'enable'}
+      >
         <Select
           allowClear
           style={{

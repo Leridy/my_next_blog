@@ -42,5 +42,15 @@ export default function NavMenu() {
     router.push(`/manage/${e?.key}`);
   };
 
-  return <Menu onClick={handleClick} className={'ml-10'} theme="dark" mode="horizontal" selectedKeys={selectedKeys} items={navMenuItems} style={{ flex: 1, minWidth: 0 }} />;
+  return (
+    <Menu
+      onClick={handleClick}
+      className={'ml-10'}
+      theme="dark"
+      mode="horizontal"
+      selectedKeys={selectedKeys}
+      items={navMenuItems}
+      style={{ flex: 1, minWidth: 0 }}
+    />
+  );
 }

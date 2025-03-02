@@ -41,7 +41,10 @@ export default function HotList() {
         title: '链接',
         dataIndex: 'url',
         render: (url: string) => (
-          <Button type={'link'} href={url}>
+          <Button
+            type={'link'}
+            href={url}
+          >
             {url}
           </Button>
         ),
@@ -91,15 +94,31 @@ export default function HotList() {
 
   return (
     <>
-      <ManageList title={'热门新闻管理'} apiURL={'news'} columns={columns} usePagination onCreate={handleCreate} onEdit={handleEdit}>
-        <FormItem label={'新闻标题'} name={'title'}>
+      <ManageList
+        title={'热门新闻管理'}
+        apiURL={'news'}
+        columns={columns}
+        usePagination
+        onCreate={handleCreate}
+        onEdit={handleEdit}
+      >
+        <FormItem
+          label={'新闻标题'}
+          name={'title'}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'新闻描述'} name={'description'}>
+        <FormItem
+          label={'新闻描述'}
+          name={'description'}
+        >
           <Input />
         </FormItem>
 
-        <FormItem label={'更新时间'} name={'updatedAt'}>
+        <FormItem
+          label={'更新时间'}
+          name={'updatedAt'}
+        >
           <DatePicker
             //  ISO-8601 DateTime.
             allowClear
@@ -108,10 +127,16 @@ export default function HotList() {
             showTime
           />
         </FormItem>
-        <FormItem label={'关联爬虫'} name={'spiderId'}>
+        <FormItem
+          label={'关联爬虫'}
+          name={'spiderId'}
+        >
           <Select allowClear>
             {spiders?.map((item: HotSpider) => (
-              <Select.Option key={item.id} value={item.id}>
+              <Select.Option
+                key={item.id}
+                value={item.id}
+              >
                 <Space className={'flex justify-start align-middle'}>
                   <BrandIcon src={item.name} /> {item.name}
                 </Space>
@@ -129,19 +154,44 @@ export default function HotList() {
         apiURL={'news'}
         ref={modalRef}
       >
-        <FormItem label={'新闻标题'} name={'title'} validateTrigger={['onBlur']} required rules={[{ required: true, message: '请输入新闻标题' }]}>
+        <FormItem
+          label={'新闻标题'}
+          name={'title'}
+          validateTrigger={['onBlur']}
+          required
+          rules={[{ required: true, message: '请输入新闻标题' }]}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'新闻描述'} name={'description'} validateTrigger={['onBlur']}>
+        <FormItem
+          label={'新闻描述'}
+          name={'description'}
+          validateTrigger={['onBlur']}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'新闻链接'} name={'url'} validateTrigger={['onBlur']} required rules={[{ required: true, type: 'url', message: '请输入正确的链接' }]}>
+        <FormItem
+          label={'新闻链接'}
+          name={'url'}
+          validateTrigger={['onBlur']}
+          required
+          rules={[{ required: true, type: 'url', message: '请输入正确的链接' }]}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'关联爬虫'} name={'spiderId'} validateTrigger={['onBlur']} required rules={[{ required: true, message: '请选择关联爬虫' }]}>
+        <FormItem
+          label={'关联爬虫'}
+          name={'spiderId'}
+          validateTrigger={['onBlur']}
+          required
+          rules={[{ required: true, message: '请选择关联爬虫' }]}
+        >
           <Select>
             {spiders?.map((item: HotSpider) => (
-              <Select.Option key={item.id} value={item.id}>
+              <Select.Option
+                key={item.id}
+                value={item.id}
+              >
                 <Space className={'flex justify-start align-middle'}>
                   <BrandIcon src={item.name} /> {item.name}
                 </Space>

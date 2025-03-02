@@ -94,8 +94,18 @@ function Avatar(props: AvatarProps) {
   }, [name, src, avatarSize]);
 
   return (
-    <div className="flex items-center justify-center rounded-full avatar" style={{ width: avatarSize, height: avatarSize }} onClick={onClick}>
-      <img className="cursor-pointer rounded" src={avatarSrc} alt={name} width={avatarSize} height={avatarSize} />
+    <div
+      className="flex items-center justify-center rounded-full avatar"
+      style={{ width: avatarSize, height: avatarSize }}
+      onClick={onClick}
+    >
+      <img
+        className="cursor-pointer rounded"
+        src={avatarSrc}
+        alt={name}
+        width={avatarSize}
+        height={avatarSize}
+      />
     </div>
   );
 }

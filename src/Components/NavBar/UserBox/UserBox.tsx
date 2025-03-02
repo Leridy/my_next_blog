@@ -18,7 +18,11 @@ export default function UserBox() {
   return (
     <div className="flex justify-end">
       <Tooltip title={topicSettingMode ? '退出定制' : '定制你的首页'}>
-        <Button type="link" onClick={handleToggleTopicSetting} title={'进入编辑模式'}>
+        <Button
+          type="link"
+          onClick={handleToggleTopicSetting}
+          title={'进入编辑模式'}
+        >
           {topicSettingMode ? <EditFilled style={{ color: 'red' }} /> : <EditFilled />}
         </Button>
       </Tooltip>

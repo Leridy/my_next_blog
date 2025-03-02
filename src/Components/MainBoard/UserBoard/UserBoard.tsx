@@ -75,7 +75,11 @@ const DraggableCard = ({ id, index, moveCard, isDraggable, children, header, sty
       data-handler-id={handlerId}
       className={`${isDraggable ? 'hover:shadow-lg' : ''}`}
     >
-      <Card header={header} style={style} className={'mx-2'}>
+      <Card
+        header={header}
+        style={style}
+        className={'mx-2'}
+      >
         {isDraggable ? (
           <div
             className="absolute  inset-0 flex items-center justify-center pointer-events-none hover:opacity-100 transition-opacity duration-200"
@@ -206,7 +210,15 @@ export default function UserBoard() {
     <div className={'grid gap-6 h-full overflow-y-scroll user-board'}>
       {cards.map((card, index) =>
         card.header ? (
-          <DraggableCard key={card.id} id={card.id} index={index} moveCard={moveCard} isDraggable={isDraggable} header={card.header} style={card.style}>
+          <DraggableCard
+            key={card.id}
+            id={card.id}
+            index={index}
+            moveCard={moveCard}
+            isDraggable={isDraggable}
+            header={card.header}
+            style={card.style}
+          >
             {card.component}
           </DraggableCard>
         ) : (

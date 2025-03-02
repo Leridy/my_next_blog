@@ -29,7 +29,10 @@ export default function BlogLayout({
       </Header>
       <Layout>
         <Layout style={{ padding: '0 24px 24px' }}>
-          <Breadcrumb items={[]} style={{ margin: '16px 0' }} />
+          <Breadcrumb
+            items={[]}
+            style={{ margin: '16px 0' }}
+          />
           <Content>{children}</Content>
         </Layout>
       </Layout>

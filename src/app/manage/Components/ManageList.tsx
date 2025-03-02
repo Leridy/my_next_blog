@@ -164,7 +164,11 @@ export default function ManageList<T>(props: ManageListProps<T>) {
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h3>{title}</h3>
         {showCreate && (
-          <Button size={'small'} type={'primary'} onClick={handleCreate}>
+          <Button
+            size={'small'}
+            type={'primary'}
+            onClick={handleCreate}
+          >
             +
           </Button>
         )}
@@ -177,7 +181,12 @@ export default function ManageList<T>(props: ManageListProps<T>) {
   }, [get, queryData]);
 
   return (
-    <Card {...cardProps} title={renderTitle} className={'h-full'} size={'small'}>
+    <Card
+      {...cardProps}
+      title={renderTitle}
+      className={'h-full'}
+      size={'small'}
+    >
       {children && (
         <div className={'mb-4'}>
           <FilterForm

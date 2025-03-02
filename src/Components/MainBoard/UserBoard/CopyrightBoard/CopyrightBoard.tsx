@@ -26,7 +26,10 @@ export default function CopyrightBoard() {
   });
   return (
     <Card header={'版权声明'}>
-      <div className={'grid gap-4'} dangerouslySetInnerHTML={{ __html: String(content) }}>
+      <div
+        className={'grid gap-4'}
+        dangerouslySetInnerHTML={{ __html: String(content) }}
+      >
         {/*powered by vercel and nextjs*/}
       </div>
     </Card>

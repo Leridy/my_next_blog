@@ -29,13 +29,23 @@ export default function FilterForm<T>(props: FilterFormProps<T>) {
   }, [form, handleSearch]);
 
   return (
-    <Form layout={'inline'} form={form}>
+    <Form
+      layout={'inline'}
+      form={form}
+    >
       {children}
       <FormItem>
-        <Button type={'primary'} onClick={handleSearch}>
+        <Button
+          type={'primary'}
+          onClick={handleSearch}
+        >
           查询
         </Button>
-        <Button className={'ml-2'} type={'default'} onClick={handleReset}>
+        <Button
+          className={'ml-2'}
+          type={'default'}
+          onClick={handleReset}
+        >
           重置
         </Button>
       </FormItem>

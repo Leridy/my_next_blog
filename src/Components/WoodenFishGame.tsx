@@ -171,7 +171,12 @@ const WoodenFishGame: React.FC = () => {
             transform: isAnimating ? 'scale(0.95)' : 'scale(1)',
           }}
         >
-          <canvas ref={canvasRef} width={200} height={150} className="mx-auto" />
+          <canvas
+            ref={canvasRef}
+            width={200}
+            height={150}
+            className="mx-auto"
+          />
           <div className="absolute top-4 right-4 bg-yellow-500 text-white px-2 py-1 rounded-full">今日功德: {count}</div>
         </div>
         <Typography.Text className="block mt-4 text-gray-600">点击木鱼积累功德</Typography.Text>

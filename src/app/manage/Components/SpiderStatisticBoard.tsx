@@ -118,8 +118,16 @@ export default function SpiderStatisticBoard() {
       }
 
       return (
-        <Tooltip title={`最后更新时间:${lastUpdate.toLocaleString()}`} key={spider.id}>
-          <Button color={color} variant={'outlined'} onClick={() => handleRefresh(spider.name)} disabled={triggerLoading}>
+        <Tooltip
+          title={`最后更新时间:${lastUpdate.toLocaleString()}`}
+          key={spider.id}
+        >
+          <Button
+            color={color}
+            variant={'outlined'}
+            onClick={() => handleRefresh(spider.name)}
+            disabled={triggerLoading}
+          >
             <BrandIcon src={spider.name} />
             {spider.name}
           </Button>

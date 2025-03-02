@@ -24,13 +24,27 @@ export default function LoginBox() {
 
   return (
     <Space direction="horizontal">
-      <Button type="primary" onClick={() => showModal(true)}>
+      <Button
+        type="primary"
+        onClick={() => showModal(true)}
+      >
         登录
       </Button>
-      <Button type={'default'} onClick={() => showModal(false)}>
+      <Button
+        type={'default'}
+        onClick={() => showModal(false)}
+      >
         注册
       </Button>
-      {visible && <UserModal visible={visible} onClose={handleCancel} onLogin={handleSuccess} onRegister={handleSuccess} defaultType={type} />}
+      {visible && (
+        <UserModal
+          visible={visible}
+          onClose={handleCancel}
+          onLogin={handleSuccess}
+          onRegister={handleSuccess}
+          defaultType={type}
+        />
+      )}
     </Space>
   );
 }

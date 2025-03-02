@@ -175,14 +175,23 @@ export default function MainBoard(props: MainBoardProps) {
         >
           {renderHotBoard}
         </div>
-        <ScrollController onScrollUp={handleScrollUp} onScrollDown={handleScrollDown} />
+        <ScrollController
+          onScrollUp={handleScrollUp}
+          onScrollDown={handleScrollDown}
+        />
       </div>
 
       <div className={'hidden md:block col-span-1 pl-0 pr-4 pt-4 pb-4 h-full ' + 'gap-6 overflow-y-scroll relative'}>
         <UserBoard />
       </div>
 
-      {openedLink && <LinkFrame url={openedLink} onClose={() => setOpenedLink('')} title={'Opened Link'} />}
+      {openedLink && (
+        <LinkFrame
+          url={openedLink}
+          onClose={() => setOpenedLink('')}
+          title={'Opened Link'}
+        />
+      )}
       <BrowserFingerprint />
     </div>
   );

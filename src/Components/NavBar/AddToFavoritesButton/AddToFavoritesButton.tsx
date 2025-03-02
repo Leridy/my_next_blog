@@ -39,8 +39,14 @@ export default function AddToFavoritesButton() {
   }, []);
 
   return (
-    <Tooltip title={'添加到收藏夹'} key={'add-to-favorites'}>
-      <Button type={'link'} onClick={handleAddToFavorites}>
+    <Tooltip
+      title={'添加到收藏夹'}
+      key={'add-to-favorites'}
+    >
+      <Button
+        type={'link'}
+        onClick={handleAddToFavorites}
+      >
         <StarFilled />
       </Button>
     </Tooltip>

@@ -86,12 +86,27 @@ export default function FakeMask() {
             animation: logoAnimation,
           }}
         >
-          <img className={'w-60'} src={'/icons/bing.svg'} alt={'bing'} title={'双击 logo 关闭'} />
+          <img
+            className={'w-60'}
+            src={'/icons/bing.svg'}
+            alt={'bing'}
+            title={'双击 logo 关闭'}
+          />
         </div>
 
         <div>
-          <Input placeholder={''} style={{ width: '400px' }} onChange={(e) => setSearchValue(e.target.value)} value={searchValue} onPressEnter={handleSearch} />
-          <Button type={'primary'} style={{ marginLeft: '1rem' }} onClick={handleSearch}>
+          <Input
+            placeholder={''}
+            style={{ width: '400px' }}
+            onChange={(e) => setSearchValue(e.target.value)}
+            value={searchValue}
+            onPressEnter={handleSearch}
+          />
+          <Button
+            type={'primary'}
+            style={{ marginLeft: '1rem' }}
+            onClick={handleSearch}
+          >
             必应搜索
           </Button>
         </div>
@@ -132,7 +147,11 @@ export default function FakeMask() {
         >
           {MaintainedMode ? (
             <div className={'text-red-500 text-lg'}>
-              <InputtingText text={String(MaintainedContent)} cursorBlinkSpeed={'fast'} hideCursor={String(MaintainedContent).includes('<br/>')} />
+              <InputtingText
+                text={String(MaintainedContent)}
+                cursorBlinkSpeed={'fast'}
+                hideCursor={String(MaintainedContent).includes('<br/>')}
+              />
             </div>
           ) : (
             renderSearch

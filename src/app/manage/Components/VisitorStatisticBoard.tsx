@@ -60,7 +60,11 @@ export default function VisitorStatisticBoard() {
   }, [getVisitedCount, getVisitorCount, getVisitorRankList]);
 
   return (
-    <CommonStatisticCard title={'访客统计'} onRefresh={handleRefresh} loading={visitorLoading || visitedLoading || visitorRankLoading}>
+    <CommonStatisticCard
+      title={'访客统计'}
+      onRefresh={handleRefresh}
+      loading={visitorLoading || visitedLoading || visitorRankLoading}
+    >
       <div className="grid grid-cols-5 gap-4 p-4 mb-4">
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日访客</span>
@@ -169,8 +173,16 @@ export default function VisitorStatisticBoard() {
       <div className="max-h-[200px] overflow-auto">
         {visitorRankList.map((item, index) => {
           return (
-            <div key={index} className={'flex justify-between items-center'}>
-              <a href={`https://www.ip138.com/iplookup.php?ip=${item.ip}&action=2`} target={'_blank'} rel={'noreferrer'} className={' hover:underline flex'}>
+            <div
+              key={index}
+              className={'flex justify-between items-center'}
+            >
+              <a
+                href={`https://www.ip138.com/iplookup.php?ip=${item.ip}&action=2`}
+                target={'_blank'}
+                rel={'noreferrer'}
+                className={' hover:underline flex'}
+              >
                 <span className={` w-6 flex items-center justify-center text-sm `}>{index + 1}.</span>
                 {item.ip} - {item.browserSign}
               </a>

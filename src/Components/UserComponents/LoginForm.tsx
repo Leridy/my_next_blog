@@ -29,7 +29,10 @@ export default function LoginForm(props: LoginFormProps) {
   };
 
   return (
-    <Form form={form} layout={'vertical'}>
+    <Form
+      form={form}
+      layout={'vertical'}
+    >
       <FormItem
         label={'邮箱'}
         name={'email'}
@@ -38,15 +41,29 @@ export default function LoginForm(props: LoginFormProps) {
           { type: 'email', message: '请输入正确的邮箱' },
         ]}
       >
-        <Input placeholder={'请输入邮箱'} type={'email'} />
+        <Input
+          placeholder={'请输入邮箱'}
+          type={'email'}
+        />
       </FormItem>
 
-      <FormItem label={'密码'} name={'password'} rules={[{ required: true, message: '请输入密码' }]}>
-        <Input placeholder={'请输入密码'} type={'password'} />
+      <FormItem
+        label={'密码'}
+        name={'password'}
+        rules={[{ required: true, message: '请输入密码' }]}
+      >
+        <Input
+          placeholder={'请输入密码'}
+          type={'password'}
+        />
       </FormItem>
 
       <Space>
-        <FormItem label={'验证码'} name={'validateCode'} rules={[{ required: true, message: '请输入验证码' }]}>
+        <FormItem
+          label={'验证码'}
+          name={'validateCode'}
+          rules={[{ required: true, message: '请输入验证码' }]}
+        >
           <Input placeholder={'请输入验证码, 区分大小写'} />
         </FormItem>
 
@@ -63,7 +80,11 @@ export default function LoginForm(props: LoginFormProps) {
 
       <FormItem>
         <Space>
-          <Button type={'primary'} onClick={handleLogin} loading={loading}>
+          <Button
+            type={'primary'}
+            onClick={handleLogin}
+            loading={loading}
+          >
             登录
           </Button>
 

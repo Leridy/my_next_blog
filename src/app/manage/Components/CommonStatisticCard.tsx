@@ -24,13 +24,21 @@ export default function CommonStatisticCard(props: CommonStatisticCardProps) {
 
         <div className={'flex items-center space-x-1 text-sm font-normal'}>
           {onRefresh && (
-            <Button onClick={onRefresh} type={'link'} size={'small'}>
+            <Button
+              onClick={onRefresh}
+              type={'link'}
+              size={'small'}
+            >
               <SyncOutlined spin={loading} />
               刷新
             </Button>
           )}
           {onGoManage && (
-            <Button type={'link'} size={'small'} onClick={handleManage}>
+            <Button
+              type={'link'}
+              size={'small'}
+              onClick={handleManage}
+            >
               管理
             </Button>
           )}
@@ -40,7 +48,10 @@ export default function CommonStatisticCard(props: CommonStatisticCardProps) {
   }, [title, onRefresh, handleManage, loading, onGoManage]);
 
   return (
-    <Card title={renderTitle} size={'small'}>
+    <Card
+      title={renderTitle}
+      size={'small'}
+    >
       {children}
     </Card>
   );

@@ -68,19 +68,43 @@ export default function ManageSetting() {
 
   return (
     <>
-      <ManageList title={'网站设置'} apiURL={'setting'} columns={columns} onCreate={handleCreate} onEdit={handleEdit}>
-        <FormItem label={'标签'} name={'label'} validateTrigger={['onBlur']}>
+      <ManageList
+        title={'网站设置'}
+        apiURL={'setting'}
+        columns={columns}
+        onCreate={handleCreate}
+        onEdit={handleEdit}
+      >
+        <FormItem
+          label={'标签'}
+          name={'label'}
+          validateTrigger={['onBlur']}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'键'} name={'key'} validateTrigger={['onBlur']}>
+        <FormItem
+          label={'键'}
+          name={'key'}
+          validateTrigger={['onBlur']}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'值'} name={'value'}>
+        <FormItem
+          label={'值'}
+          name={'value'}
+        >
           <Input />
         </FormItem>
 
-        <FormItem label={'可见范围'} name={'role'} validateTrigger={['onBlur']}>
-          <Select placeholder={'请选择'} className={'w-full'}>
+        <FormItem
+          label={'可见范围'}
+          name={'role'}
+          validateTrigger={['onBlur']}
+        >
+          <Select
+            placeholder={'请选择'}
+            className={'w-full'}
+          >
             <Select.Option value={'1'}>公开</Select.Option>
             <Select.Option value={'2'}>内部</Select.Option>
           </Select>
@@ -94,18 +118,47 @@ export default function ManageSetting() {
         apiURL={'setting'}
         ref={modalRef}
       >
-        <FormItem label={'标签'} name={'label'} required rules={[{ required: true, message: '请输入标签' }]}>
+        <FormItem
+          label={'标签'}
+          name={'label'}
+          required
+          rules={[{ required: true, message: '请输入标签' }]}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'键'} name={'key'} validateTrigger={['onBlur']} required rules={[{ required: true, message: '请输入键' }]}>
+        <FormItem
+          label={'键'}
+          name={'key'}
+          validateTrigger={['onBlur']}
+          required
+          rules={[{ required: true, message: '请输入键' }]}
+        >
           <Input />
         </FormItem>
-        <FormItem label={'值'} name={'value'} required rules={[{ required: true, message: '请输入值' }]}>
-          <MonacoEditorNoSSR height="300" language="JSON" theme="vs-dark" />
+        <FormItem
+          label={'值'}
+          name={'value'}
+          required
+          rules={[{ required: true, message: '请输入值' }]}
+        >
+          <MonacoEditorNoSSR
+            height="300"
+            language="JSON"
+            theme="vs-dark"
+          />
         </FormItem>
 
-        <FormItem label={'可见范围'} name={'role'} validateTrigger={['onBlur']} required rules={[{ required: true, message: '请选择可见范围' }]}>
-          <Select placeholder={'请选择'} className={'w-full'}>
+        <FormItem
+          label={'可见范围'}
+          name={'role'}
+          validateTrigger={['onBlur']}
+          required
+          rules={[{ required: true, message: '请选择可见范围' }]}
+        >
+          <Select
+            placeholder={'请选择'}
+            className={'w-full'}
+          >
             <Select.Option value={'1'}>公开</Select.Option>
             <Select.Option value={'2'}>内部</Select.Option>
           </Select>

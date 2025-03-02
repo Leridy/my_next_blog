@@ -233,7 +233,10 @@ export default function HotBoard(props: HotBoardProps) {
           </div>
         </Tooltip>
         <Tooltip title={show ? '不看它' : '看它'}>
-          <div className={`toggle-button ${show ? '' : 'hide'}`} onClick={handleToggle}>
+          <div
+            className={`toggle-button ${show ? '' : 'hide'}`}
+            onClick={handleToggle}
+          >
             {show ? <EyeInvisibleOutlined /> : <EyeOutlined />}
           </div>
         </Tooltip>
@@ -248,7 +251,15 @@ export default function HotBoard(props: HotBoardProps) {
           // 判断 hotCount大小排序
           return b.hotCount - a.hotCount;
         })
-        .map((newsInfo, i) => <NewsItem onClick={openFrame} keyword={keyword} index={i} {...newsInfo} key={newsInfo.id} />) || ''
+        .map((newsInfo, i) => (
+          <NewsItem
+            onClick={openFrame}
+            keyword={keyword}
+            index={i}
+            {...newsInfo}
+            key={newsInfo.id}
+          />
+        )) || ''
     );
   }, [filterNews, keyword, openFrame]);
 
@@ -331,7 +342,14 @@ export default function HotBoard(props: HotBoardProps) {
         animationDelay: `${(index || 0) * 0.1}s`,
       }}
     >
-      <div ref={setRefs} className={'p-4 ' + 'rounded-lg ' + 'hotBoard' + 'ard ' + 'flex-col ' + 'sm:h-full ' + `${show ? '' : 'hide'} `} style={cardStyle} onMouseMove={handleMouseMove} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+      <div
+        ref={setRefs}
+        className={'p-4 ' + 'rounded-lg ' + 'hotBoard' + 'ard ' + 'flex-col ' + 'sm:h-full ' + `${show ? '' : 'hide'} `}
+        style={cardStyle}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         {!news?.length && !loading && !topicSettingMode && (
           <div
             style={{
@@ -355,17 +373,32 @@ export default function HotBoard(props: HotBoardProps) {
         )}
 
         {topicSettingMode && renderOptionBar}
-        <div className={'flex items-center space-x-2 w-full'} style={{ position: 'relative', zIndex: 1 }}>
+        <div
+          className={'flex items-center space-x-2 w-full'}
+          style={{ position: 'relative', zIndex: 1 }}
+        >
           {icon && <BrandIcon src={icon} />}
           <h3 className={'font-bold'}>{title}</h3>
           <div className={`flex-1 flex justify-end ${topicSettingMode ? 'hidden' : ''}`}>
             <Tooltip title={'触发爬虫'}>
-              <Button size={'small'} type={'link'} onClick={handleTriggerSpiderRefresh} disabled={loading || spiderLoading || news?.length > 0} style={{ display: news.length > 0 ? 'none' : undefined }}>
+              <Button
+                size={'small'}
+                type={'link'}
+                onClick={handleTriggerSpiderRefresh}
+                disabled={loading || spiderLoading || news?.length > 0}
+                style={{ display: news.length > 0 ? 'none' : undefined }}
+              >
                 <BugOutlined />
               </Button>
             </Tooltip>
             <Tooltip title={'刷新'}>
-              <Button size={'small'} type={'link'} onClick={handleGetNewsList} disabled={loading} style={{ display: spiderId ? undefined : 'none' }}>
+              <Button
+                size={'small'}
+                type={'link'}
+                onClick={handleGetNewsList}
+                disabled={loading}
+                style={{ display: spiderId ? undefined : 'none' }}
+              >
                 <SyncOutlined spin={loading} />
               </Button>
             </Tooltip>
@@ -384,8 +417,26 @@ export default function HotBoard(props: HotBoardProps) {
           </div>
         </div>
 
-        <div className={'hotBoardNewsList mt-4 mb-4 ' + `${filterNews?.length ? 'fade-in' : ''}`} style={{ position: 'relative', zIndex: 1 }}>
-          {filterNews?.length && !topicSettingMode ? renderNews : <EmptyBoard loading={loading} text={topicSettingMode ? '拖动卡片来排序' : undefined} icon={topicSettingMode ? <BrandIcon src={icon} size={100} /> : undefined} />}
+        <div
+          className={'hotBoardNewsList mt-4 mb-4 ' + `${filterNews?.length ? 'fade-in' : ''}`}
+          style={{ position: 'relative', zIndex: 1 }}
+        >
+          {filterNews?.length && !topicSettingMode ? (
+            renderNews
+          ) : (
+            <EmptyBoard
+              loading={loading}
+              text={topicSettingMode ? '拖动卡片来排序' : undefined}
+              icon={
+                topicSettingMode ? (
+                  <BrandIcon
+                    src={icon}
+                    size={100}
+                  />
+                ) : undefined
+              }
+            />
+          )}
         </div>
       </div>
     </div>

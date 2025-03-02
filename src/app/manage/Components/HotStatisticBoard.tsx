@@ -157,7 +157,12 @@ export default function HotStatisticBoard() {
   }, [getTopicClickStatistic]);
 
   return (
-    <CommonStatisticCard title={'热门数据统计'} loading={loading || newsStatLoading || visitorStatLoading || topicLoading || topicClickLoading} onRefresh={handleRefresh} onGoManage={handleManage}>
+    <CommonStatisticCard
+      title={'热门数据统计'}
+      loading={loading || newsStatLoading || visitorStatLoading || topicLoading || topicClickLoading}
+      onRefresh={handleRefresh}
+      onGoManage={handleManage}
+    >
       <div className="grid grid-cols-5 gap-4 p-4 mb-4">
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日新增话题</span>
@@ -238,8 +243,16 @@ export default function HotStatisticBoard() {
       <div className="max-h-[200px] overflow-auto">
         {NewsRank.map((item, index) => {
           return (
-            <div key={index} className={'flex justify-between items-center'}>
-              <a href={item.url} target={'_blank'} rel={'noreferrer'} className={' hover:underline flex'}>
+            <div
+              key={index}
+              className={'flex justify-between items-center'}
+            >
+              <a
+                href={item.url}
+                target={'_blank'}
+                rel={'noreferrer'}
+                className={' hover:underline flex'}
+              >
                 <span className={` w-6 flex items-center justify-center text-sm `}>{index + 1}.</span>
                 {item.title}
               </a>

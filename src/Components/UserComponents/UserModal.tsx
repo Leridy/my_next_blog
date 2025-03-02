@@ -51,13 +51,33 @@ export default function UserModal(props: UserModalProps) {
   };
 
   return (
-    <Modal title={type === 'login' ? '登录' : '注册'} open={visible} onCancel={onClose} footer={null} destroyOnClose>
-      {type === 'login' ? <LoginForm loading={loading} onLogin={handleLogin} /> : <RegisterForm loading={loading} onRegister={handleRegister} />}
+    <Modal
+      title={type === 'login' ? '登录' : '注册'}
+      open={visible}
+      onCancel={onClose}
+      footer={null}
+      destroyOnClose
+    >
+      {type === 'login' ? (
+        <LoginForm
+          loading={loading}
+          onLogin={handleLogin}
+        />
+      ) : (
+        <RegisterForm
+          loading={loading}
+          onRegister={handleRegister}
+        />
+      )}
       {/* 已有账户？点击登录 */}
       {onRegister && (
         <p className={'text-center cursor-pointer'}>
           {type === 'login' ? '没有账户？' : '已有账户？'}
-          <Button type={'link'} size={'small'} onClick={() => setType(type === 'login' ? 'register' : 'login')}>
+          <Button
+            type={'link'}
+            size={'small'}
+            onClick={() => setType(type === 'login' ? 'register' : 'login')}
+          >
             {type === 'login' ? '点击注册' : '点击登录'}
           </Button>
         </p>

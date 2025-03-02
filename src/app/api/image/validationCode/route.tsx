@@ -52,7 +52,15 @@ const generateValidateCodeImage = (code: string) => {
       const x2 = Math.random() * width;
       const y2 = Math.random() * height;
       const fill = lineColors[Math.floor(Math.random() * lineColors.length)];
-      svgText.push(<line x1={x1} y1={y1} x2={x2} y2={y2} stroke={fill} />);
+      svgText.push(
+        <line
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          stroke={fill}
+        />
+      );
     }
 
     return svgText;
@@ -64,15 +72,30 @@ const generateValidateCodeImage = (code: string) => {
       const y = Math.random() * height;
       const r = Math.random() * 3;
       const fill = lineColors[Math.floor(Math.random() * lineColors.length)];
-      svgText.push(<circle cx={x} cy={y} r={r} fill={fill} />);
+      svgText.push(
+        <circle
+          cx={x}
+          cy={y}
+          r={r}
+          fill={fill}
+        />
+      );
     }
 
     return svgText;
   };
 
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height}>
-      <rect width={width} height={height} fill={backgroundColor} />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={width}
+      height={height}
+    >
+      <rect
+        width={width}
+        height={height}
+        fill={backgroundColor}
+      />
       <path
         style={{
           transform,

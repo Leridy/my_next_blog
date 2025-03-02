@@ -19,7 +19,10 @@ export default function TipsAndNotification() {
 
   return enable ? (
     <Card header={'提示与通知'}>
-      <DigitalClock showDate={true} showTitle={false} />
+      <DigitalClock
+        showDate={true}
+        showTitle={false}
+      />
 
       <div dangerouslySetInnerHTML={{ __html: content as string }} />
     </Card>
