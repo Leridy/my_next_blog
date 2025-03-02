@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "deploy": "curl -X GET https://api.vercel.com/v1/integrations/deploy/prj_qMtRl2Fvd5g1tvEK7UwJ3vS1hSYx/AUO1eeNzmQ",
-    "prepare": "husky",
+    "prepare": "husky || echo 'Husky not installed'",
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "prettier:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
   },
