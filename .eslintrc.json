@@ -2,6 +2,8 @@
   "extends": ["next/core-web-vitals", "next/typescript", "prettier"],
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    // 宽度限制
+    "max-len": ["error", { "code": 300 }]
   }
 }
