@@ -103,250 +103,250 @@ const WeatherForecast: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeDay, setActiveDay] = useState<number>(0);
 
-  useEffect(() => {
-    const fetchGeoAndWeather = async () => {
+  const fetchGeoAndWeather = async () => {
+    try {
+      setLoading(true);
+
+      // 检查本地存储中是否有今天的天气数据
+      const today = new Date().toISOString().split('T')[0]; // 获取当前日期，格式为 YYYY-MM-DD
+      const cachedData = localStorage.getItem('weatherData');
+      const cachedGeo = localStorage.getItem('geoData');
+      const cachedDate = localStorage.getItem('weatherDate');
+
+      // 如果有缓存数据且是今天的数据，直接使用
+      if (cachedData && cachedGeo && cachedDate === today) {
+        setWeather(JSON.parse(cachedData));
+        setGeoData(JSON.parse(cachedGeo));
+        setLoading(false);
+        return;
+      }
+
+      // 没有缓存或不是今天的数据，重新请求
+      let latitude, longitude, city, province;
+
       try {
-        setLoading(true);
-
-        // 检查本地存储中是否有今天的天气数据
-        const today = new Date().toISOString().split('T')[0]; // 获取当前日期，格式为 YYYY-MM-DD
-        const cachedData = localStorage.getItem('weatherData');
-        const cachedGeo = localStorage.getItem('geoData');
-        const cachedDate = localStorage.getItem('weatherDate');
-
-        // 如果有缓存数据且是今天的数据，直接使用
-        if (cachedData && cachedGeo && cachedDate === today) {
-          setWeather(JSON.parse(cachedData));
-          setGeoData(JSON.parse(cachedGeo));
-          setLoading(false);
-          return;
-        }
-
-        // 没有缓存或不是今天的数据，重新请求
-        let latitude, longitude, city, province;
-
-        try {
-          // 1. 先尝试浏览器定位
-          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-            if (!navigator.geolocation) {
-              reject(new Error('浏览器不支持地理位置功能'));
-              return;
-            }
-
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              enableHighAccuracy: true,
-              timeout: 5000,
-              maximumAge: 0,
-            });
-          });
-
-          latitude = position.coords.latitude;
-          longitude = position.coords.longitude;
-
-          // 使用高德地图API进行逆地理编码
-          const geoResponse = await fetch(`https://restapi.amap.com/v3/geocode/regeo?key=2c52fb4b04e6d26830212c17ef7f4ff8&location=${longitude},${latitude}&extensions=base`);
-          const geoResult = await geoResponse.json();
-
-          if (geoResult.status !== '1') {
-            throw new Error('无法获取位置信息');
+        // 1. 先尝试浏览器定位
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error('浏览器不支持地理位置功能'));
+            return;
           }
 
-          const addressComponent = geoResult.regeocode.addressComponent;
-          city = addressComponent.city || addressComponent.district || '未知城市';
-          province = addressComponent.province || '未知省份';
-        } catch (geoError) {
-          console.log('浏览器定位失败，尝试高德IP定位:', geoError);
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+          });
+        });
 
+        latitude = position.coords.latitude;
+        longitude = position.coords.longitude;
+
+        // 使用高德地图API进行逆地理编码
+        const geoResponse = await fetch(`https://restapi.amap.com/v3/geocode/regeo?key=2c52fb4b04e6d26830212c17ef7f4ff8&location=${longitude},${latitude}&extensions=base`);
+        const geoResult = await geoResponse.json();
+
+        if (geoResult.status !== '1') {
+          throw new Error('无法获取位置信息');
+        }
+
+        const addressComponent = geoResult.regeocode.addressComponent;
+        city = addressComponent.city || addressComponent.district || '未知城市';
+        province = addressComponent.province || '未知省份';
+      } catch (geoError) {
+        console.log('浏览器定位失败，尝试高德IP定位:', geoError);
+
+        try {
+          // 2. 浏览器定位失败，使用高德地图IP定位API
+          const ipLocationResponse = await fetch('https://restapi.amap.com/v3/ip?key=2c52fb4b04e6d26830212c17ef7f4ff8');
+          const ipLocationResult = await ipLocationResponse.json();
+
+          if (ipLocationResult.status !== '1') {
+            throw new Error('高德IP定位失败');
+          }
+
+          city = ipLocationResult.city || '未知城市';
+          province = ipLocationResult.province || '未知省份';
+
+          // 通过城市名称查询经纬度
+          const cityGeoResponse = await fetch(`https://restapi.amap.com/v3/geocode/geo?key=2c52fb4b04e6d26830212c17ef7f4ff8&address=${city}&city=${city}`);
+          const cityGeoResult = await cityGeoResponse.json();
+
+          if (cityGeoResult.status !== '1' || !cityGeoResult.geocodes || cityGeoResult.geocodes.length === 0) {
+            throw new Error('无法获取城市坐标');
+          }
+
+          // 获取城市中心点坐标
+          const location = cityGeoResult.geocodes[0].location.split(',');
+          longitude = parseFloat(location[0]);
+          latitude = parseFloat(location[1]);
+        } catch (ipError) {
+          console.log('高德IP定位失败，尝试太平洋IP定位:', ipError);
+
+          // 3. 高德IP定位也失败了，使用太平洋IP定位API (纯中文环境，免费无限制)
           try {
-            // 2. 浏览器定位失败，使用高德地图IP定位API
-            const ipLocationResponse = await fetch('https://restapi.amap.com/v3/ip?key=2c52fb4b04e6d26830212c17ef7f4ff8');
-            const ipLocationResult = await ipLocationResponse.json();
+            const pacificIPResponse = await fetch('https://whois.pconline.com.cn/ipJson.jsp?json=true', {
+              mode: 'cors',
+              // 这里可能需要使用代理解决跨域问题，具体看你的项目部署环境
+              // 或者使用JSONP方式请求
+            });
 
-            if (ipLocationResult.status !== '1') {
-              throw new Error('高德IP定位失败');
-            }
+            const pacificIPText = await pacificIPResponse.text();
+            // 太平洋API返回的可能不是标准JSON，处理一下
+            const pacificIPData = JSON.parse(pacificIPText.replace(/\s/g, ''));
 
-            city = ipLocationResult.city || '未知城市';
-            province = ipLocationResult.province || '未知省份';
+            city = pacificIPData.city;
+            province = pacificIPData.pro;
 
-            // 通过城市名称查询经纬度
-            const cityGeoResponse = await fetch(`https://restapi.amap.com/v3/geocode/geo?key=2c52fb4b04e6d26830212c17ef7f4ff8&address=${city}&city=${city}`);
-            const cityGeoResult = await cityGeoResponse.json();
+            // 因为没有精确经纬度，可以用和风天气API的城市查询接口
+            const geoResponse = await fetch(`https://geoapi.qweather.com/v2/city/lookup?key=9f2344dee7804cfbb07cadac21e8b2c0&location=${city}`);
+            const geoData = await geoResponse.json();
 
-            if (cityGeoResult.status !== '1' || !cityGeoResult.geocodes || cityGeoResult.geocodes.length === 0) {
-              throw new Error('无法获取城市坐标');
-            }
-
-            // 获取城市中心点坐标
-            const location = cityGeoResult.geocodes[0].location.split(',');
-            longitude = parseFloat(location[0]);
-            latitude = parseFloat(location[1]);
-          } catch (ipError) {
-            console.log('高德IP定位失败，尝试太平洋IP定位:', ipError);
-
-            // 3. 高德IP定位也失败了，使用太平洋IP定位API (纯中文环境，免费无限制)
-            try {
-              const pacificIPResponse = await fetch('https://whois.pconline.com.cn/ipJson.jsp?json=true', {
-                mode: 'cors',
-                // 这里可能需要使用代理解决跨域问题，具体看你的项目部署环境
-                // 或者使用JSONP方式请求
-              });
-
-              const pacificIPText = await pacificIPResponse.text();
-              // 太平洋API返回的可能不是标准JSON，处理一下
-              const pacificIPData = JSON.parse(pacificIPText.replace(/\s/g, ''));
-
-              city = pacificIPData.city;
-              province = pacificIPData.pro;
-
-              // 因为没有精确经纬度，可以用和风天气API的城市查询接口
-              const geoResponse = await fetch(`https://geoapi.qweather.com/v2/city/lookup?key=9f2344dee7804cfbb07cadac21e8b2c0&location=${city}`);
-              const geoData = await geoResponse.json();
-
-              if (geoData.code === '200' && geoData.location && geoData.location.length > 0) {
-                latitude = geoData.location[0].lat;
-                longitude = geoData.location[0].lon;
-              } else {
-                // 默认坐标，例如北京
-                latitude = 39.9;
-                longitude = 116.4;
-              }
-            } catch (pacificError) {
-              console.error('所有定位方式均失败，使用默认位置:', pacificError);
-              // 所有方法都失败，使用默认位置（北京）
-              city = '北京';
-              province = '北京';
+            if (geoData.code === '200' && geoData.location && geoData.location.length > 0) {
+              latitude = geoData.location[0].lat;
+              longitude = geoData.location[0].lon;
+            } else {
+              // 默认坐标，例如北京
               latitude = 39.9;
               longitude = 116.4;
             }
+          } catch (pacificError) {
+            console.error('所有定位方式均失败，使用默认位置:', pacificError);
+            // 所有方法都失败，使用默认位置（北京）
+            city = '北京';
+            province = '北京';
+            latitude = 39.9;
+            longitude = 116.4;
           }
         }
+      }
 
-        const newGeoData = {
-          latitude,
-          longitude,
-          city,
-          province,
-        };
+      const newGeoData = {
+        latitude,
+        longitude,
+        city,
+        province,
+      };
 
-        setGeoData(newGeoData);
+      setGeoData(newGeoData);
 
-        // 使用和风天气API获取天气数据
-        const weatherResponse = await fetch(`https://devapi.qweather.com/v7/weather/7d?key=9f2344dee7804cfbb07cadac21e8b2c0&location=${longitude},${latitude}`);
+      // 使用和风天气API获取天气数据
+      const weatherResponse = await fetch(`https://devapi.qweather.com/v7/weather/7d?key=9f2344dee7804cfbb07cadac21e8b2c0&location=${longitude},${latitude}`);
 
-        const nowWeatherResponse = await fetch(`https://devapi.qweather.com/v7/weather/now?key=9f2344dee7804cfbb07cadac21e8b2c0&location=${longitude},${latitude}`);
+      const nowWeatherResponse = await fetch(`https://devapi.qweather.com/v7/weather/now?key=9f2344dee7804cfbb07cadac21e8b2c0&location=${longitude},${latitude}`);
 
-        if (!weatherResponse.ok || !nowWeatherResponse.ok) {
-          throw new Error('天气数据获取失败');
-        }
+      if (!weatherResponse.ok || !nowWeatherResponse.ok) {
+        throw new Error('天气数据获取失败');
+      }
 
-        const dailyWeatherData = await weatherResponse.json();
-        const nowWeatherData = await nowWeatherResponse.json();
+      const dailyWeatherData = await weatherResponse.json();
+      const nowWeatherData = await nowWeatherResponse.json();
 
-        if (dailyWeatherData.code !== '200' || nowWeatherData.code !== '200') {
-          throw new Error(`天气数据获取失败: ${dailyWeatherData.code}`);
-        }
+      if (dailyWeatherData.code !== '200' || nowWeatherData.code !== '200') {
+        throw new Error(`天气数据获取失败: ${dailyWeatherData.code}`);
+      }
 
-        // 转换和风天气数据格式为我们使用的格式
-        const currentTime = Math.floor(Date.now() / 1000);
-        const sunrise = Math.floor(new Date(`${dailyWeatherData.daily[0].fxDate} ${dailyWeatherData.daily[0].sunrise}`).getTime() / 1000);
-        const sunset = Math.floor(new Date(`${dailyWeatherData.daily[0].fxDate} ${dailyWeatherData.daily[0].sunset}`).getTime() / 1000);
+      // 转换和风天气数据格式为我们使用的格式
+      const currentTime = Math.floor(Date.now() / 1000);
+      const sunrise = Math.floor(new Date(`${dailyWeatherData.daily[0].fxDate} ${dailyWeatherData.daily[0].sunrise}`).getTime() / 1000);
+      const sunset = Math.floor(new Date(`${dailyWeatherData.daily[0].fxDate} ${dailyWeatherData.daily[0].sunset}`).getTime() / 1000);
 
-        // 构建与之前API兼容的数据结构
-        const formattedData: WeatherData = {
-          current: {
-            dt: currentTime,
-            sunrise,
-            sunset,
-            temp: parseFloat(nowWeatherData.now.temp),
-            feels_like: parseFloat(nowWeatherData.now.feelsLike),
-            pressure: parseFloat(nowWeatherData.now.pressure),
-            humidity: parseFloat(nowWeatherData.now.humidity),
-            dew_point: nowWeatherData.now.dew,
-            uvi: dailyWeatherData?.daily[0]?.uvi || 0,
-            clouds: parseInt(nowWeatherData.now.cloud || '0'),
-            visibility: parseFloat(nowWeatherData.now.vis),
-            wind_speed: parseFloat(nowWeatherData.now.windSpeed),
-            wind_deg: parseFloat(nowWeatherData.now.wind360),
+      // 构建与之前API兼容的数据结构
+      const formattedData: WeatherData = {
+        current: {
+          dt: currentTime,
+          sunrise,
+          sunset,
+          temp: parseFloat(nowWeatherData.now.temp),
+          feels_like: parseFloat(nowWeatherData.now.feelsLike),
+          pressure: parseFloat(nowWeatherData.now.pressure),
+          humidity: parseFloat(nowWeatherData.now.humidity),
+          dew_point: nowWeatherData.now.dew,
+          uvi: dailyWeatherData?.daily[0]?.uvi || 0,
+          clouds: parseInt(nowWeatherData.now.cloud || '0'),
+          visibility: parseFloat(nowWeatherData.now.vis),
+          wind_speed: parseFloat(nowWeatherData.now.windSpeed),
+          wind_deg: parseFloat(nowWeatherData.now.wind360),
+          weather: [
+            {
+              id: parseInt(nowWeatherData.now.icon),
+              main: nowWeatherData.now.text,
+              description: nowWeatherData.now.text,
+              icon: nowWeatherData.now.icon,
+            },
+          ],
+        },
+        daily: dailyWeatherData.daily.map(
+          (day: {
+            cloud: 'string';
+            wind360Day: string;
+            uvIndex: string;
+            fxDate: string | number | Date;
+            sunrise: string;
+            sunset: string;
+            tempMin: string;
+            tempMax: string;
+            pressure: string;
+            humidity: string;
+            windSpeedDay: string;
+            iconDay: string;
+            textDay: string;
+            precip: string;
+          }) => ({
+            dt: Math.floor(new Date(day.fxDate).getTime() / 1000),
+            sunrise: Math.floor(new Date(`${day.fxDate} ${day.sunrise}`).getTime() / 1000),
+            sunset: Math.floor(new Date(`${day.fxDate} ${day.sunset}`).getTime() / 1000),
+            temp: {
+              day: parseFloat(day.tempMax),
+              min: parseFloat(day.tempMin),
+              max: parseFloat(day.tempMax),
+              night: parseFloat(day.tempMin),
+              eve: (parseFloat(day.tempMax) + parseFloat(day.tempMin)) / 2,
+              morn: parseFloat(day.tempMin),
+            },
+            feels_like: {
+              day: parseFloat(day.tempMax),
+              night: parseFloat(day.tempMin),
+              eve: (parseFloat(day.tempMax) + parseFloat(day.tempMin)) / 2,
+              morn: parseFloat(day.tempMin),
+            },
+            pressure: parseFloat(day.pressure),
+            humidity: parseFloat(day.humidity),
+            dew_point: 0,
+            wind_speed: parseFloat(day.windSpeedDay),
+            wind_deg: parseFloat(day.wind360Day),
             weather: [
               {
-                id: parseInt(nowWeatherData.now.icon),
-                main: nowWeatherData.now.text,
-                description: nowWeatherData.now.text,
-                icon: nowWeatherData.now.icon,
+                id: parseInt(day.iconDay),
+                main: day.textDay,
+                description: day.textDay,
+                icon: day.iconDay,
               },
             ],
-          },
-          daily: dailyWeatherData.daily.map(
-            (day: {
-              cloud: 'string';
-              wind360Day: string;
-              uvIndex: string;
-              fxDate: string | number | Date;
-              sunrise: string;
-              sunset: string;
-              tempMin: string;
-              tempMax: string;
-              pressure: string;
-              humidity: string;
-              windSpeedDay: string;
-              iconDay: string;
-              textDay: string;
-              precip: string;
-            }) => ({
-              dt: Math.floor(new Date(day.fxDate).getTime() / 1000),
-              sunrise: Math.floor(new Date(`${day.fxDate} ${day.sunrise}`).getTime() / 1000),
-              sunset: Math.floor(new Date(`${day.fxDate} ${day.sunset}`).getTime() / 1000),
-              temp: {
-                day: parseFloat(day.tempMax),
-                min: parseFloat(day.tempMin),
-                max: parseFloat(day.tempMax),
-                night: parseFloat(day.tempMin),
-                eve: (parseFloat(day.tempMax) + parseFloat(day.tempMin)) / 2,
-                morn: parseFloat(day.tempMin),
-              },
-              feels_like: {
-                day: parseFloat(day.tempMax),
-                night: parseFloat(day.tempMin),
-                eve: (parseFloat(day.tempMax) + parseFloat(day.tempMin)) / 2,
-                morn: parseFloat(day.tempMin),
-              },
-              pressure: parseFloat(day.pressure),
-              humidity: parseFloat(day.humidity),
-              dew_point: 0,
-              wind_speed: parseFloat(day.windSpeedDay),
-              wind_deg: parseFloat(day.wind360Day),
-              weather: [
-                {
-                  id: parseInt(day.iconDay),
-                  main: day.textDay,
-                  description: day.textDay,
-                  icon: day.iconDay,
-                },
-              ],
-              clouds: day.cloud,
-              pop: parseFloat(day.precip) / 100,
-              uvi: day.uvIndex,
-            })
-          ),
-          timezone: 'Asia/Shanghai',
-          timezone_offset: 28800,
-        };
+            clouds: day.cloud,
+            pop: parseFloat(day.precip) / 100,
+            uvi: day.uvIndex,
+          })
+        ),
+        timezone: 'Asia/Shanghai',
+        timezone_offset: 28800,
+      };
 
-        setWeather(formattedData);
+      setWeather(formattedData);
 
-        // 将数据存储到 localStorage，包括当前日期
-        localStorage.setItem('weatherData', JSON.stringify(formattedData));
-        localStorage.setItem('geoData', JSON.stringify(newGeoData));
-        localStorage.setItem('weatherDate', today);
-      } catch (err) {
-        console.error('数据获取错误:', err);
-        setError('无法加载天气数据，请稍后再试。');
-      } finally {
-        setLoading(false);
-      }
-    };
+      // 将数据存储到 localStorage，包括当前日期
+      localStorage.setItem('weatherData', JSON.stringify(formattedData));
+      localStorage.setItem('geoData', JSON.stringify(newGeoData));
+      localStorage.setItem('weatherDate', today);
+    } catch (err) {
+      console.error('数据获取错误:', err);
+      setError('无法加载天气数据，请稍后再试。');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchGeoAndWeather();
   }, []);
   // 获取天气图标
@@ -447,7 +447,7 @@ const WeatherForecast: React.FC = () => {
           <p className="text-lg font-semibold">{error}</p>
           <button
             className="mt-4 px-4 py-2 bg-[var(--color-primary)] text-[var(--color-text)] rounded-lg hover:bg-[var(--color-secondary)] transition-colors"
-            onClick={() => window.location.reload()}
+            onClick={() => fetchGeoAndWeather()}
           >
             重试
           </button>
