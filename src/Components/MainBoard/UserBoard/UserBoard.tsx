@@ -6,7 +6,7 @@ import UserProfile from '@/Components/MainBoard/UserBoard/UserProfile';
 import TipsAndNotification from '@/Components/MainBoard/UserBoard/TipsAndNotification/TipsAndNotification';
 import LinksBoard from '@/Components/MainBoard/UserBoard/LinksBoard/LinksBoard';
 import CopyrightBoard from '@/Components/MainBoard/UserBoard/CopyrightBoard/CopyrightBoard';
-import WoodenFishGame from '@/Components/WoodenFishGame';
+import WoodenFishGame from '@/Components/Games/WoodenFishGame';
 import TodoList from '@/Components/TodoList';
 import FoodPicker from '@/Components/FoodPicker';
 import CommentSystem from '@/Components/CommentsBoard';
@@ -143,6 +143,12 @@ export default function UserBoard() {
         header: '敲木鱼',
         style: { minHeight: '400px' },
       },
+      // {
+      //   id: 'MouseGame',
+      //   component: <MouseGame />,
+      //   header: 'Mouse Game',
+      //   style: { minHeight: '400px' },
+      // },
       {
         id: 'todoList',
         component: <TodoList />,

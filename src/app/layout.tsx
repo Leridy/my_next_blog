@@ -5,6 +5,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import WebSiteAnalyze from '@/Components/WebSiteAnalyze';
+import React from 'react';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
