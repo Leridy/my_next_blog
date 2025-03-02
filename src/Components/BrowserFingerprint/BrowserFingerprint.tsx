@@ -14,12 +14,7 @@ interface NetworkInformation {
 export default function BrowserFingerprint() {
   const [fingerprint, setFingerprint] = useState<string>('');
 
-  const headers = useMemo(
-    () => ({
-      'x-ignore-error': 'true',
-    }),
-    []
-  );
+  const headers = useMemo(() => ({ 'x-ignore-error': 'true' }), []);
 
   const { create } = useApi({
     apiURL: 'fingerprint',
@@ -151,5 +146,12 @@ export default function BrowserFingerprint() {
     setFingerprint('');
   }, [create, fingerprint]);
 
-  return <canvas id="fingerprint" width="200" height="200" style={{ display: 'none' }} />;
+  return (
+    <canvas
+      id="fingerprint"
+      width="200"
+      height="200"
+      style={{ display: 'none' }}
+    />
+  );
 }

@@ -3,6 +3,7 @@
   "semi": true,
   "tabWidth": 2,
   "trailingComma": "es5",
-  "printWidth": 300,
-  "bracketSpacing": true
+  "printWidth": 250,
+  "bracketSpacing": true,
+  "singleAttributePerLine": true
 }

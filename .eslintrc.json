@@ -3,7 +3,6 @@
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": "error",
-    "max-len": ["error", { "code": 300 }],
-    "object-curly-newline": ["error", { "multiline": true }]
+    "max-len": ["error", { "code": 250 }]
   }
 }
