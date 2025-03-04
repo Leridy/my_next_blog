@@ -12,6 +12,7 @@ import { Button, message, Tooltip } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import './HotBoard.styles.scss';
 import { NetworkError } from '@/http';
+import { useNewsContext } from '@/Provider/NewsProvider';
 
 const SITE_SETTING_KEY = 'HotBoard';
 
@@ -41,8 +42,8 @@ export interface HotBoardProps {
  * @description 这个组件是用来展示热门内容的，你需要传入以下信息，然后这个组件会展示出来
  */
 export default function HotBoard(props: HotBoardProps) {
-  const { id, icon, title, rowSpan, colSpan, onFocus, isFocus, keyword, onOpenFrame, index, spiderId, show = false, onMoveItem, onToggleShow } = props;
-
+  const { id, icon, title, description, rowSpan, colSpan, onFocus, isFocus, keyword, onOpenFrame, index, spiderId, show = false, onMoveItem, onToggleShow } = props;
+  const { addOrUpdateCategory } = useNewsContext();
   // 鼠标交互状态
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -68,6 +69,21 @@ export default function HotBoard(props: HotBoardProps) {
   } = useApi<HotNews>({
     apiURL: 'news',
   });
+
+  useEffect(() => {
+    const banTitle = ['IT 之家', '今日头条', 'Bilibili', '爱范儿', '抖音', '新浪', '贴吧热榜', '少数派', '51 CTO', '微信读书', '酷安'];
+    if (news.length && !banTitle.includes(title)) {
+      addOrUpdateCategory({
+        title,
+        type: description || '',
+        // // 取前十条数据
+        links: news.slice(0, 10).map((item) => ({
+          title: item.title,
+          id: String(item.id),
+        })),
+      });
+    }
+  }, [news, addOrUpdateCategory]);
 
   const { get: triggerSpiderRefresh, loading: spiderLoading } = useApi<HotSpider>({
     apiURL: 'spider/trigger',

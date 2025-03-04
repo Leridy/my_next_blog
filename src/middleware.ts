@@ -4,7 +4,8 @@ import { MyNRError } from '@/utils/MyNRError';
 
 const routerMap = new Map<string[], (req: NextRequest) => Promise<NextResponse> | Promise<void> | NextResponse | undefined>();
 
-const pathRequireTokenAdminRole = ['/manage', '/blog/admin'];
+const pathRequireTokenAdminRole = ['/manage', '/api/statistic/news/count', '/blog/admin'];
+const pathRequireTokenUserRole = ['/api/ai/chat'];
 
 routerMap.set(pathRequireTokenAdminRole, (req: NextRequest) =>
   validationAuthToken(req, {
@@ -19,6 +20,8 @@ routerMap.set(['/api/hot', '/api/user', '/api/setting'], (req: NextRequest) =>
     validateMethod: ['POST', 'PUT', 'DELETE'],
   })
 );
+
+routerMap.set(pathRequireTokenUserRole, (req: NextRequest) => validationAuthToken(req, { role: Role.USER, validateMethod: ['POST'] }));
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

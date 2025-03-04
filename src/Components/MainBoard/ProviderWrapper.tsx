@@ -8,6 +8,7 @@ import MainBoard from '@/Components/MainBoard/MainBoard';
 import NavBar from '@/Components/NavBar';
 import FakeMask from '@/Components/FakeMask/FakeMask';
 import dynamic from 'next/dynamic';
+import { NewsProvider } from '@/Provider/NewsProvider';
 
 const UserSettingProviderNoSSR = dynamic(() => import('@/Provider/UserSettingProvider'), { ssr: false });
 
@@ -16,15 +17,17 @@ export default function ProviderWrapper() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <SiteSettingProvider>
-        <UserSettingProviderNoSSR>
-          <UserProvider>
-            <NavBar onSearch={setKeyword} />
-            <MainBoard keyword={keyword} />
-            <FakeMask />
-          </UserProvider>
-        </UserSettingProviderNoSSR>
-      </SiteSettingProvider>
+      <NewsProvider>
+        <SiteSettingProvider>
+          <UserSettingProviderNoSSR>
+            <UserProvider>
+              <NavBar onSearch={setKeyword} />
+              <MainBoard keyword={keyword} />
+              <FakeMask />
+            </UserProvider>
+          </UserSettingProviderNoSSR>
+        </SiteSettingProvider>
+      </NewsProvider>
     </DndProvider>
   );
 }

@@ -13,6 +13,7 @@ import CommentSystem from '@/Components/CommentsBoard';
 import { useUserSettingContext } from '@/Provider/UserSettingProvider';
 import BuyMeCoffee from '@/Components/BuyMeCoffee';
 import WeatherForecast from '@/Components/Weather';
+import DeepSeekChat from '@/Components/DeepSeekChat';
 
 const BOARD_ORDER_KEY = 'userBoardOrder';
 
@@ -36,8 +37,7 @@ const DraggableCard = ({ id, index, moveCard, isDraggable, children, header, sty
     }),
   });
 
-  // @ts-expect-error handlerId可能为null
-
+  // @ts-ignore
   const [{ handlerId }, drop] = useDrop({
     accept: 'CARD',
     collect(monitor) {
@@ -45,7 +45,8 @@ const DraggableCard = ({ id, index, moveCard, isDraggable, children, header, sty
         handlerId: monitor.getHandlerId(),
       };
     },
-    // @ts-expect-error item可能为null
+
+    // @ts-ignore
     hover(item: { id: string; index: number }) {
       if (!isDraggable) return;
 
@@ -127,6 +128,12 @@ export default function UserBoard() {
         id: 'tips',
         component: <TipsAndNotification />,
         header: '',
+      },
+      {
+        id: 'deepseek',
+        component: <DeepSeekChat />,
+        header: 'DeepSeek Chat',
+        style: { minHeight: '900px' },
       },
       {
         id: 'profile',
@@ -222,24 +229,19 @@ export default function UserBoard() {
 
   return (
     <div className={'grid gap-6 h-full overflow-y-scroll user-board'}>
-      {cards.map((card, index) =>
-        card.header ? (
-          <DraggableCard
-            key={card.id}
-            id={card.id}
-            index={index}
-            moveCard={moveCard}
-            isDraggable={isDraggable}
-            header={card.header}
-            style={card.style}
-          >
-            {card.component}
-          </DraggableCard>
-        ) : (
-          // 没有header的组件不使用Card包装
-          <div key={card.id}>{card.component}</div>
-        )
-      )}
+      {cards.map((card, index) => (
+        <DraggableCard
+          key={card.id}
+          id={card.id}
+          index={index}
+          moveCard={moveCard}
+          isDraggable={isDraggable}
+          header={card.header}
+          style={card.style}
+        >
+          {card.component}
+        </DraggableCard>
+      ))}
     </div>
   );
 }
