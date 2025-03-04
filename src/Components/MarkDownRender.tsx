@@ -15,10 +15,9 @@ import { FiLink, FiCheckSquare, FiSquare, FiList, FiCode, FiImage } from 'react-
 
 interface MarkdownRendererProps {
   content: string;
-  className?: string;
 }
 
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className }) => {
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
 
@@ -296,7 +295,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className 
     <ReactMarkdown
       components={components}
       remarkPlugins={[remarkGfm]}
-      className={className}
     >
       {content}
     </ReactMarkdown>
