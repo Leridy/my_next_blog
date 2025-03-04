@@ -140,6 +140,7 @@ const defaultPromptTemplate = (linksCategories: LinkCategory[], username: string
 3. 严格保护用户隐私
 4. 仅基于下方提供的链接信息回答问题
 5. 遇到超出下面知识范围的问题，回复"我无法回答这个问题"或引导用户访问deepseek官网
+6. 注意我的运行环境有超时限制，所以请你先让回答的链接建立，然后再接着回答问题
 
 以下是可参考的链接资源，请仔细阅读并记住这些信息：
 ${linksCategories
@@ -191,7 +192,6 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
         const messageChunk = parsed
           .map((response) => {
             // 取出 content 字段
-            console.log('Response:', response);
             return response.choices[0].delta.content;
           })
           .join('');
@@ -203,12 +203,10 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
       }
     },
     onComplete: (fullResponse) => {
-      console.log('Stream complete:', fullResponse);
       // 流式传输完成后，清理状态
       const allParsed = parseSSEData(fullResponse) as unknown as ChatResponse[];
       console.log('All parsed:', allParsed);
       const allMessages = allParsed.map((response) => response.choices[0].delta.content).join('');
-      console.log('All messages:', allMessages);
       // 把最后一个 message 的 cotent 替换为 allMessage
       setMessages((prev) => {
         const lastMessage = prev[prev.length - 1];
