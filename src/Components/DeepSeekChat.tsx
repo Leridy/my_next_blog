@@ -140,7 +140,7 @@ const defaultPromptTemplate = (linksCategories: LinkCategory[], username: string
 3. 严格保护用户隐私
 4. 仅基于下方提供的链接信息回答问题
 5. 遇到超出下面知识范围的问题，回复"我无法回答这个问题"或引导用户访问deepseek官网
-6. 注意我的运行环境有超时限制，所以请你先让回答的链接建立，然后再接着回答问题
+6. 注意我的运行环境有超时限制，所以请你尽量在十秒内给我答复
 
 以下是可参考的链接资源，请仔细阅读并记住这些信息：
 ${linksCategories
@@ -221,14 +221,14 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
     },
     onError: (error) => {
       console.error('Stream error:', error);
-      const errorMessage = {
-        id: generateId(),
-        role: 'assistant' as const,
-        content: '抱歉，发生了错误。请稍后再试。',
-        timestamp: Date.now(),
-      };
 
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => {
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage.role === 'assistant') {
+          return [...prev.slice(0, -1), { ...lastMessage, content: '抱歉，发生了错误。请稍后再试。' }];
+        }
+        return prev;
+      });
       setIsLoading(false);
       setStreamContent('');
     },
@@ -480,6 +480,7 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
                       isLoading && message.role === 'assistant' && index === messages.length - 1 ? streamContent || '思考中...' : message.content
                     }
                   />
+                  {isLoading && <LoadingOutlined className="text-[var(--color-text-secondary)]" />}
                   <div className="text-xs mt-1 text-[var(--color-text-secondary)]">{new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
               </motion.div>
