@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 
 // 类型定义
 interface LinkData {
@@ -44,10 +44,6 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }),
     [categories, addOrUpdateCategory]
   );
-
-  useEffect(() => {
-    console.log('categories:', categories);
-  }, [categories]);
 
   return <NewsContext.Provider value={contextValue}>{children}</NewsContext.Provider>;
 };

@@ -3,10 +3,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { DeleteOutlined, InfoCircleOutlined, LoadingOutlined, MessageOutlined, SendOutlined } from '@ant-design/icons';
 import { IoMdRefresh } from 'react-icons/io';
 import { Button, message, Modal, Tooltip } from 'antd';
-import useApi from '@/app/manage/hooks/useApi';
 import { useUserContext } from '@/Provider/UserProvider';
 import { useNewsContext } from '@/Provider/NewsProvider';
 import MarkdownRenderer from '@/Components/MarkDownRender';
+import useStreamApi, { parseSSEData } from '@/app/manage/hooks/useStreamApi';
 
 type role = 'user' | 'assistant' | 'system';
 
@@ -44,6 +44,7 @@ interface Choice {
   finish_reason: string;
   index: number;
   message: Message;
+  delta: Message;
   logprobs: {
     content: ContentLogProb[];
   };
@@ -176,8 +177,63 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [confirmClearVisible, setConfirmClearVisible] = useState(false);
 
-  const { create: post } = useApi<ChatResponse>({
+  // 添加一个状态来存储当前的流式响应内容
+  const [streamContent, setStreamContent] = useState('');
+
+  // 添加流式 API 钩子
+  const { isStreaming, streamFetch } = useStreamApi({
     apiURL: 'ai/chat',
+    onChunk: (chunk) => {
+      try {
+        // 尝试解析 JSON，若失败则当作纯文本处理
+
+        const parsed = parseSSEData(chunk) as unknown as ChatResponse[];
+        const messageChunk = parsed
+          .map((response) => {
+            // 取出 content 字段
+            console.log('Response:', response);
+            return response.choices[0].delta.content;
+          })
+          .join('');
+        setStreamContent((prev) => prev + messageChunk);
+        // eslint-disable-next-line unused-imports/no-unused-vars
+      } catch (e) {
+        // 若不是 JSON，直接添加文本
+        setStreamContent((prev) => prev + chunk);
+      }
+    },
+    onComplete: (fullResponse) => {
+      console.log('Stream complete:', fullResponse);
+      // 流式传输完成后，清理状态
+      const allParsed = parseSSEData(fullResponse) as unknown as ChatResponse[];
+      console.log('All parsed:', allParsed);
+      const allMessages = allParsed.map((response) => response.choices[0].delta.content).join('');
+      console.log('All messages:', allMessages);
+      // 把最后一个 message 的 cotent 替换为 allMessage
+      setMessages((prev) => {
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage.role === 'assistant') {
+          return [...prev.slice(0, -1), { ...lastMessage, content: allMessages }];
+        }
+        return prev;
+      });
+      setIsLoading(false);
+
+      setStreamContent('');
+    },
+    onError: (error) => {
+      console.error('Stream error:', error);
+      const errorMessage = {
+        id: generateId(),
+        role: 'assistant' as const,
+        content: '抱歉，发生了错误。请稍后再试。',
+        timestamp: Date.now(),
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+      setIsLoading(false);
+      setStreamContent('');
+    },
   });
 
   const scrollToBottom = () => {
@@ -210,9 +266,11 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
   const generateId = () => `id-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
   // 发送消息到DeepSeek API
+  // 修改发送消息到DeepSeek的函数，使用流式 API
   const sendMessageToDeepSeek = async (userMessage: string, systemPrompt?: string) => {
     try {
       setIsLoading(true);
+      setStreamContent(''); // 清空之前的流内容
 
       const requestMessages = [];
 
@@ -238,20 +296,20 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
         content: userMessage,
       });
 
-      // 发送请求
-      const response = await post({
-        // @ts-ignore 管得多，我就要怎么用
-        messages: requestMessages,
-      });
-
-      const assistantMessage = {
+      // 创建临时的助手消息并添加到列表
+      const tempAssistantMessage = {
         id: generateId(),
         role: 'assistant' as const,
-        content: response.choices[0].message.content,
+        content: '',
         timestamp: Date.now(),
       };
 
-      setMessages((prev) => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, tempAssistantMessage]);
+
+      // 使用流式 API 发送请求
+      await streamFetch({
+        messages: requestMessages,
+      });
     } catch (error) {
       console.error('Error sending message to DeepSeek:', error);
 
@@ -271,7 +329,7 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
 
   // 发送消息
   const sendMessage = () => {
-    if (!inputValue.trim() || isLoading) return;
+    if (!inputValue.trim() || isLoading || isStreaming) return;
 
     const userMessage = {
       id: generateId(),
@@ -285,7 +343,6 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
     // 处理系统提示词逻辑
     const promptTemplate = customPromptTemplate || defaultPromptTemplate;
     const systemPrompt = promptTemplate(categories, user?.name || '划水玩家');
-    console.log('systemPrompt:', systemPrompt);
     // 重置输入框
     setInputValue('');
     if (inputRef.current) {
@@ -410,7 +467,7 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
           )}
 
           <AnimatePresence>
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <motion.div
                 key={message.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -419,30 +476,17 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div className={`max-w-[100%] rounded-2xl px-4 py-3 ${message.role === 'user' ? 'bg-[var(--color-quaternary)] text-[var(--color-text)]' : 'bg-[var(--color-card-background)] text-[var(--color-text)]'}`}>
-                  <MarkdownRenderer content={message.content} />
+                  <MarkdownRenderer
+                    content={
+                      // 如果是最后一条消息且是助手消息且正在加载，显示流式内容
+                      isLoading && message.role === 'assistant' && index === messages.length - 1 ? streamContent || '思考中...' : message.content
+                    }
+                  />
                   <div className="text-xs mt-1 text-[var(--color-text-secondary)]">{new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
-
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex justify-start"
-            >
-              <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-[var(--color-card-background)] text-[var(--color-text)]">
-                <div className="flex items-center space-x-2">
-                  <LoadingOutlined
-                    style={{ fontSize: 16 }}
-                    spin
-                  />
-                  <span>思考中...</span>
-                </div>
-              </div>
-            </motion.div>
-          )}
 
           <div
             ref={messagesEndRef}

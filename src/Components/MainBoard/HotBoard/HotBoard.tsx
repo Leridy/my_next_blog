@@ -71,7 +71,7 @@ export default function HotBoard(props: HotBoardProps) {
   });
 
   useEffect(() => {
-    const banTitle = ['IT 之家', '今日头条', 'Bilibili', '爱范儿', '抖音', '新浪', '贴吧热榜', '少数派', '51 CTO', '微信读书', '酷安'];
+    const banTitle = ['IT 之家', '今日头条', '爱范儿', '新浪', '贴吧热榜', '少数派', '51 CTO', '酷安'];
     if (news.length && !banTitle.includes(title)) {
       addOrUpdateCategory({
         title,
