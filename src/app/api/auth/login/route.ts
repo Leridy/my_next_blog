@@ -43,6 +43,8 @@ async function post(req: NextRequest) {
   const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET || '');
   const alg = 'HS256';
 
+  console.log(process.env.JWT_TOKEN_SECRET);
+
   const token = await new jose.SignJWT(returnResult).setProtectedHeader({ alg }).setIssuedAt().setExpirationTime('30d').sign(secret);
   resHeaderOperation['Set-Cookie'] = `token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60};`;
 
