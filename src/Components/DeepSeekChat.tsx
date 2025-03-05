@@ -480,7 +480,7 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
                       isLoading && message.role === 'assistant' && index === messages.length - 1 ? streamContent || '思考中...' : message.content
                     }
                   />
-                  {isLoading && <LoadingOutlined className="text-[var(--color-text-secondary)]" />}
+                  {isLoading && message.role === 'assistant' && index === messages.length - 1 && <LoadingOutlined className="text-[var(--color-text-secondary)]" />}
                   <div className="text-xs mt-1 text-[var(--color-text-secondary)]">{new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
               </motion.div>
