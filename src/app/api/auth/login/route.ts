@@ -17,6 +17,28 @@ const updateLastLoginData = async (data: Pick<User, 'id'>) => {
   return userDao.updateLastLoginData(data);
 };
 
+/**
+ * 获取主域名（去掉子域名部分）
+ */
+function getMainDomain(req: NextRequest): string {
+  const host = req.headers.get('host') || '';
+  // 分离域名部分
+  const hostname = host.split(':')[0]; // 移除可能的端口号
+
+  // 检查是否为本地开发环境
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return hostname;
+  }
+
+  // 解析主域名（取最后两部分）
+  const parts = hostname.split('.');
+  if (parts.length >= 2) {
+    return parts.slice(-2).join('.');
+  }
+
+  return hostname; // 兜底情况
+}
+
 async function post(req: NextRequest) {
   // the refactor logic code above into this function you should remember the req is a NextRequest object,
   // and you should return a NextResponse object.
@@ -43,10 +65,17 @@ async function post(req: NextRequest) {
   const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET || '');
   const alg = 'HS256';
 
-  console.log(process.env.JWT_TOKEN_SECRET);
-
   const token = await new jose.SignJWT(returnResult).setProtectedHeader({ alg }).setIssuedAt().setExpirationTime('30d').sign(secret);
-  resHeaderOperation['Set-Cookie'] = `token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60};`;
+
+  // 获取主域名
+  const mainDomain = getMainDomain(req);
+
+  // 确定是否需要添加域名设置
+  const domainSetting = mainDomain !== 'localhost' && mainDomain !== '127.0.0.1' ? `Domain=.${mainDomain}; ` : '';
+
+  // 设置更宽松的 SameSite 策略以支持子域名交互，如需安全性更强可以用 Lax 替代 None
+  const secure = process.env.NODE_ENV === 'production' ? 'Secure; ' : '';
+  resHeaderOperation['Set-Cookie'] = `token=${token}; ${domainSetting}Path=/; HttpOnly; SameSite=Lax; ${secure}Max-Age=${30 * 24 * 60 * 60};`;
 
   if (validateResult) {
     resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);
