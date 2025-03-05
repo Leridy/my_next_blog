@@ -75,7 +75,7 @@ async function post(req: NextRequest) {
 
   // 设置更宽松的 SameSite 策略以支持子域名交互，如需安全性更强可以用 Lax 替代 None
   const secure = process.env.NODE_ENV === 'production' ? 'Secure; ' : '';
-  resHeaderOperation['Set-Cookie'] = `token=${token}; ${domainSetting}Path=/; HttpOnly; SameSite=Lax; ${secure}Max-Age=${30 * 24 * 60 * 60};`;
+  resHeaderOperation['Set-Cookie'] = `token=${token}; ${domainSetting} Path=/; HttpOnly; SameSite=Lax; ${secure}Max-Age=${30 * 24 * 60 * 60};`;
 
   if (validateResult) {
     resHeaderOperation = mergeHeaderObj(resHeaderOperation, validateResult);

@@ -88,6 +88,7 @@ export default function useStreamApi<T>({ apiURL, onChunk, onComplete, onError }
           },
           body: JSON.stringify(data),
           signal: controller.signal,
+          credentials: 'include',
         });
 
         if (!response.ok) {
