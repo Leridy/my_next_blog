@@ -5,6 +5,7 @@ config();
 const nextConfig = {
   env: {
     DATABASE_URL: process.env.DATABASE_URL,
+    CURRENT_ENV: process.env.CURRENT_ENV,
   },
   // typescript: {
   //   ignoreBuildErrors: true,

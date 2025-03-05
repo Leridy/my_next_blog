@@ -176,6 +176,8 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  console.log('isDevelopment:', isDevelopment);
+
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [confirmClearVisible, setConfirmClearVisible] = useState(false);
 
@@ -253,7 +255,7 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
   // 滚动到最新消息
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, streamContent]);
 
   // 自动调整输入框高度
   const adjustInputHeight = (element: HTMLTextAreaElement) => {
@@ -507,7 +509,7 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="输入您的问题..."
-                className="w-full py-3 px-4 pr-12 rounded-lg resize-none outline-none bg-transparent text-[var(--color-text)] min-h-[44px] max-h-[120px]"
+                className="w-full py-3 px-4 pr-12 rounded-lg resize-none outline-none text-[var(--color-text)] min-h-[44px] max-h-[120px] bg-[var(--color-transparent-background)]"
                 style={{ fontSize: 'var(--text-size)' }}
                 rows={1}
               />
