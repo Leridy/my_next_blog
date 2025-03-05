@@ -7,6 +7,7 @@ import { useUserContext } from '@/Provider/UserProvider';
 import { useNewsContext } from '@/Provider/NewsProvider';
 import MarkdownRenderer from '@/Components/MarkDownRender';
 import useStreamApi, { parseSSEData } from '@/app/manage/hooks/useStreamApi';
+import { isDevelopment } from '@/utils/constant';
 
 type role = 'user' | 'assistant' | 'system';
 
@@ -183,7 +184,7 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
 
   // 添加流式 API 钩子
   const { isStreaming, streamFetch } = useStreamApi({
-    apiURL: 'ai/chat',
+    apiURL: isDevelopment ? 'ai/chat' : 'https://ai.huashui.cc/api/ai/chat',
     onChunk: (chunk) => {
       try {
         // 尝试解析 JSON，若失败则当作纯文本处理

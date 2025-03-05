@@ -76,7 +76,7 @@ export default function useStreamApi<T>({ apiURL, onChunk, onComplete, onError }
       const controller = new AbortController();
       setAbortController(controller);
 
-      const fullUrl = '/api/' + apiURL;
+      const fullUrl = apiURL.startsWith('https://') || apiURL.startsWith('http://') ? apiURL : `${window.location.origin}/api/${apiURL}`;
 
       let fullResponse = '';
 
