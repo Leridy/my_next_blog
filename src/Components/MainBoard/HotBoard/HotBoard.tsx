@@ -291,8 +291,6 @@ export default function HotBoard(props: HotBoardProps) {
     const baseStyle = {
       willChange: 'transform, box-shadow',
       background: 'var(--color-hot-border-background)',
-      gridRow: rowSpan ? `span ${rowSpan}` : undefined,
-      gridColumn: colSpan ? `span ${colSpan}` : undefined,
       opacity: isDragging ? 0.5 : undefined,
       display: showBoard ? undefined : 'none',
       position: 'relative' as const,
@@ -353,14 +351,16 @@ export default function HotBoard(props: HotBoardProps) {
 
   return (
     <div
-      className={`widthAnimation ${topicSettingMode ? 'edit-mode' : 'normal'}`}
+      className={`widthAnimation  ${topicSettingMode ? 'edit-mode' : 'normal'}`}
       style={{
         animationDelay: `${(index || 0) * 0.1}s`,
+        gridRow: rowSpan ? `span ${rowSpan}` : undefined,
+        gridColumn: colSpan ? `span ${colSpan}` : undefined,
       }}
     >
       <div
         ref={setRefs}
-        className={'p-4 ' + 'rounded-lg ' + 'hotBoard' + 'ard ' + 'flex-col ' + 'sm:h-full ' + `${show ? '' : 'hide'} `}
+        className={'p-4 ' + 'rounded-lg ' + 'hotBoard' + 'ard ' + 'flex-col ' + 'sm:h-full ' + `${show ? '' : 'hide'} hotBoardCard`}
         style={cardStyle}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
