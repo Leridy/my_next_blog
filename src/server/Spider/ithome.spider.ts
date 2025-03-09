@@ -40,7 +40,7 @@ export default async function main() {
 
   const $ = load(requestedData as unknown as string);
 
-  const listDom = $('.rank-box .placeholder');
+  const listDom = $('div.rank > div:nth-child(2) .placeholder');
   const result: Pick<HotNews, 'title' | 'description' | 'image' | 'url' | 'uniqueId' | 'spiderId' | 'hotCount' | 'tags'>[] = listDom.toArray().map((item) => {
     const dom = $(item);
     const href = dom.find('a').attr('href');

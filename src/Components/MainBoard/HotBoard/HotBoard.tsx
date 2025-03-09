@@ -265,7 +265,7 @@ export default function HotBoard(props: HotBoardProps) {
       filterNews
         ?.sort((a, b) => {
           // 判断 hotCount大小排序
-          return b.hotCount - a.hotCount;
+          return b.hotCount - a.hotCount || b.id - a.id;
         })
         .map((newsInfo, i) => (
           <NewsItem
