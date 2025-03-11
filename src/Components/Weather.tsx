@@ -485,7 +485,7 @@ const WeatherForecast: React.FC = () => {
               transition={{ delay: 0.2 }}
               className="flex items-center"
             >
-              <h1 className="text-xl font-bold text-[var(--color-text)]">{geoData.city}</h1>
+              <h1 className="text-xl font-bold text-[var(--color-text)]">{geoData.city || geoData.province}</h1>
             </motion.div>
 
             <motion.div
