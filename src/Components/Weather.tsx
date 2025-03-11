@@ -225,7 +225,7 @@ const WeatherForecast: React.FC = () => {
       const newGeoData = {
         latitude,
         longitude,
-        city,
+        city: Array.isArray(city) && city.length > 0 ? city[0] : city || province,
         province,
       };
 
