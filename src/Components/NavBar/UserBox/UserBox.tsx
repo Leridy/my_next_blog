@@ -7,6 +7,7 @@ import { EditFilled } from '@ant-design/icons';
 import { useCallback } from 'react';
 import { useUserSettingContext } from '@/Provider/UserSettingProvider';
 import AddToFavoritesButton from '@/Components/NavBar/AddToFavoritesButton/AddToFavoritesButton';
+import HelloBossButton from '@/Components/NavBar/HelloBossButton/HelloBossButton';
 
 export default function UserBox() {
   const { user } = useUserContext();
@@ -28,6 +29,8 @@ export default function UserBox() {
       </Tooltip>
 
       <AddToFavoritesButton />
+
+      <HelloBossButton />
 
       {user ? <Avatar name={user.name} /> : <LoginBox />}
     </div>
