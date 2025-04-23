@@ -107,7 +107,7 @@ interface AIChatLayoutProps extends HeaderProps {
   configPanel?: ReactNode;
 }
 
-const AIChatLayout: FC<AIChatLayoutProps> = ({ leftContent, centerContent, rightContent, sessionPanel, chatPanel, configPanel }) => {
+const ChatLayout: FC<AIChatLayoutProps> = ({ leftContent, centerContent, rightContent, sessionPanel, chatPanel, configPanel }) => {
   const isSmallScreen = useMediaQuery({ maxWidth: 767 });
 
   const renderPanel = (panel: ReactNode) => <ScrollablePanel>{panel}</ScrollablePanel>;
@@ -129,4 +129,4 @@ const AIChatLayout: FC<AIChatLayoutProps> = ({ leftContent, centerContent, right
   );
 };
 
-export default AIChatLayout;
+export default ChatLayout;
