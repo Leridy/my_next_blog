@@ -6,7 +6,7 @@ import ConversationList from '@/Components/ChatComponents/Conversition/Conversit
 import { useHelloBossContext } from '@/Provider/HelloBossProvider/HelloBossProvider';
 
 function ConversationPanel() {
-  const { conversations, currentConversation, pinConversation, archiveConversation, selectConversation, createConversation, deleteConversation } = useHelloBossContext();
+  const { conversations, currentConversation, pinConversation, archiveConversation, selectConversation, createConversation, deleteConversation, loading } = useHelloBossContext();
 
   /**
    * create and select a new conversation
@@ -29,6 +29,7 @@ function ConversationPanel() {
       onArchive={archiveConversation}
       onPin={pinConversation}
       onDelete={deleteConversation}
+      loading={loading}
     />
   );
 }

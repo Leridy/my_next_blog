@@ -1,12 +1,14 @@
 // AppContext.tsx
-import React, { createContext, useReducer, useEffect, useMemo } from 'react';
+import React, { createContext, useReducer, useEffect, useMemo, Dispatch, ReactNode, FC, useState, useContext } from 'react';
 import { appReducer, initialState } from './appReducer';
 import { HelloBossState, AppAction, Conversation, Configuration, ConfigurationType, Message, Preference } from '@/IndexedDB/HelloBoss/types';
 import { ChatDatabase } from '@/IndexedDB/HelloBoss/ChatDatabase';
 
 // 更新AppContextType接口
 interface HelloBossContextType extends HelloBossState {
-  dispatch: React.Dispatch<AppAction>;
+  loading: boolean; // Provider loading state
+
+  dispatch: Dispatch<AppAction>;
   // 初始化方法
   initializeDB: () => Promise<void>;
   loadInitialData: () => Promise<void>;
@@ -42,8 +44,10 @@ interface HelloBossContextType extends HelloBossState {
 
 const HelloBossContext = createContext<HelloBossContextType | undefined>(undefined);
 
-export const HelloBossProvider: React.FC<{ children: React.ReactNode; userId: string | null }> = ({ children, userId }) => {
+export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null }> = ({ children, userId }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  // add a loading state to make a good user experience
+  const [loading, setLoading] = useState(true);
 
   const db = useMemo(() => {
     return userId ? new ChatDatabase(userId) : null;
@@ -54,11 +58,14 @@ export const HelloBossProvider: React.FC<{ children: React.ReactNode; userId: st
   const initializeDB = async () => {
     if (!db) return;
     try {
+      setLoading(true);
       dispatch({ type: 'INITIALIZE_START' });
       await db.initialize();
       dispatch({ type: 'INITIALIZE_SUCCESS', payload: {} });
     } catch (error) {
       dispatch({ type: 'INITIALIZE_FAILURE', error: (error as Error).message });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,6 +73,7 @@ export const HelloBossProvider: React.FC<{ children: React.ReactNode; userId: st
   const loadInitialData = async () => {
     if (!db) return;
     try {
+      setLoading(true);
       dispatch({ type: 'INITIALIZE_START' });
       const [conversations, configurations, preferences] = await Promise.all([db.getAllConversations(), db.getConfigurationsByType('resume'), db.getPreference('currentUser', 'theme')]);
       dispatch({
@@ -74,6 +82,8 @@ export const HelloBossProvider: React.FC<{ children: React.ReactNode; userId: st
       });
     } catch (error) {
       dispatch({ type: 'INITIALIZE_FAILURE', error: (error as Error).message });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -229,6 +239,9 @@ export const HelloBossProvider: React.FC<{ children: React.ReactNode; userId: st
       loadInitialData,
       createConversation,
 
+      // loading state
+      loading,
+
       selectConversation: (id: string) => {
         dispatch({ type: 'SET_CURRENT_CONVERSATION', payload: state.conversations.find((conv) => conv.id === id) || null });
       },
@@ -306,18 +319,13 @@ export const HelloBossProvider: React.FC<{ children: React.ReactNode; userId: st
     }
   }, [userId]);
 
-  // watching change of state
-  useEffect(() => {
-    console.log('State changed:', state);
-  }, [state]);
-
   // 在Provider value中暴露所有方法
   return <HelloBossContext.Provider value={value}>{children}</HelloBossContext.Provider>;
 };
 
 // implementation of useHelloBossContext
 export const useHelloBossContext = () => {
-  const context = React.useContext(HelloBossContext);
+  const context = useContext(HelloBossContext);
   if (!context) {
     throw new Error('useHelloBossContext must be used within a HelloBossProvider');
   }

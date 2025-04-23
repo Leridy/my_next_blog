@@ -7,6 +7,7 @@ import { format, isToday, isYesterday, parseISO } from 'date-fns';
 import { ChevronRight, Plus } from 'lucide-react';
 import { Conversation } from '@/IndexedDB/HelloBoss/types';
 import ConversationItem from '@/Components/ChatComponents/Conversition/ConversationItem';
+import LoadingPanel from '@/Components/MainBoard/HotBoard/LoadingPanel';
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -16,6 +17,7 @@ interface ConversationListProps {
   onArchive?: (id: string, isArchive: boolean) => void;
   onNewConversation?: () => void;
   onDelete?: (id: string) => void;
+  loading?: boolean;
 }
 
 interface GroupedConversations {
@@ -52,7 +54,7 @@ const GroupHeader: React.FC<{
 };
 
 const ConversationList: React.FC<ConversationListProps> = (props) => {
-  const { conversations, currentId, onSelect, onPin, onArchive, onNewConversation, onDelete } = props;
+  const { conversations, currentId, onSelect, onPin, onArchive, onNewConversation, onDelete, loading = false } = props;
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
@@ -203,58 +205,61 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
   return (
     <div className="flex flex-col h-full select-none">
       {/* 新增的新会话按钮区域 */}
-
-      <div className="p-4 border-b border-border">
-        <Input.Search
-          placeholder="搜索会话"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          allowClear
-          className="w-full"
-        />
-      </div>
-
-      <div className="p-3 border-b border-border flex justify-between items-center bg-tertiary">
-        <motion.button
-          onClick={onNewConversation}
-          className="px-4 py-2 rounded-md flex items-center w-full"
-          style={{
-            backgroundColor: 'var(--color-primary)',
-            color: 'var(--color-text-light)',
-          }}
-          whileHover={{
-            backgroundColor: 'var(--color-secondary)',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          }}
-          whileTap={{
-            backgroundColor: 'var(--color-tertiary)',
-            scale: 0.98,
-          }}
-          transition={{ duration: 0.2 }}
-        >
-          <Plus
-            className="mr-2"
-            size={16}
-          />
-          新会话
-        </motion.button>
-      </div>
-
-      <div className="flex-1 overflow-hidden select-none">
-        <AutoSizer>
-          {({ height, width }) => (
-            <List
-              height={height}
-              width={width}
-              itemCount={itemCount}
-              itemSize={(index) => getItemSize(index)}
-              itemData={groupedConversations}
+      {loading ? (
+        <LoadingPanel />
+      ) : (
+        <>
+          <div className="p-4 border-b border-border">
+            <Input.Search
+              placeholder="搜索会话"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              allowClear
+              className="w-full"
+            />
+          </div>
+          <div className="p-3 border-b border-border flex justify-between items-center bg-tertiary">
+            <motion.button
+              onClick={onNewConversation}
+              className="px-4 py-2 rounded-md flex items-center w-full"
+              style={{
+                backgroundColor: 'var(--color-primary)',
+                color: 'var(--color-text-light)',
+              }}
+              whileHover={{
+                backgroundColor: 'var(--color-secondary)',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              }}
+              whileTap={{
+                backgroundColor: 'var(--color-tertiary)',
+                scale: 0.98,
+              }}
+              transition={{ duration: 0.2 }}
             >
-              {Row}
-            </List>
-          )}
-        </AutoSizer>
-      </div>
+              <Plus
+                className="mr-2"
+                size={16}
+              />
+              新会话
+            </motion.button>
+          </div>
+          <div className="flex-1 overflow-hidden select-none">
+            <AutoSizer>
+              {({ height, width }) => (
+                <List
+                  height={height}
+                  width={width}
+                  itemCount={itemCount}
+                  itemSize={(index) => getItemSize(index)}
+                  itemData={groupedConversations}
+                >
+                  {Row}
+                </List>
+              )}
+            </AutoSizer>
+          </div>
+        </>
+      )}
     </div>
   );
 };
