@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useMediaQuery } from 'react-responsive';
 import { FiMoreHorizontal, FiX } from 'react-icons/fi';
 import InputtingText from '@/Components/InputtingText/InputtingText';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
   leftContent?: ReactNode;
@@ -12,6 +13,12 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ leftContent = 'HELLO BOSS，你的AI求职军师，开口就是offer敲门砖', centerContent, rightContent }) => {
+  const router = useRouter();
+
+  const handleBackToMainBoard = () => {
+    // Logic to navigate back to the main board
+    router.push('/'); // Adjust the route as needed
+  };
   return (
     <motion.header
       className="h-16 px-4 flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-navbar-background)]"
@@ -44,6 +51,10 @@ const Header: FC<HeaderProps> = ({ leftContent = 'HELLO BOSS，你的AI求职军
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               style={{ color: 'inherit' }}
+              onClick={() => {
+                // Handle close action
+                handleBackToMainBoard();
+              }}
             >
               <FiX />
             </motion.button>
@@ -88,7 +99,6 @@ const ScrollablePanel: FC<{ children: ReactNode }> = ({ children }) => {
       className="h-full overflow-y-auto bg-[var(--color-card-background)] shadow-sm backdrop-blur-sm"
       whileHover={{
         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        backgroundColor: 'var(--color-transparent-background)',
       }}
       transition={{ duration: 0.2 }}
       style={{

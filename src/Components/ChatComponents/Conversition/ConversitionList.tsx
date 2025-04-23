@@ -224,7 +224,7 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
               className="px-4 py-2 rounded-md flex items-center w-full"
               style={{
                 backgroundColor: 'var(--color-primary)',
-                color: 'var(--color-text-light)',
+                color: 'var(--color-text)',
               }}
               whileHover={{
                 backgroundColor: 'var(--color-secondary)',

@@ -4,6 +4,7 @@ import React from 'react';
 import { HelloBossProvider } from '@/Provider/HelloBossProvider/HelloBossProvider';
 import { useUserContext } from '@/Provider/UserProvider';
 import ConversationPanel from '@/Components/HelloBoss/ConversationPanel';
+import SessionTitle from '@/Components/HelloBoss/SessionTitle';
 
 function HelloBossContainer() {
   const { user } = useUserContext();
@@ -12,6 +13,7 @@ function HelloBossContainer() {
     <HelloBossProvider userId={user?.id.toString() || null}>
       <ChatLayout
         leftContent={'HELLO BOSS，用 AI 打败已读不回'}
+        centerContent={<SessionTitle />}
         chatPanel={<WIPComponent message={'🚧 👷 🏗️ 划水网，正在整个大的 Hello Boss 功能横空出世， 敬请期待...'} />}
         sessionPanel={<ConversationPanel />}
         configPanel={<WIPComponent message={'配置面板暂未实现'} />}
