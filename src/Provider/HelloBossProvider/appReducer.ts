@@ -12,6 +12,7 @@ export const initialState: HelloBossState = {
 };
 
 export function appReducer(state: HelloBossState, action: AppAction): HelloBossState {
+  console.log('appReducer', action);
   switch (action.type) {
     case 'INITIALIZE_START':
       return { ...state, status: 'loading' };

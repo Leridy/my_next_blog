@@ -18,6 +18,7 @@ interface HelloBossContextType extends HelloBossState {
   deleteConversation: (id: string) => Promise<void>;
   pinConversation: (id: string, isPinned: boolean) => Promise<void>;
   archiveConversation: (id: string, isArchived: boolean) => Promise<void>;
+  selectConversation: (id: string) => void;
 
   // Message 方法
   sendMessage: (content: string) => Promise<void>;
@@ -227,6 +228,10 @@ export const HelloBossProvider: React.FC<{ children: React.ReactNode; userId: st
       initializeDB,
       loadInitialData,
       createConversation,
+
+      selectConversation: (id: string) => {
+        dispatch({ type: 'SET_CURRENT_CONVERSATION', payload: state.conversations.find((conv) => conv.id === id) || null });
+      },
       getConversation: async (id: string) => (db ? await db.getConversation(id) : null),
       updateConversation: async (id: string, updates: Partial<Conversation>) => {
         if (!db) return;
@@ -288,12 +293,23 @@ export const HelloBossProvider: React.FC<{ children: React.ReactNode; userId: st
     [state, db]
   );
 
+  // 初始化并加载数据
+  async function initializeAndLoadData() {
+    await initializeDB();
+    await loadInitialData();
+  }
+
   // 加载完成后初始化 db
   useEffect(() => {
     if (userId) {
-      initializeDB();
+      initializeAndLoadData();
     }
   }, [userId]);
+
+  // watching change of state
+  useEffect(() => {
+    console.log('State changed:', state);
+  }, [state]);
 
   // 在Provider value中暴露所有方法
   return <HelloBossContext.Provider value={value}>{children}</HelloBossContext.Provider>;

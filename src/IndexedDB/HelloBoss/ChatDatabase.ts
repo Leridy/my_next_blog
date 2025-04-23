@@ -12,6 +12,12 @@ export class ChatDatabase {
 
   async initialize(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
+      console.log('Initializing database...');
+      console.table({
+        dbName: this.dbName,
+        version: this.version,
+        userId: this.userId,
+      });
       const request = indexedDB.open(this.dbName, this.version);
 
       request.onerror = () => {
