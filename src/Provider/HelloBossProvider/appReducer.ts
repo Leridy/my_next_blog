@@ -4,6 +4,7 @@ import { HelloBossState, AppAction } from '@/IndexedDB/HelloBoss/types';
 export const initialState: HelloBossState = {
   conversations: [],
   currentConversation: null,
+  currentMessage: null,
   messages: [],
   configurations: [],
   preferences: null,
@@ -66,6 +67,13 @@ export function appReducer(state: HelloBossState, action: AppAction): HelloBossS
       return {
         ...state,
         messages: state.messages.filter((msg) => msg.id !== action.payload),
+      };
+
+    // replace the messages with the new ones
+    case 'SET_MESSAGES':
+      return {
+        ...state,
+        messages: action.payload || [],
       };
 
     case 'ADD_CONFIGURATION':

@@ -16,26 +16,31 @@ const Header: FC<HeaderProps> = ({ leftContent = 'HELLO BOSS，你的AI求职军
   const router = useRouter();
 
   const handleBackToMainBoard = () => {
-    // Logic to navigate back to the main board
-    router.push('/'); // Adjust the route as needed
+    router.push('/');
   };
+
   return (
     <motion.header
-      className="h-16 px-4 flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-navbar-background)]"
+      className="h-16 px-4 grid items-center border-b border-[var(--color-border)] bg-[var(--color-navbar-background)]"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      style={{ color: 'var(--color-text-light)' }}
+      style={{
+        color: 'var(--color-text-light)',
+        gridTemplateColumns: 'auto minmax(0, 1fr) auto',
+        width: '100%',
+      }}
     >
-      <div className="flex-1 flex items-center">{typeof leftContent === 'string' ? <InputtingText text={leftContent} /> : leftContent}</div>
+      <div className="flex items-center min-w-0">{typeof leftContent === 'string' ? <InputtingText text={leftContent} /> : leftContent}</div>
+
       <motion.div
-        className="flex-1 flex justify-center"
+        className="flex justify-center min-w-0"
         whileHover={{ scale: 1.02 }}
       >
-        {centerContent || <span className="text-lg font-semibold">New Chat</span>}
+        {centerContent || <span className="text-lg font-semibold truncate">New Chat</span>}
       </motion.div>
 
-      <div className="flex-1 flex justify-end items-center space-x-2">
+      <div className="flex justify-end items-center space-x-2 min-w-0">
         {rightContent || (
           <>
             <motion.button
@@ -51,10 +56,7 @@ const Header: FC<HeaderProps> = ({ leftContent = 'HELLO BOSS，你的AI求职军
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               style={{ color: 'inherit' }}
-              onClick={() => {
-                // Handle close action
-                handleBackToMainBoard();
-              }}
+              onClick={handleBackToMainBoard}
             >
               <FiX />
             </motion.button>
@@ -73,9 +75,9 @@ const CustomLayout: FC<{
   const isMediumScreen = useMediaQuery({ minWidth: 768, maxWidth: 1279 });
 
   const getLayoutStyles = () => {
-    if (isLargeScreen) return 'grid-cols-[300px_1fr_450px]';
-    if (isMediumScreen) return 'grid-cols-[250px_1fr_300px]';
-    return 'grid-cols-[1fr]';
+    if (isLargeScreen) return '300px minmax(0, 1fr) 450px';
+    if (isMediumScreen) return '250px minmax(0, 1fr) 300px';
+    return 'minmax(0, 1fr)';
   };
 
   return (
@@ -85,7 +87,11 @@ const CustomLayout: FC<{
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className={`grid ${getLayoutStyles()}  flex-1 overflow-hidden`}
+        className="grid flex-1 overflow-hidden"
+        style={{
+          gridTemplateColumns: getLayoutStyles(),
+          width: '100%',
+        }}
       >
         {children}
       </motion.div>
@@ -111,6 +117,24 @@ const ScrollablePanel: FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
+const NormalPanel: FC<{ children: ReactNode }> = ({ children }) => {
+  return (
+    <motion.div
+      className="h-full bg-[var(--color-card-background)] shadow-sm backdrop-blur-sm"
+      whileHover={{
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+      }}
+      transition={{ duration: 0.2 }}
+      style={{
+        border: '1px solid var(--color-border)',
+        color: 'var(--color-text)',
+      }}
+    >
+      <div className="h-full flex flex-col">{children}</div>
+    </motion.div>
+  );
+};
+
 interface AIChatLayoutProps extends HeaderProps {
   sessionPanel?: ReactNode;
   chatPanel: ReactNode;
@@ -121,6 +145,7 @@ const ChatLayout: FC<AIChatLayoutProps> = ({ leftContent, centerContent, rightCo
   const isSmallScreen = useMediaQuery({ maxWidth: 767 });
 
   const renderPanel = (panel: ReactNode) => <ScrollablePanel>{panel}</ScrollablePanel>;
+  const renderedChatPanel = (panel: ReactNode) => <NormalPanel>{panel}</NormalPanel>;
 
   return (
     <CustomLayout
@@ -133,7 +158,7 @@ const ChatLayout: FC<AIChatLayoutProps> = ({ leftContent, centerContent, rightCo
       }
     >
       {!isSmallScreen && sessionPanel && renderPanel(sessionPanel)}
-      {renderPanel(chatPanel)}
+      {renderedChatPanel(chatPanel)}
       {!isSmallScreen && configPanel && renderPanel(configPanel)}
     </CustomLayout>
   );

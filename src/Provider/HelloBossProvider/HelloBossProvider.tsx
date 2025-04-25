@@ -1,11 +1,11 @@
 // AppContext.tsx
 import React, { createContext, useReducer, useEffect, useMemo, Dispatch, ReactNode, FC, useState, useContext } from 'react';
 import { appReducer, initialState } from './appReducer';
-import { HelloBossState, AppAction, Conversation, Configuration, ConfigurationType, Message, Preference } from '@/IndexedDB/HelloBoss/types';
+import { HelloBossState, AppAction, Conversation, Configuration, ConfigurationType, Message, Preference, MessageRole } from '@/IndexedDB/HelloBoss/types';
 import { ChatDatabase } from '@/IndexedDB/HelloBoss/ChatDatabase';
 
 // 更新AppContextType接口
-interface HelloBossContextType extends HelloBossState {
+export interface HelloBossContextType extends HelloBossState {
   loading: boolean; // Provider loading state
 
   dispatch: Dispatch<AppAction>;
@@ -35,6 +35,7 @@ interface HelloBossContextType extends HelloBossState {
   updateConfiguration: (id: string, updates: Partial<Configuration>) => Promise<void>;
   deleteConfiguration: (id: string) => Promise<void>;
   getConfigurationsByType: (type: ConfigurationType) => Promise<Configuration[]>;
+  getAllConfigurations: () => Promise<Configuration[]>;
 
   // Preference 方法
   setPreference: (pref: Omit<Preference, 'updatedAt'>) => Promise<void>;
@@ -120,6 +121,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       content,
       status: 'pending' as const,
     };
+
     const id = await db.addMessage(newMessage);
     const createdMessage = { ...newMessage, id };
     dispatch({ type: 'ADD_MESSAGE', payload: createdMessage });
@@ -129,8 +131,8 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       const aiMessage = {
         conversationId: state.currentConversation!.id,
         createdAt: Date.now(),
-        role: 'assistant' as const,
-        content: 'This is a simulated AI response',
+        role: 'assistant' as MessageRole,
+        content: `Echo: \n ${content}`,
         status: 'sent' as const,
       };
       const aiId = await db.addMessage(aiMessage);
@@ -242,8 +244,11 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       // loading state
       loading,
 
-      selectConversation: (id: string) => {
+      selectConversation: async (id: string) => {
         dispatch({ type: 'SET_CURRENT_CONVERSATION', payload: state.conversations.find((conv) => conv.id === id) || null });
+        // 这里可以添加更多的逻辑，比如加载会话的消息等
+        const messages = db ? await db.getMessagesByConversation(id) : [];
+        dispatch({ type: 'SET_MESSAGES', payload: messages });
       },
       getConversation: async (id: string) => (db ? await db.getConversation(id) : null),
       updateConversation: async (id: string, updates: Partial<Conversation>) => {
@@ -265,6 +270,13 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
         if (!db) return;
         await db.updateMessage(id, updates);
         dispatch({ type: 'UPDATE_MESSAGE', payload: { id, updates } });
+        // updated the related conversation the latest message and update time
+        const conversation = state.conversations.find((conv) => conv.id === state.currentConversation?.id);
+        if (conversation) {
+          const updatedConversation = { ...conversation, lastMessage: updates.content || conversation.lastMessage, updatedAt: Date.now() };
+          await db.updateConversation(conversation.id, updatedConversation);
+          dispatch({ type: 'UPDATE_CONVERSATION', payload: { id: conversation.id, updates: updatedConversation } });
+        }
       },
       deleteMessage: async (id: string) => {
         if (!db) return;
@@ -297,6 +309,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
         dispatch({ type: 'SET_PREFERENCE', payload: updatedPref });
       },
       getPreference: async (userId: string, key: string) => (db ? await db.getPreference(userId, key) : null),
+      getAllConfigurations: async () => (db ? await db.getAllConfigurations() : []),
       deletePreference: async (userId: string, key: string) => {
         if (!db) return;
         await db.deletePreference(userId, key);

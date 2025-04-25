@@ -38,7 +38,7 @@ export interface Configuration {
   name: string;
   type: ConfigurationType;
   description?: string;
-  content: any;
+  content: string;
   isActive: boolean;
   createdAt: number;
   updatedAt: number;
@@ -50,7 +50,7 @@ export interface Configuration {
 export interface Preference {
   userId: string;
   key: string;
-  value: any;
+  value: string;
   updatedAt: number;
   syncFlag?: boolean;
 }
@@ -71,6 +71,7 @@ export interface HelloBossState {
   conversations: Conversation[];
   currentConversation: Conversation | null;
   messages: Message[];
+  currentMessage: Message | null;
   configurations: Configuration[];
   preferences: Preference | null;
   status: AppStatus;
@@ -88,6 +89,7 @@ export type AppAction =
   | { type: 'ADD_MESSAGE'; payload: Message }
   | { type: 'UPDATE_MESSAGE'; payload: { id: string; updates: Partial<Message> } }
   | { type: 'DELETE_MESSAGE'; payload: string }
+  | { type: 'SET_MESSAGES'; payload: Message[] | null }
   | { type: 'ADD_CONFIGURATION'; payload: Configuration }
   | { type: 'UPDATE_CONFIGURATION'; payload: { id: string; updates: Partial<Configuration> } }
   | { type: 'DELETE_CONFIGURATION'; payload: string }
