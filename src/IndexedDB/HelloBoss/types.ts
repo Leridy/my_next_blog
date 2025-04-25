@@ -50,7 +50,7 @@ export interface Configuration {
 export interface Preference {
   userId: string;
   key: string;
-  value: string;
+  value: string | number;
   updatedAt: number;
   syncFlag?: boolean;
 }
