@@ -5,9 +5,7 @@ export const mockConfigurations: Omit<Configuration, 'id'>[] = [
   {
     name: '默认简历模板',
     type: 'resume',
-    content: {
-      sections: ['education', 'workExperience', 'skills'],
-    },
+    content: '',
     isActive: true,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -16,10 +14,7 @@ export const mockConfigurations: Omit<Configuration, 'id'>[] = [
   {
     name: 'CEO角色',
     type: 'boss-role',
-    content: {
-      personality: '严谨果断',
-      industry: '科技',
-    },
+    content: '{"name":"CEO","description":"负责公司整体战略和决策"}',
     isActive: true,
     createdAt: Date.now(),
     updatedAt: Date.now(),
