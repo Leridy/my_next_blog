@@ -1,7 +1,7 @@
 // types.ts
 export type MessageRole = 'user' | 'assistant' | 'system';
 export type MessageStatus = 'pending' | 'sent' | 'failed';
-export type ConfigurationType = 'resume' | 'boss-role' | 'display' | 'preference';
+export type ConfigurationType = 'resume' | 'boss-role' | 'display' | 'preference' | 'extra';
 export type ThemePreference = 'light' | 'dark';
 
 export interface Conversation {
@@ -88,6 +88,7 @@ export type AppAction =
   | { type: 'DELETE_CONVERSATION'; payload: string }
   | { type: 'ADD_MESSAGE'; payload: Message }
   | { type: 'UPDATE_MESSAGE'; payload: { id: string; updates: Partial<Message> } }
+  | { type: 'UPDATE_MESSAGE_CONTENT'; payload: { id: string; content: (prev: string) => string } }
   | { type: 'DELETE_MESSAGE'; payload: string }
   | { type: 'SET_MESSAGES'; payload: Message[] | null }
   | { type: 'ADD_CONFIGURATION'; payload: Configuration }

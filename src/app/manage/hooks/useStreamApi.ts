@@ -68,7 +68,7 @@ export default function useStreamApi<T>({ apiURL, onChunk, onComplete, onError }
   }, [abortController]);
 
   const streamFetch = useCallback(
-    async (data: any) => {
+    async (data: T) => {
       setIsStreaming(true);
       setStreamError(null);
 

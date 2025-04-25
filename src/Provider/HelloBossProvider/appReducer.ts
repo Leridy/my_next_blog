@@ -63,6 +63,12 @@ export function appReducer(state: HelloBossState, action: AppAction): HelloBossS
       };
     }
 
+    case 'UPDATE_MESSAGE_CONTENT':
+      return {
+        ...state,
+        messages: state.messages.map((msg) => (msg.id === action.payload.id ? { ...msg, content: action.payload.content(msg.content) } : msg)),
+      };
+
     case 'DELETE_MESSAGE':
       return {
         ...state,
