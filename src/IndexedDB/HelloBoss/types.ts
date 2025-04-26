@@ -89,6 +89,8 @@ export type AppAction =
   | { type: 'ADD_MESSAGE'; payload: Message }
   | { type: 'UPDATE_MESSAGE'; payload: { id: string; updates: Partial<Message> } }
   | { type: 'UPDATE_MESSAGE_CONTENT'; payload: { id: string; content: (prev: string) => string } }
+  | { type: 'BATCH_ADD_MESSAGES'; payload: Message[] }
+  | { type: 'BATCH_UPDATE_MESSAGES'; payload: Array<{ id: string; content?: string; status?: MessageStatus }> }
   | { type: 'DELETE_MESSAGE'; payload: string }
   | { type: 'SET_MESSAGES'; payload: Message[] | null }
   | { type: 'ADD_CONFIGURATION'; payload: Configuration }

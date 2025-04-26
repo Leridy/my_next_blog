@@ -71,6 +71,25 @@ export function appReducer(state: HelloBossState, action: AppAction): HelloBossS
         }),
       };
 
+    case 'BATCH_ADD_MESSAGES':
+      return {
+        ...state,
+        messages: [...state.messages, ...action.payload],
+      };
+
+    case 'BATCH_UPDATE_MESSAGES':
+      return {
+        ...state,
+        messages: state.messages.map((msg) => {
+          const update = action.payload.find((u) => u.id === msg.id);
+          console.log({
+            msg,
+            action,
+          });
+          return update ? { ...msg, ...update } : msg;
+        }),
+      };
+
     case 'DELETE_MESSAGE':
       return {
         ...state,

@@ -4,6 +4,7 @@ import { appReducer, initialState } from './appReducer';
 import { HelloBossState, AppAction, Conversation, Configuration, ConfigurationType, Message, Preference } from '@/IndexedDB/HelloBoss/types';
 import { ChatDatabase } from '@/IndexedDB/HelloBoss/ChatDatabase';
 import useStreamApi, { parseSSEData } from '@/app/manage/hooks/useStreamApi';
+import useDebouncedStateSync from '@/Provider/HelloBossProvider/dbHook';
 
 export interface HelloBossContextType extends HelloBossState {
   loading: boolean;
@@ -40,23 +41,26 @@ const HelloBossContext = createContext<HelloBossContextType | undefined>(undefin
 export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null }> = ({ children, userId }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [loading, setLoading] = useState(true);
+  const [pendingMessages, setPendingMessages] = useState<Record<string, Message>>({});
+
+  const db = useMemo(() => {
+    return userId ? new ChatDatabase(userId) : null;
+  }, [userId]);
+
+  useDebouncedStateSync(db, state);
 
   const initialConversationInfo = (content: string) => {
     const regex = /---conversationJSON-(.*?)---/g;
     const match = regex.exec(content);
-    console.log('Regex match:', match, regex, content);
     if (match && match[1]) {
       try {
-        const jsonString = match[1];
-        const conversationInfo = JSON.parse(jsonString);
-        console.log('Parsed conversation info:', conversationInfo);
+        const conversationInfo = JSON.parse(match[1]);
         dispatch({
           type: 'UPDATE_CONVERSATION',
           payload: {
             id: state.currentConversation?.id || '',
             updates: {
               title: conversationInfo.description,
-              // description: ,
             },
           },
         });
@@ -74,64 +78,65 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     onChunk: (chunk) => {
       const parsedData = parseSSEData(chunk);
       if (parsedData.length > 0) {
-        parsedData.forEach((response) => {
-          if (typeof response === 'object' && response !== null) {
-            const content = response.choices[0]?.delta.content || '';
-            dispatch({
-              type: 'UPDATE_MESSAGE_CONTENT',
-              payload: {
-                id: 'last-assistant',
-                content: (prevContent: string) => prevContent + content,
-              },
-            });
-          }
+        const updates = parsedData
+          .filter((response) => typeof response === 'object' && response !== null)
+          .map((response) => ({
+            id: 'last-message',
+            content: response.choices[0]?.delta.content || '',
+          }));
+        if (updates.length === 0) return;
+
+        dispatch({
+          type: 'BATCH_UPDATE_MESSAGES',
+          payload: updates,
         });
       }
     },
     onComplete: async (fullResponse) => {
-      if (!db || !state.currentConversation) return;
+      if (!state.currentConversation) return;
+
+      let messageId = '';
       const fullMessage = parseSSEData(fullResponse)
-        .map((item) => item.choices[0]?.delta.content)
+        .map((item) => {
+          messageId = item.id;
+          return item.choices[0]?.delta.content;
+        })
         .join('');
-      const messages = await db.getMessagesByConversation(state.currentConversation.id);
-      const lastMessage = messages[messages.length - 1];
+
+      const lastMessage = Object.values(pendingMessages).pop();
       if (lastMessage) {
-        await db.updateMessage(lastMessage.id, { status: 'sent' });
         dispatch({
           type: 'UPDATE_MESSAGE',
           payload: {
             id: lastMessage.id,
-            updates: { status: 'sent' },
+            updates: {
+              status: 'sent',
+              id: messageId,
+              content: fullMessage,
+            },
           },
         });
 
-        console.log(lastMessage, fullMessage);
-
-        // 判断 lastMessage 里面是否有 ---conversationJSON- 开头的内容
-        // 以 “---conversationJSON-{"title":"React+WebGIS","description":"上海思芮 前端开发招聘"}---” 为例子
-        // 请实现一个方法 来判断 lastMessage 里面是否有这个内容, 如果有，将中间 JSON 的部分提取出来
-        // 然后将这个 JSON 解析成对象，把数据更新到当前的 conversation 里面
         initialConversationInfo(fullMessage);
+        setPendingMessages({});
       }
     },
     onError: (error) => {
-      dispatch({
-        type: 'UPDATE_MESSAGE',
-        payload: {
-          id: 'last-assistant',
-          updates: {
-            id: crypto.randomUUID(),
-            status: 'failed',
-            content: `Error: ${error.message}`,
+      const lastMessageId = Object.keys(pendingMessages).pop();
+      if (lastMessageId) {
+        dispatch({
+          type: 'UPDATE_MESSAGE',
+          payload: {
+            id: lastMessageId,
+            updates: {
+              status: 'failed',
+              content: `Error: ${error.message}`,
+            },
           },
-        },
-      });
+        });
+      }
     },
   });
-
-  const db = useMemo(() => {
-    return userId ? new ChatDatabase(userId) : null;
-  }, [userId]);
 
   const initializeDB = async () => {
     if (!db) return;
@@ -181,80 +186,75 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     const id = await db.addConversation(newConversation);
     const createdConversation = { ...newConversation, id };
     dispatch({ type: 'ADD_CONVERSATION', payload: createdConversation });
-    Promise.resolve().then(() => selectConversation(id));
+    await selectConversation(id);
     return id;
   };
 
   const sendMessage = async (content: string) => {
-    if (!db) return;
-
-    // if conversation not found, create a new one
     if (!state.currentConversation) {
-      await createConversation('New Conversation');
+      const id = await createConversation('New Conversation');
+      await selectConversation(id);
+      if (!state.currentConversation) return;
     }
 
-    if (!state.currentConversation) return;
-
-    // Add user message
+    const userMessageId = crypto.randomUUID();
     const userMessage = {
-      conversationId: state.currentConversation.id,
+      id: userMessageId,
+      conversationId: state.currentConversation!.id,
       createdAt: Date.now(),
       role: 'user' as const,
       content,
-      status: 'sent' as const,
+      status: 'pending' as const,
     };
-    const userMessageId = await db.addMessage(userMessage);
-    dispatch({ type: 'ADD_MESSAGE', payload: { ...userMessage, id: userMessageId } });
 
-    // Add AI message
+    const aiMessageId = 'last-message';
     const aiMessage = {
-      conversationId: state.currentConversation.id,
-      id: 'last-assistant',
+      id: aiMessageId,
+      conversationId: state.currentConversation!.id,
       createdAt: Date.now(),
       role: 'assistant' as const,
       content: '',
       status: 'pending' as const,
     };
 
-    try {
-      await db.addMessage(aiMessage);
-      console.log('AI message added:', aiMessage);
-      dispatch({ type: 'ADD_MESSAGE', payload: { ...aiMessage, id: aiMessage.id } });
-    } catch (error) {
-      console.error('Error adding AI message:', error);
-    }
+    setPendingMessages({
+      [userMessageId]: userMessage,
+    });
+
+    dispatch({
+      type: 'BATCH_ADD_MESSAGES',
+      payload: [userMessage, aiMessage],
+    });
 
     try {
-      const configurations = await db.getAllConfigurations();
-      const messages = await db.getMessagesByConversation(state.currentConversation.id);
+      const configurations = (await db?.getAllConfigurations()) || [];
+      const messages = (await db?.getMessagesByConversation(state.currentConversation.id)) || [];
 
       await streamFetch({
         configurations,
-        messages,
+        messages: [...messages, userMessage],
       });
 
-      // Update conversation metadata
-      await db.updateConversation(state.currentConversation.id, {
+      const updates = {
         lastMessage: content,
         updatedAt: Date.now(),
         messageCount: messages.length + 1,
-      });
+      };
+
       dispatch({
         type: 'UPDATE_CONVERSATION',
         payload: {
           id: state.currentConversation.id,
-          updates: {
-            lastMessage: content,
-            updatedAt: Date.now(),
-            messageCount: messages.length + 1,
-          },
+          updates,
         },
       });
     } catch (error) {
-      await db.updateMessage(aiMessage.id, { status: 'failed' });
       dispatch({
         type: 'UPDATE_MESSAGE',
-        payload: { id: aiMessage.id, updates: { status: 'failed' } },
+        payload: {
+          id: aiMessageId,
+          updates: { status: 'failed' },
+        },
       });
       console.error('Error sending message:', error);
     }
@@ -270,7 +270,6 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
 
   const updateConversation = async (id: string, updates: Partial<Conversation>) => {
     if (!db) throw new Error('Database not initialized');
-    await db.updateConversation(id, updates);
     dispatch({ type: 'UPDATE_CONVERSATION', payload: { id, updates } });
   };
 
@@ -279,73 +278,6 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     const messages = db ? await db.getMessagesByConversation(id) : [];
     dispatch({ type: 'SET_MESSAGES', payload: messages });
   };
-
-  useEffect(() => {
-    const syncState = async () => {
-      if (!db) return;
-
-      try {
-        if (state.conversations) {
-          const dbConversations = await db.getAllConversations();
-          const dbConversationIds = new Set(dbConversations.map((c) => c.id));
-
-          const newConversations = state.conversations.filter((c) => !dbConversationIds.has(c.id));
-          await Promise.all(newConversations.map((c) => db.addConversation(c)));
-
-          const modifiedConversations = state.conversations.filter((c) => {
-            const dbConv = dbConversations.find((dbC) => dbC.id === c.id);
-            return dbConv && JSON.stringify(dbConv) !== JSON.stringify(c);
-          });
-          await Promise.all(modifiedConversations.map((c) => db.updateConversation(c.id, c)));
-        }
-
-        if (state.configurations) {
-          const dbConfigs = await db.getAllConfigurations();
-          const dbConfigIds = new Set(dbConfigs.map((c) => c.id));
-
-          const newConfigs = state.configurations.filter((c) => !dbConfigIds.has(c.id));
-          await Promise.all(newConfigs.map((c) => db.addConfiguration(c)));
-
-          const modifiedConfigs = state.configurations.filter((c) => {
-            const dbConfig = dbConfigs.find((dbC) => dbC.id === c.id);
-            return dbConfig && JSON.stringify(dbConfig) !== JSON.stringify(c);
-          });
-          await Promise.all(modifiedConfigs.map((c) => db.updateConfiguration(c.id, c)));
-        }
-
-        if (state.preferences) {
-          for (const [key, pref] of Object.entries(state.preferences)) {
-            const dbPref = await db.getPreference(pref.userId, key);
-            if (!dbPref || JSON.stringify(dbPref) !== JSON.stringify(pref)) {
-              await db.setPreference(pref);
-            }
-          }
-        }
-
-        if (state.currentConversation) {
-          const dbMessages = await db.getMessagesByConversation(state.currentConversation.id);
-          const dbMessageIds = new Set(dbMessages.map((m) => m.id));
-
-          const newMessages = state.messages.filter((m) => !dbMessageIds.has(m.id) && m.conversationId === state.currentConversation?.id);
-          await Promise.all(newMessages.map((m) => db.addMessage(m)));
-
-          const modifiedMessages = state.messages.filter((m) => {
-            const dbMsg = dbMessages.find((dbM) => dbM.id === m.id);
-            return dbMsg && JSON.stringify(dbMsg) !== JSON.stringify(m);
-          });
-          await Promise.all(modifiedMessages.map((m) => db.updateMessage(m.id, m)));
-        }
-      } catch (error) {
-        console.error('State sync failed:', error);
-      }
-    };
-
-    const debounceTimer = setTimeout(() => {
-      syncState();
-    }, 500);
-
-    return () => clearTimeout(debounceTimer);
-  }, [state, db]);
 
   const value = useMemo(
     () => ({
@@ -357,12 +289,10 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       loadInitialData,
       createConversation,
       selectConversation,
-
       getConversation: async (id: string) => (db ? await db.getConversation(id) : null),
       updateConversation,
       deleteConversation: async (id: string) => {
         if (!db) return;
-        await db.deleteConversation(id);
         dispatch({ type: 'DELETE_CONVERSATION', payload: id });
       },
       pinConversation,
@@ -371,29 +301,9 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       getMessage: async (id: string) => (db ? await db.getMessage(id) : null),
       getMessagesByConversation: async (conversationId: string) => (db ? await db.getMessagesByConversation(conversationId) : []),
       updateMessage: async (id: string, updates: Partial<Message>) => {
-        if (!db) return;
-        await db.updateMessage(id, updates);
         dispatch({ type: 'UPDATE_MESSAGE', payload: { id, updates } });
-        const conversation = state.conversations.find((conv) => conv.id === state.currentConversation?.id);
-        if (conversation) {
-          const updatedConversation = {
-            ...conversation,
-            lastMessage: updates.content || conversation.lastMessage,
-            updatedAt: Date.now(),
-          };
-          await db.updateConversation(conversation.id, updatedConversation);
-          dispatch({
-            type: 'UPDATE_CONVERSATION',
-            payload: {
-              id: conversation.id,
-              updates: updatedConversation,
-            },
-          });
-        }
       },
       deleteMessage: async (id: string) => {
-        if (!db) return;
-        await db.deleteMessage(id);
         dispatch({ type: 'DELETE_MESSAGE', payload: id });
       },
       addConfiguration: async (config: Omit<Configuration, 'id'>) => {
@@ -405,27 +315,19 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       },
       getConfiguration: async (id: string) => (db ? await db.getConfiguration(id) : null),
       updateConfiguration: async (id: string, updates: Partial<Configuration>) => {
-        if (!db) return;
-        await db.updateConfiguration(id, updates);
         dispatch({ type: 'UPDATE_CONFIGURATION', payload: { id, updates } });
       },
       deleteConfiguration: async (id: string) => {
-        if (!db) return;
-        await db.deleteConfiguration(id);
         dispatch({ type: 'DELETE_CONFIGURATION', payload: id });
       },
       getConfigurationsByType: async (type: ConfigurationType) => (db ? await db.getConfigurationsByType(type) : []),
       setPreference: async (pref: Omit<Preference, 'updatedAt'>) => {
-        if (!db) return;
-        await db.setPreference(pref);
         const updatedPref = { ...pref, updatedAt: Date.now() };
         dispatch({ type: 'SET_PREFERENCE', payload: updatedPref });
       },
       getPreference: async (userId: string, key: string) => (db ? await db.getPreference(userId, key) : null),
       getAllConfigurations: async () => (db ? await db.getAllConfigurations() : []),
-      deletePreference: async (userId: string, key: string) => {
-        if (!db) return;
-        await db.deletePreference(userId, key);
+      deletePreference: async () => {
         dispatch({ type: 'SET_PREFERENCE', payload: null });
       },
       abortStream,
@@ -433,14 +335,9 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     [state, db, loading, isStreaming, abortStream, selectConversation]
   );
 
-  async function initializeAndLoadData() {
-    await initializeDB();
-    await loadInitialData();
-  }
-
   useEffect(() => {
     if (userId) {
-      initializeAndLoadData();
+      initializeDB().then(loadInitialData);
     }
   }, [userId]);
 
