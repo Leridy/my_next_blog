@@ -44,23 +44,24 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
   const { streamFetch, abortStream, isStreaming } = useStreamApi<{
     configurations: Configuration[];
     messages: Message[];
-    content: string;
   }>({
     apiURL: 'https://ai.huashui.cc/api/ai/hello-boss',
     onChunk: (chunk) => {
+      console.log(chunk);
       const parsedData = parseSSEData(chunk);
       if (parsedData.length > 0) {
-        const lastChunk = parsedData[parsedData.length - 1];
-        if (typeof lastChunk === 'object' && lastChunk !== null) {
-          const content = (lastChunk as { content?: string }).content || '';
-          dispatch({
-            type: 'UPDATE_MESSAGE_CONTENT',
-            payload: {
-              id: 'last-assistant',
-              content: (prevContent: string) => prevContent + content,
-            },
-          });
-        }
+        parsedData.forEach((response) => {
+          if (typeof response === 'object' && response !== null) {
+            const content = response.choices[0]?.delta.content || '';
+            dispatch({
+              type: 'UPDATE_MESSAGE_CONTENT',
+              payload: {
+                id: 'last-assistant',
+                content: (prevContent: string) => prevContent + content,
+              },
+            });
+          }
+        });
       }
     },
     onComplete: async () => {
@@ -161,16 +162,23 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     const userMessageId = await db.addMessage(userMessage);
     dispatch({ type: 'ADD_MESSAGE', payload: { ...userMessage, id: userMessageId } });
 
-    // Add assistant placeholder message
+    // Add AI message
     const aiMessage = {
       conversationId: state.currentConversation.id,
+      id: 'last-assistant',
       createdAt: Date.now(),
       role: 'assistant' as const,
       content: '',
       status: 'pending' as const,
     };
-    const aiMessageId = await db.addMessage(aiMessage);
-    dispatch({ type: 'ADD_MESSAGE', payload: { ...aiMessage, id: aiMessageId } });
+
+    try {
+      await db.addMessage(aiMessage);
+      console.log('AI message added:', aiMessage);
+      dispatch({ type: 'ADD_MESSAGE', payload: { ...aiMessage, id: aiMessage.id } });
+    } catch (error) {
+      console.error('Error adding AI message:', error);
+    }
 
     try {
       const configurations = await db.getAllConfigurations();
@@ -178,8 +186,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
 
       await streamFetch({
         configurations,
-        messages: messages.filter((m) => m.role === 'user'),
-        content,
+        messages,
       });
 
       // Update conversation metadata
@@ -200,10 +207,10 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
         },
       });
     } catch (error) {
-      await db.updateMessage(aiMessageId, { status: 'failed' });
+      await db.updateMessage(aiMessage.id, { status: 'failed' });
       dispatch({
         type: 'UPDATE_MESSAGE',
-        payload: { id: aiMessageId, updates: { status: 'failed' } },
+        payload: { id: aiMessage.id, updates: { status: 'failed' } },
       });
       console.error('Error sending message:', error);
     }

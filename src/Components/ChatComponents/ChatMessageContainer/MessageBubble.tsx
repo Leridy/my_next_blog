@@ -11,6 +11,7 @@ import { Message } from '@/IndexedDB/HelloBoss/types';
 import { HelloBossContextType } from '@/Provider/HelloBossProvider/HelloBossProvider';
 import { useUserContext } from '@/Provider/UserProvider';
 import Avatar from '@/Components/NavBar/Avatar';
+import { Spin } from 'antd';
 
 mermaid.initialize({
   startOnLoad: false,
@@ -60,6 +61,17 @@ const MessageBubble: FC<MessageBubbleProps> = (props) => {
     navigator.clipboard.writeText(code);
     setCopied(code);
     setTimeout(() => setCopied(null), 2000);
+  };
+
+  const renderLoadingIndicator = () => {
+    if (!isPending || !isAI || message.content.trim().length > 0) return null;
+
+    return (
+      <div className="flex items-center gap-2 text-[var(--color-text-secondary)] text-sm mt-2">
+        <Spin size="small" />
+        <span>正在思考中...</span>
+      </div>
+    );
   };
 
   return (
@@ -211,6 +223,7 @@ const MessageBubble: FC<MessageBubbleProps> = (props) => {
             >
               {message.content}
             </ReactMarkdown>
+            {renderLoadingIndicator()}
           </div>
 
           <AnimatePresence>

@@ -13,7 +13,7 @@ export const initialState: HelloBossState = {
 };
 
 export function appReducer(state: HelloBossState, action: AppAction): HelloBossState {
-  console.log('appReducer', action);
+  // console.log('appReducer', action);
   switch (action.type) {
     case 'INITIALIZE_START':
       return { ...state, status: 'loading' };
@@ -66,7 +66,9 @@ export function appReducer(state: HelloBossState, action: AppAction): HelloBossS
     case 'UPDATE_MESSAGE_CONTENT':
       return {
         ...state,
-        messages: state.messages.map((msg) => (msg.id === action.payload.id ? { ...msg, content: action.payload.content(msg.content) } : msg)),
+        messages: state.messages.map((msg) => {
+          return msg.id === action.payload.id ? { ...msg, content: action.payload.content(msg.content) } : msg;
+        }),
       };
 
     case 'DELETE_MESSAGE':

@@ -15,16 +15,32 @@ interface UseStreamApiReturn<T> {
   abortStream: () => void;
 }
 
+export interface OpenAIStreamResponse {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: {
+    delta: {
+      content?: string;
+      role?: string;
+    };
+    index: number;
+    finish_reason: string | null;
+  }[];
+}
+
 /**
  * 将 SSE 数据流解析为 JavaScript 对象
  * @param text SSE 数据文本
  * @returns 解析出的对象数组
  */
-export function parseSSEData(text: string): unknown[] {
-  const results: unknown[] = [];
+export function parseSSEData(text: string): OpenAIStreamResponse[] {
+  const results: OpenAIStreamResponse[] = [];
 
   // 按行分割
-  const lines = text.split('\n');
+  const lines = text.split('data:').filter((item) => !item.includes('[DONE]\n') && Boolean(item));
+  console.log(lines);
 
   // 处理每一行
   for (const line of lines) {
@@ -33,24 +49,22 @@ export function parseSSEData(text: string): unknown[] {
 
     // 跳过空行
     if (!trimmedLine) continue;
-    if (trimmedLine.startsWith('data: [DONE]')) continue;
 
     // 检查是否以 data: 开头
-    if (trimmedLine.startsWith('data:')) {
-      const jsonStr = trimmedLine.substring(5).trim();
-
+    if (trimmedLine) {
       try {
-        const data = JSON.parse(jsonStr);
+        const data = JSON.parse(trimmedLine);
         results.push(data);
         // eslint-disable-next-line unused-imports/no-unused-vars
       } catch (error) {
         // 静默处理解析错误或记录
-        console.error(error, 'JSON 解析错误:', jsonStr);
+        console.error(error, 'JSON 解析错误:', trimmedLine);
       }
     } else if (trimmedLine.startsWith('[DONE]')) {
       // 遇到 [DONE] 结束符，停止解析
     }
   }
+  console.log(results);
 
   return results;
 }
@@ -104,7 +118,6 @@ export default function useStreamApi<T>({ apiURL, onChunk, onComplete, onError }
 
         while (true) {
           const { done, value } = await reader.read();
-
           if (done) {
             break;
           }
