@@ -10,20 +10,20 @@ import MessageBoard from '@/Components/ChatComponents/ChatMessageContainer/Messa
 import MessageInputBox from '@/Components/ChatComponents/ChatMessageContainer/MessageInputBox';
 
 function MessagePanel() {
-  const { currentConversation, messages, sendMessage, currentMessage, updateMessage, deleteMessage } = useHelloBossContext();
+  const { currentConversation, messages, sendMessage, streamMessage, updateMessage, deleteMessage } = useHelloBossContext();
   return (
     <>
       <MessageBoard
         currentConversationId={currentConversation?.id}
-        messages={messages}
-        status={currentMessage?.status}
+        messages={[...messages, streamMessage].filter((ele) => ele !== undefined)}
+        status={streamMessage?.status}
         updateMessage={updateMessage}
         deleteMessage={deleteMessage}
       />
       <MessageInputBox
         currentConversationId={currentConversation?.id}
         sendMessage={sendMessage}
-        status={currentMessage?.status}
+        status={streamMessage?.status}
       />
     </>
   );

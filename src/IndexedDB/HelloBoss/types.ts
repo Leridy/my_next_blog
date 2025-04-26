@@ -71,7 +71,7 @@ export interface HelloBossState {
   conversations: Conversation[];
   currentConversation: Conversation | null;
   messages: Message[];
-  currentMessage: Message | null;
+  streamMessage?: Message;
   configurations: Configuration[];
   preferences: Preference | null;
   status: AppStatus;
@@ -88,9 +88,9 @@ export type AppAction =
   | { type: 'DELETE_CONVERSATION'; payload: string }
   | { type: 'ADD_MESSAGE'; payload: Message }
   | { type: 'UPDATE_MESSAGE'; payload: { id: string; updates: Partial<Message> } }
-  | { type: 'UPDATE_MESSAGE_CONTENT'; payload: { id: string; content: (prev: string) => string } }
-  | { type: 'BATCH_ADD_MESSAGES'; payload: Message[] }
-  | { type: 'BATCH_UPDATE_MESSAGES'; payload: Array<{ id: string; content?: string; status?: MessageStatus }> }
+  | { type: 'UPDATE_STREAM_MESSAGE_CONTENT'; payload: Message }
+  // reset stream message
+  | { type: 'RESET_STREAM_MESSAGE' }
   | { type: 'DELETE_MESSAGE'; payload: string }
   | { type: 'SET_MESSAGES'; payload: Message[] | null }
   | { type: 'ADD_CONFIGURATION'; payload: Configuration }

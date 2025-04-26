@@ -1,7 +1,7 @@
 // AppContext.tsx
 import React, { createContext, useReducer, useEffect, useMemo, Dispatch, ReactNode, FC, useState, useContext } from 'react';
 import { appReducer, initialState } from './appReducer';
-import { HelloBossState, AppAction, Conversation, Configuration, ConfigurationType, Message, Preference } from '@/IndexedDB/HelloBoss/types';
+import { HelloBossState, AppAction, Conversation, Configuration, ConfigurationType, Message, Preference, MessageRole, MessageStatus } from '@/IndexedDB/HelloBoss/types';
 import { ChatDatabase } from '@/IndexedDB/HelloBoss/ChatDatabase';
 import useStreamApi, { parseSSEData } from '@/app/manage/hooks/useStreamApi';
 import useDebouncedStateSync from '@/Provider/HelloBossProvider/dbHook';
@@ -41,7 +41,6 @@ const HelloBossContext = createContext<HelloBossContextType | undefined>(undefin
 export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null }> = ({ children, userId }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [loading, setLoading] = useState(true);
-  const [pendingMessages, setPendingMessages] = useState<Record<string, Message>>({});
 
   const db = useMemo(() => {
     return userId ? new ChatDatabase(userId) : null;
@@ -78,63 +77,81 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     onChunk: (chunk) => {
       const parsedData = parseSSEData(chunk);
       if (parsedData.length > 0) {
-        const updates = parsedData
+        parsedData
           .filter((response) => typeof response === 'object' && response !== null)
-          .map((response) => ({
-            id: 'last-message',
-            content: response.choices[0]?.delta.content || '',
-          }));
-        if (updates.length === 0) return;
+          .map((response) => {
+            // new content
+            const content = response.choices[0]?.delta.content;
+            const messageId = response.id;
 
-        dispatch({
-          type: 'BATCH_UPDATE_MESSAGES',
-          payload: updates,
-        });
+            if (content) {
+              dispatch({
+                type: 'UPDATE_STREAM_MESSAGE_CONTENT',
+                payload: {
+                  id: messageId,
+                  status: 'pending',
+                  conversationId: state.currentConversation?.id || '',
+                  role: 'assistant' as MessageRole,
+                  createdAt: Date.now(),
+                  content,
+                },
+              });
+            }
+          });
       }
     },
     onComplete: async (fullResponse) => {
       if (!state.currentConversation) return;
 
-      let messageId = '';
+      let messageData: Message = {
+        id: crypto.randomUUID(),
+        conversationId: state.currentConversation.id,
+        createdAt: Date.now(),
+        role: 'assistant' as MessageRole,
+        content: '',
+        status: 'sent' as MessageStatus,
+      };
       const fullMessage = parseSSEData(fullResponse)
         .map((item) => {
-          messageId = item.id;
+          messageData = {
+            id: item.id,
+            conversationId: state.currentConversation?.id || '',
+            createdAt: Date.now(),
+            role: 'assistant' as MessageRole,
+            content: '',
+            status: 'sent' as MessageStatus,
+          };
+
           return item.choices[0]?.delta.content;
         })
         .join('');
 
-      const lastMessage = Object.values(pendingMessages).pop();
-      if (lastMessage) {
-        dispatch({
-          type: 'UPDATE_MESSAGE',
-          payload: {
-            id: lastMessage.id,
-            updates: {
-              status: 'sent',
-              id: messageId,
-              content: fullMessage,
-            },
-          },
-        });
+      dispatch({
+        type: 'ADD_MESSAGE',
+        payload: {
+          ...messageData,
+          content: fullMessage,
+        },
+      });
 
-        initialConversationInfo(fullMessage);
-        setPendingMessages({});
-      }
+      dispatch({
+        type: 'RESET_STREAM_MESSAGE',
+      });
+
+      initialConversationInfo(fullMessage);
     },
     onError: (error) => {
-      const lastMessageId = Object.keys(pendingMessages).pop();
-      if (lastMessageId) {
-        dispatch({
-          type: 'UPDATE_MESSAGE',
-          payload: {
-            id: lastMessageId,
-            updates: {
-              status: 'failed',
-              content: `Error: ${error.message}`,
-            },
-          },
-        });
-      }
+      dispatch({
+        type: 'UPDATE_STREAM_MESSAGE_CONTENT',
+        payload: {
+          status: 'failed',
+          id: crypto.randomUUID(),
+          content: `出现了错误：${(error as Error).message}`,
+          conversationId: state.currentConversation?.id || '',
+          role: 'assistant' as MessageRole,
+          createdAt: Date.now(),
+        },
+      });
     },
   });
 
@@ -202,28 +219,14 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       id: userMessageId,
       conversationId: state.currentConversation!.id,
       createdAt: Date.now(),
-      role: 'user' as const,
+      role: 'user' as MessageRole,
       content,
-      status: 'pending' as const,
+      status: 'sent' as MessageStatus,
     };
-
-    const aiMessageId = 'last-message';
-    const aiMessage = {
-      id: aiMessageId,
-      conversationId: state.currentConversation!.id,
-      createdAt: Date.now(),
-      role: 'assistant' as const,
-      content: '',
-      status: 'pending' as const,
-    };
-
-    setPendingMessages({
-      [userMessageId]: userMessage,
-    });
 
     dispatch({
-      type: 'BATCH_ADD_MESSAGES',
-      payload: [userMessage, aiMessage],
+      type: 'ADD_MESSAGE',
+      payload: userMessage,
     });
 
     try {
@@ -250,10 +253,14 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       });
     } catch (error) {
       dispatch({
-        type: 'UPDATE_MESSAGE',
+        type: 'UPDATE_STREAM_MESSAGE_CONTENT',
         payload: {
-          id: aiMessageId,
-          updates: { status: 'failed' },
+          status: 'failed',
+          id: userMessageId,
+          content: `出现了错误：${(error as Error).message}`,
+          conversationId: state.currentConversation?.id || '',
+          role: 'assistant' as MessageRole,
+          createdAt: Date.now(),
         },
       });
       console.error('Error sending message:', error);
@@ -293,7 +300,16 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       updateConversation,
       deleteConversation: async (id: string) => {
         if (!db) return;
+        // use db to delete the conversation
+        await db.deleteConversation(id);
+        // remove messages related to the conversation
+        const messages = await db.getMessagesByConversation(id);
+        await Promise.all(messages.map((msg) => db.deleteMessage(msg.id)));
+
         dispatch({ type: 'DELETE_CONVERSATION', payload: id });
+        messages.forEach((msg) => {
+          dispatch({ type: 'DELETE_MESSAGE', payload: msg.id });
+        });
       },
       pinConversation,
       archiveConversation,
@@ -304,6 +320,9 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
         dispatch({ type: 'UPDATE_MESSAGE', payload: { id, updates } });
       },
       deleteMessage: async (id: string) => {
+        if (!db) return;
+        // use db to delete the message
+        await db.deleteMessage(id);
         dispatch({ type: 'DELETE_MESSAGE', payload: id });
       },
       addConfiguration: async (config: Omit<Configuration, 'id'>) => {
@@ -318,6 +337,9 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
         dispatch({ type: 'UPDATE_CONFIGURATION', payload: { id, updates } });
       },
       deleteConfiguration: async (id: string) => {
+        if (!db) return;
+        // use db to delete the configuration
+        await db.deleteConfiguration(id);
         dispatch({ type: 'DELETE_CONFIGURATION', payload: id });
       },
       getConfigurationsByType: async (type: ConfigurationType) => (db ? await db.getConfigurationsByType(type) : []),

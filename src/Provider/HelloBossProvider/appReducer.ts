@@ -2,9 +2,9 @@
 import { HelloBossState, AppAction } from '@/IndexedDB/HelloBoss/types';
 
 export const initialState: HelloBossState = {
-  conversations: [],
-  currentConversation: null,
-  currentMessage: null,
+  conversations: [], // 会话列表
+  currentConversation: null, // 当前会话
+  streamMessage: undefined, // 流消息
   messages: [],
   configurations: [],
   preferences: null,
@@ -63,33 +63,6 @@ export function appReducer(state: HelloBossState, action: AppAction): HelloBossS
       };
     }
 
-    case 'UPDATE_MESSAGE_CONTENT':
-      return {
-        ...state,
-        messages: state.messages.map((msg) => {
-          return msg.id === action.payload.id ? { ...msg, content: action.payload.content(msg.content) } : msg;
-        }),
-      };
-
-    case 'BATCH_ADD_MESSAGES':
-      return {
-        ...state,
-        messages: [...state.messages, ...action.payload],
-      };
-
-    case 'BATCH_UPDATE_MESSAGES':
-      return {
-        ...state,
-        messages: state.messages.map((msg) => {
-          const update = action.payload.find((u) => u.id === msg.id);
-          console.log({
-            msg,
-            action,
-          });
-          return update ? { ...msg, ...update } : msg;
-        }),
-      };
-
     case 'DELETE_MESSAGE':
       return {
         ...state,
@@ -101,6 +74,22 @@ export function appReducer(state: HelloBossState, action: AppAction): HelloBossS
       return {
         ...state,
         messages: action.payload || [],
+      };
+
+    case 'UPDATE_STREAM_MESSAGE_CONTENT':
+      return {
+        ...state,
+        streamMessage: {
+          ...state.streamMessage,
+          ...action.payload,
+          content: (state.streamMessage?.content || '') + (action.payload.content || ''),
+        },
+      };
+
+    case 'RESET_STREAM_MESSAGE':
+      return {
+        ...state,
+        streamMessage: undefined,
       };
 
     case 'ADD_CONFIGURATION':
