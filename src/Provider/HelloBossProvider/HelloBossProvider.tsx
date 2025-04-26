@@ -1,5 +1,4 @@
-// AppContext.tsx
-import React, { createContext, useReducer, useEffect, useMemo, Dispatch, ReactNode, FC, useState, useContext } from 'react';
+import React, { createContext, useReducer, useEffect, useMemo, Dispatch, ReactNode, FC, useState, useContext, useCallback } from 'react';
 import { appReducer, initialState } from './appReducer';
 import { HelloBossState, AppAction, Conversation, Configuration, ConfigurationType, Message, Preference, MessageRole, MessageStatus } from '@/IndexedDB/HelloBoss/types';
 import { ChatDatabase } from '@/IndexedDB/HelloBoss/ChatDatabase';
@@ -39,8 +38,17 @@ export interface HelloBossContextType extends HelloBossState {
 const HelloBossContext = createContext<HelloBossContextType | undefined>(undefined);
 
 export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null }> = ({ children, userId }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState);
+  const [state, b] = useReducer(appReducer, initialState);
   const [loading, setLoading] = useState(true);
+
+  const dispatch = useCallback<typeof b>(
+    (action) => {
+      console.log('Dispatching action:', action);
+      console.trace('Dispatch call stack');
+      b(action);
+    },
+    [b]
+  );
 
   const db = useMemo(() => {
     return userId ? new ChatDatabase(userId) : null;
@@ -207,84 +215,91 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     return id;
   };
 
-  const sendMessage = async (content: string) => {
-    if (!state.currentConversation) {
-      const id = await createConversation('New Conversation');
-      await selectConversation(id);
-      if (!state.currentConversation) return;
-    }
+  const sendMessage = useCallback(
+    async (content: string) => {
+      if (!state.currentConversation) {
+        const id = await createConversation('New Conversation');
+        await selectConversation(id);
+        if (!state.currentConversation) return;
+      }
 
-    const userMessageId = crypto.randomUUID();
-    const userMessage = {
-      id: userMessageId,
-      conversationId: state.currentConversation!.id,
-      createdAt: Date.now(),
-      role: 'user' as MessageRole,
-      content,
-      status: 'sent' as MessageStatus,
-    };
+      console.trace('sendMessage', content);
 
-    dispatch({
-      type: 'ADD_MESSAGE',
-      payload: userMessage,
-    });
-
-    try {
-      const configurations = (await db?.getAllConfigurations()) || [];
-      const messages = (await db?.getMessagesByConversation(state.currentConversation.id)) || [];
-
-      await streamFetch({
-        configurations,
-        messages: [...messages, userMessage],
-      });
-
-      const updates = {
-        lastMessage: content,
-        updatedAt: Date.now(),
-        messageCount: messages.length + 1,
+      const userMessage = {
+        id: crypto.randomUUID(),
+        conversationId: state.currentConversation!.id,
+        createdAt: Date.now(),
+        role: 'user' as MessageRole,
+        content,
+        status: 'sent' as MessageStatus,
       };
 
       dispatch({
-        type: 'UPDATE_CONVERSATION',
-        payload: {
-          id: state.currentConversation.id,
-          updates,
-        },
+        type: 'ADD_MESSAGE',
+        payload: userMessage,
       });
-    } catch (error) {
-      dispatch({
-        type: 'UPDATE_STREAM_MESSAGE_CONTENT',
-        payload: {
-          status: 'failed',
-          id: userMessageId,
-          content: `出现了错误：${(error as Error).message}`,
-          conversationId: state.currentConversation?.id || '',
-          role: 'assistant' as MessageRole,
-          createdAt: Date.now(),
-        },
-      });
-      console.error('Error sending message:', error);
-    }
-  };
 
-  const pinConversation = async (id: string, isPinned: boolean) => {
+      try {
+        const configurations = (await db?.getAllConfigurations()) || [];
+        const messages = (await db?.getMessagesByConversation(state.currentConversation.id)) || [];
+
+        await streamFetch({
+          configurations,
+          messages: [...messages, userMessage],
+        });
+
+        const updates = {
+          lastMessage: content,
+          updatedAt: Date.now(),
+          messageCount: messages.length + 1,
+        };
+
+        dispatch({
+          type: 'UPDATE_CONVERSATION',
+          payload: {
+            id: state.currentConversation.id,
+            updates,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: 'UPDATE_STREAM_MESSAGE_CONTENT',
+          payload: {
+            status: 'failed',
+            id: crypto.randomUUID(),
+            content: `出现了错误：${(error as Error).message}`,
+            conversationId: state.currentConversation?.id || '',
+            role: 'assistant' as MessageRole,
+            createdAt: Date.now(),
+          },
+        });
+        console.error('Error sending message:', error);
+      }
+    },
+    [db, state.currentConversation, streamFetch]
+  );
+
+  const pinConversation = useCallback(async (id: string, isPinned: boolean) => {
     await updateConversation(id, { isPinned });
-  };
+  }, []);
 
-  const archiveConversation = async (id: string, isArchived: boolean) => {
+  const archiveConversation = useCallback(async (id: string, isArchived: boolean) => {
     await updateConversation(id, { isArchived });
-  };
+  }, []);
 
-  const updateConversation = async (id: string, updates: Partial<Conversation>) => {
+  const updateConversation = useCallback(async (id: string, updates: Partial<Conversation>) => {
     if (!db) throw new Error('Database not initialized');
     dispatch({ type: 'UPDATE_CONVERSATION', payload: { id, updates } });
-  };
+  }, []);
 
-  const selectConversation = async (id: string) => {
-    dispatch({ type: 'SET_CURRENT_CONVERSATION', payload: state.conversations.find((conv) => conv.id === id) || null });
-    const messages = db ? await db.getMessagesByConversation(id) : [];
-    dispatch({ type: 'SET_MESSAGES', payload: messages });
-  };
+  const selectConversation = useCallback(
+    async (id: string) => {
+      dispatch({ type: 'SET_CURRENT_CONVERSATION', payload: state.conversations.find((conv) => conv.id === id) || null });
+      const messages = db ? await db.getMessagesByConversation(id) : [];
+      dispatch({ type: 'SET_MESSAGES', payload: messages });
+    },
+    [db, state.conversations]
+  );
 
   const value = useMemo(
     () => ({
@@ -354,7 +369,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       },
       abortStream,
     }),
-    [state, db, loading, isStreaming, abortStream, selectConversation]
+    [state, db, loading, isStreaming, abortStream, selectConversation, dispatch]
   );
 
   useEffect(() => {
