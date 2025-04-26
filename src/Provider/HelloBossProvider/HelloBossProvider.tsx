@@ -184,7 +184,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     try {
       setLoading(true);
       dispatch({ type: 'INITIALIZE_START' });
-      const [conversations, configurations, preferences] = await Promise.all([db.getAllConversations(), db.getConfigurationsByType('resume'), db.getPreference('currentUser', 'theme')]);
+      const [conversations, configurations, preferences] = await Promise.all([db.getAllConversations(), db.getAllConfigurations(), db.getPreference('currentUser', 'theme')]);
       dispatch({
         type: 'INITIALIZE_SUCCESS',
         payload: { conversations, configurations, preferences },
