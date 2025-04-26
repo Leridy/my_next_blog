@@ -176,8 +176,6 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  console.log('isDevelopment:', isDevelopment);
-
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [confirmClearVisible, setConfirmClearVisible] = useState(false);
 
