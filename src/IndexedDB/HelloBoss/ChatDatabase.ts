@@ -140,11 +140,9 @@ export class ChatDatabase {
   }
 
   // Message CRUD operations
-  async addMessage(message: Omit<Message, 'id'>): Promise<string> {
-    const id = crypto.randomUUID();
+  async addMessage(message: Message): Promise<string> {
     const fullMessage: Message = {
       ...message,
-      id,
       createdAt: message.createdAt ?? Date.now(),
       status: message.status ?? 'pending',
       tokens: message.tokens ?? 0,
@@ -156,7 +154,7 @@ export class ChatDatabase {
     };
 
     await this.withTransaction('messages', 'readwrite', (store) => store.add(fullMessage));
-    return id;
+    return message.id;
   }
 
   async getMessage(id: string): Promise<Message | null> {
