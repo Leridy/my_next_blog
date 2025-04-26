@@ -40,7 +40,6 @@ export function parseSSEData(text: string): OpenAIStreamResponse[] {
 
   // 按行分割
   const lines = text.split('data:').filter((item) => !item.includes('[DONE]\n') && Boolean(item));
-  console.log(lines);
 
   // 处理每一行
   for (const line of lines) {
@@ -64,7 +63,6 @@ export function parseSSEData(text: string): OpenAIStreamResponse[] {
       // 遇到 [DONE] 结束符，停止解析
     }
   }
-  console.log(results);
 
   return results;
 }

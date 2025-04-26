@@ -41,13 +41,37 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [loading, setLoading] = useState(true);
 
+  const initialConversationInfo = (content: string) => {
+    const regex = /---conversationJSON-(.*?)---/g;
+    const match = regex.exec(content);
+    console.log('Regex match:', match, regex, content);
+    if (match && match[1]) {
+      try {
+        const jsonString = match[1];
+        const conversationInfo = JSON.parse(jsonString);
+        console.log('Parsed conversation info:', conversationInfo);
+        dispatch({
+          type: 'UPDATE_CONVERSATION',
+          payload: {
+            id: state.currentConversation?.id || '',
+            updates: {
+              title: conversationInfo.description,
+              // description: ,
+            },
+          },
+        });
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
+    }
+  };
+
   const { streamFetch, abortStream, isStreaming } = useStreamApi<{
     configurations: Configuration[];
     messages: Message[];
   }>({
     apiURL: 'https://ai.huashui.cc/api/ai/hello-boss',
     onChunk: (chunk) => {
-      console.log(chunk);
       const parsedData = parseSSEData(chunk);
       if (parsedData.length > 0) {
         parsedData.forEach((response) => {
@@ -64,8 +88,11 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
         });
       }
     },
-    onComplete: async () => {
+    onComplete: async (fullResponse) => {
       if (!db || !state.currentConversation) return;
+      const fullMessage = parseSSEData(fullResponse)
+        .map((item) => item.choices[0]?.delta.content)
+        .join('');
       const messages = await db.getMessagesByConversation(state.currentConversation.id);
       const lastMessage = messages[messages.length - 1];
       if (lastMessage) {
@@ -77,6 +104,14 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
             updates: { status: 'sent' },
           },
         });
+
+        console.log(lastMessage, fullMessage);
+
+        // 判断 lastMessage 里面是否有 ---conversationJSON- 开头的内容
+        // 以 “---conversationJSON-{"title":"React+WebGIS","description":"上海思芮 前端开发招聘"}---” 为例子
+        // 请实现一个方法 来判断 lastMessage 里面是否有这个内容, 如果有，将中间 JSON 的部分提取出来
+        // 然后将这个 JSON 解析成对象，把数据更新到当前的 conversation 里面
+        initialConversationInfo(fullMessage);
       }
     },
     onError: (error) => {
@@ -85,6 +120,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
         payload: {
           id: 'last-assistant',
           updates: {
+            id: crypto.randomUUID(),
             status: 'failed',
             content: `Error: ${error.message}`,
           },
@@ -145,11 +181,19 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     const id = await db.addConversation(newConversation);
     const createdConversation = { ...newConversation, id };
     dispatch({ type: 'ADD_CONVERSATION', payload: createdConversation });
+    Promise.resolve().then(() => selectConversation(id));
     return id;
   };
 
   const sendMessage = async (content: string) => {
-    if (!db || !state.currentConversation) return;
+    if (!db) return;
+
+    // if conversation not found, create a new one
+    if (!state.currentConversation) {
+      await createConversation('New Conversation');
+    }
+
+    if (!state.currentConversation) return;
 
     // Add user message
     const userMessage = {
@@ -230,6 +274,12 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     dispatch({ type: 'UPDATE_CONVERSATION', payload: { id, updates } });
   };
 
+  const selectConversation = async (id: string) => {
+    dispatch({ type: 'SET_CURRENT_CONVERSATION', payload: state.conversations.find((conv) => conv.id === id) || null });
+    const messages = db ? await db.getMessagesByConversation(id) : [];
+    dispatch({ type: 'SET_MESSAGES', payload: messages });
+  };
+
   useEffect(() => {
     const syncState = async () => {
       if (!db) return;
@@ -306,11 +356,8 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       initializeDB,
       loadInitialData,
       createConversation,
-      selectConversation: async (id: string) => {
-        dispatch({ type: 'SET_CURRENT_CONVERSATION', payload: state.conversations.find((conv) => conv.id === id) || null });
-        const messages = db ? await db.getMessagesByConversation(id) : [];
-        dispatch({ type: 'SET_MESSAGES', payload: messages });
-      },
+      selectConversation,
+
       getConversation: async (id: string) => (db ? await db.getConversation(id) : null),
       updateConversation,
       deleteConversation: async (id: string) => {
@@ -383,7 +430,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       },
       abortStream,
     }),
-    [state, db, loading, isStreaming, abortStream]
+    [state, db, loading, isStreaming, abortStream, selectConversation]
   );
 
   async function initializeAndLoadData() {
