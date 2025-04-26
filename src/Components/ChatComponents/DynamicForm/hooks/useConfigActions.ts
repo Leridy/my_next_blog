@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { message } from 'antd';
 import { Configuration } from '@/IndexedDB/HelloBoss/types';
 
-export const useConfigActions = (onAdd: (config: Omit<Configuration, 'id'>) => Promise<void>, onUpdate: (id: string, updates: Partial<Configuration>) => Promise<void>) => {
+export const useConfigActions = (onAdd: (config: Omit<Configuration, 'id'>) => Promise<string>, onUpdate: (id: string, updates: Partial<Configuration>) => Promise<void>) => {
   const [editingConfig, setEditingConfig] = useState<Configuration | null>(null);
 
   const handleSave = async (config: Configuration) => {
