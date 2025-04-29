@@ -10,7 +10,7 @@ import MessageBoard from '@/Components/ChatComponents/ChatMessageContainer/Messa
 import MessageInputBox from '@/Components/ChatComponents/ChatMessageContainer/MessageInputBox';
 
 function MessagePanel() {
-  const { currentConversation, messages, sendMessage, streamMessage, updateMessage, deleteMessage } = useHelloBossContext();
+  const { currentConversation, messages, sendMessage, streamMessage, updateMessage, deleteMessage, createConversation } = useHelloBossContext();
   return (
     <>
       <MessageBoard
@@ -24,6 +24,7 @@ function MessagePanel() {
         currentConversationId={currentConversation?.id}
         sendMessage={sendMessage}
         status={streamMessage?.status}
+        onCreateConversation={createConversation}
       />
     </>
   );

@@ -8,6 +8,7 @@ import useDebouncedStateSync from '@/Provider/HelloBossProvider/dbHook';
 export interface HelloBossContextType extends HelloBossState {
   loading: boolean;
   isStreaming: boolean;
+  isSending: boolean;
   dispatch: Dispatch<AppAction>;
   initializeDB: () => Promise<void>;
   loadInitialData: () => Promise<void>;
@@ -40,6 +41,8 @@ const HelloBossContext = createContext<HelloBossContextType | undefined>(undefin
 export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null }> = ({ children, userId }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [loading, setLoading] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const db = useMemo(() => {
     return userId ? new ChatDatabase(userId) : null;
@@ -71,13 +74,14 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     [state.currentConversation?.id]
   );
 
-  const { streamFetch, abortStream, isStreaming } = useStreamApi<{
+  const { streamFetch, abortStream } = useStreamApi<{
     configurations: Configuration[];
     messages: Message[];
   }>({
     apiURL: 'https://ai.huashui.cc/api/ai/hello-boss',
     onChunk: useCallback(
       (chunk: string) => {
+        setIsStreaming(true);
         const parsedData = parseSSEData(chunk);
         if (parsedData.length > 0) {
           parsedData
@@ -106,6 +110,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     ),
     onComplete: useCallback(
       async (fullResponse: string) => {
+        setIsStreaming(false);
         if (!state.currentConversation) return;
 
         let messageData: Message = {
@@ -149,6 +154,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     ),
     onError: useCallback(
       (error: Error) => {
+        setIsStreaming(false);
         dispatch({
           type: 'UPDATE_STREAM_MESSAGE_CONTENT',
           payload: {
@@ -203,10 +209,6 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
         payload: state.conversations.find((conv) => conv.id === id) || null,
       });
       const messages = db ? await db.getMessagesByConversation(id) : [];
-      console.log(
-        'message.id',
-        messages.map((msg) => msg.id)
-      );
       dispatch({ type: 'SET_MESSAGES', payload: messages });
     },
     [db, state.conversations]
@@ -230,7 +232,8 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       const id = await db.addConversation(newConversation);
       const createdConversation = { ...newConversation, id };
       dispatch({ type: 'ADD_CONVERSATION', payload: createdConversation });
-      await selectConversation(id);
+      dispatch({ type: 'SET_CURRENT_CONVERSATION', payload: createdConversation });
+
       return id;
     },
     [db, selectConversation]
@@ -238,30 +241,39 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
 
   const sendMessage = useCallback(
     async (content: string) => {
-      if (!state.currentConversation) {
-        const id = await createConversation('New Conversation');
-        await selectConversation(id);
-        if (!state.currentConversation) return;
-      }
-
-      const userMessage = {
-        id: crypto.randomUUID(),
-        conversationId: state.currentConversation!.id,
-        createdAt: Date.now(),
-        role: 'user' as MessageRole,
-        content,
-        status: 'sent' as MessageStatus,
-      };
-
-      dispatch({ type: 'ADD_MESSAGE', payload: userMessage });
-
+      setIsSending(true);
       try {
+        let conversationId = state.currentConversation?.id;
+        if (!conversationId) {
+          conversationId = await createConversation('New Conversation');
+          await selectConversation(conversationId);
+        }
+
+        const userMessage = {
+          id: crypto.randomUUID(),
+          conversationId: conversationId,
+          createdAt: Date.now(),
+          role: 'user' as MessageRole,
+          content,
+          status: 'sending' as MessageStatus,
+        };
+
+        dispatch({ type: 'ADD_MESSAGE', payload: userMessage });
+
         const configurations = (await db?.getAllConfigurations()) || [];
-        const messages = (await db?.getMessagesByConversation(state.currentConversation.id)) || [];
+        const messages = (await db?.getMessagesByConversation(conversationId)) || [];
 
         await streamFetch({
           configurations,
           messages: [...messages, userMessage],
+        });
+
+        dispatch({
+          type: 'UPDATE_MESSAGE',
+          payload: {
+            id: userMessage.id,
+            updates: { status: 'sent' },
+          },
         });
 
         const updates = {
@@ -273,7 +285,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
         dispatch({
           type: 'UPDATE_CONVERSATION',
           payload: {
-            id: state.currentConversation.id,
+            id: conversationId,
             updates,
           },
         });
@@ -290,6 +302,8 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
           },
         });
         console.error('Error sending message:', error);
+      } finally {
+        setIsSending(false);
       }
     },
     [db, state.currentConversation, streamFetch, createConversation, selectConversation]
@@ -309,6 +323,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       ...state,
       loading,
       isStreaming,
+      isSending,
       dispatch,
       initializeDB,
       loadInitialData,
@@ -373,7 +388,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
       },
       abortStream,
     }),
-    [state, db, loading, isStreaming, abortStream, selectConversation, dispatch, initializeDB, loadInitialData, createConversation, sendMessage, updateConversation]
+    [state, db, loading, isStreaming, isSending, abortStream, selectConversation, dispatch, initializeDB, loadInitialData, createConversation, sendMessage, updateConversation]
   );
 
   useEffect(() => {

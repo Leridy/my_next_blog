@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { Input } from 'antd';
+// ConversationList.tsx
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { Input, Button } from 'antd';
 import { motion } from 'framer-motion';
 import { VariableSizeList as List, ListChildComponentProps } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { format, isToday, isYesterday, parseISO } from 'date-fns';
-import { ChevronRight, Plus } from 'lucide-react';
+import { ChevronDown, Plus } from 'lucide-react';
 import { Conversation } from '@/IndexedDB/HelloBoss/types';
 import ConversationItem from '@/Components/ChatComponents/Conversition/ConversationItem';
 import LoadingPanel from '@/Components/MainBoard/HotBoard/LoadingPanel';
@@ -26,29 +27,33 @@ interface GroupedConversations {
   conversations: Conversation[];
 }
 
-const ITEM_HEIGHT = 90;
-const GROUP_HEADER_HEIGHT = 40;
+const ITEM_HEIGHT = 84;
+const GROUP_HEADER_HEIGHT = 48;
 
-// 分组标题组件
 const GroupHeader: React.FC<{
   label: string;
   isExpanded: boolean;
   onToggle: () => void;
-}> = ({ label, isExpanded, onToggle }) => {
+  count: number;
+}> = ({ label, isExpanded, onToggle, count }) => {
   return (
     <motion.div
-      className="flex items-center px-4 py-2 bg-quaternary text-text cursor-pointer"
+      className="flex items-center justify-between px-4 py-3 bg-quaternary/50 text-text cursor-pointer"
       onClick={onToggle}
-      whileHover={{ backgroundColor: 'var(--color-secondary)' }}
-      transition={{ duration: 0.2 }}
+      whileHover={{ backgroundColor: 'var(--color-quaternary)' }}
+      transition={{ duration: 0.15 }}
+      initial={false}
     >
-      <motion.div
-        animate={{ rotate: isExpanded ? 90 : 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        <ChevronRight size={16} />
-      </motion.div>
-      <span className="ml-2 font-medium">{label}</span>
+      <div className="flex items-center">
+        <motion.div
+          animate={{ rotate: isExpanded ? 0 : -90 }}
+          transition={{ duration: 0.15 }}
+        >
+          <ChevronDown size={16} />
+        </motion.div>
+        <span className="ml-2 font-medium text-sm">{label}</span>
+      </div>
+      <span className="text-xs text-text-secondary">{count}条对话</span>
     </motion.div>
   );
 };
@@ -58,7 +63,20 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
-  // 分组会话逻辑
+  // 初始化时默认展开所有分组
+  useEffect(() => {
+    if (conversations.length > 0 && Object.keys(expandedGroups).length === 0) {
+      const initialExpandedState = groupedConversations.reduce(
+        (acc, group) => {
+          acc[group.date] = true;
+          return acc;
+        },
+        {} as Record<string, boolean>
+      );
+      setExpandedGroups(initialExpandedState);
+    }
+  }, [conversations]);
+
   const groupedConversations = useMemo<GroupedConversations[]>(() => {
     const filtered = conversations.filter(
       (conv) => conv.title.toLowerCase().includes(searchQuery.toLowerCase()) || conv.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())) || conv.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
@@ -84,57 +102,44 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
       groups[dateKey].push(conv);
     });
 
-    // 排序并转换为数组
     return Object.entries(groups)
       .sort(([aKey], [bKey]) => {
-        // 置顶会话优先
-        if (aKey === 'pinned') return -1;
-        if (bKey === 'pinned') return 1;
-
-        // 按日期排序
         if (aKey === 'today') return -1;
         if (bKey === 'today') return 1;
         if (aKey === 'yesterday') return -1;
         if (bKey === 'yesterday') return 1;
-
         return bKey.localeCompare(aKey);
       })
       .map(([date, convs]) => {
         let label = '';
         if (date === 'today') label = '今天';
         else if (date === 'yesterday') label = '昨天';
-        else label = format(parseISO(date), 'MMMM d, yyyy');
+        else label = format(parseISO(date), 'yyyy年M月d日');
 
         return {
           date,
           label,
           conversations: convs.sort((a, b) => {
-            // 置顶会话排在最前面
             if (a.isPinned && !b.isPinned) return -1;
             if (!a.isPinned && b.isPinned) return 1;
-
-            // 按更新时间排序
             return b.updatedAt - a.updatedAt;
           }),
         };
       });
   }, [conversations, searchQuery]);
 
-  // 计算虚拟列表的总项数和每项内容
   const itemCount = useMemo(() => {
     return groupedConversations.reduce((total, group) => {
       return total + 1 + (expandedGroups[group.date] ? group.conversations.length : 0);
     }, 0);
   }, [groupedConversations, expandedGroups]);
 
-  // 虚拟列表项渲染
   const Row = useCallback(
     ({ index, style }: ListChildComponentProps) => {
       let currentIndex = 0;
 
       for (const group of groupedConversations) {
         if (index === currentIndex) {
-          // 渲染分组标题
           return (
             <div style={style}>
               <GroupHeader
@@ -146,6 +151,7 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
                     [group.date]: !(prev[group.date] ?? true),
                   }))
                 }
+                count={group.conversations.length}
               />
             </div>
           );
@@ -155,7 +161,6 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
         if (expandedGroups[group.date] ?? true) {
           if (index < currentIndex + group.conversations.length) {
             const conv = group.conversations[index - currentIndex];
-            // 渲染会话项
             return (
               <div style={style}>
                 <ConversationItem
@@ -175,10 +180,9 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
 
       return null;
     },
-    [groupedConversations, expandedGroups, currentId, onSelect]
+    [groupedConversations, expandedGroups, currentId, onSelect, onPin, onArchive, onDelete]
   );
 
-  // 获取虚拟列表项高度
   const getItemSize = useCallback(
     (index: number): number => {
       let currentIndex = 0;
@@ -203,54 +207,51 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
   );
 
   return (
-    <div className="flex flex-col h-full select-none">
-      {/* 新增的新会话按钮区域 */}
+    <div className="flex flex-col h-full select-none bg-background">
       {loading ? (
         <LoadingPanel />
       ) : (
         <>
           <div className="p-4 border-b border-border">
             <Input.Search
-              placeholder="搜索会话"
+              placeholder="搜索会话..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               allowClear
-              className="w-full"
+              className="w-full rounded-lg"
+              size="large"
             />
           </div>
-          <div className="p-3 border-b border-border flex justify-between items-center bg-tertiary">
-            <motion.button
+
+          <motion.div
+            className="p-3 border-b border-border"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Button
               onClick={onNewConversation}
-              className="px-4 py-2 rounded-md flex items-center w-full"
-              style={{
-                backgroundColor: 'var(--color-primary)',
-                color: 'var(--color-text)',
-              }}
-              whileHover={{
-                backgroundColor: 'var(--color-secondary)',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-              }}
-              whileTap={{
-                backgroundColor: 'var(--color-tertiary)',
-                scale: 0.98,
-              }}
-              transition={{ duration: 0.2 }}
+              type="primary"
+              className="w-full h-10"
+              icon={
+                <Plus
+                  size={16}
+                  className="mr-2"
+                />
+              }
             >
-              <Plus
-                className="mr-2"
-                size={16}
-              />
               新会话
-            </motion.button>
-          </div>
-          <div className="flex-1 overflow-hidden select-none">
+            </Button>
+          </motion.div>
+
+          <div className="flex-1 overflow-hidden">
             <AutoSizer>
               {({ height, width }) => (
                 <List
                   height={height}
                   width={width}
                   itemCount={itemCount}
-                  itemSize={(index) => getItemSize(index)}
+                  itemSize={getItemSize}
                   itemData={groupedConversations}
                 >
                   {Row}

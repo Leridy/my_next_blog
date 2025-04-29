@@ -1,6 +1,7 @@
 // MessageBoard.tsx
 import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CommentOutlined, SmileOutlined } from '@ant-design/icons';
 import MessageBubble from './MessageBubble';
 import { Conversation, Message, MessageStatus } from '@/IndexedDB/HelloBoss/types';
 import { HelloBossContextType } from '@/Provider/HelloBossProvider/HelloBossProvider';
@@ -19,41 +20,66 @@ const MessageBoard = (props: MessageBoardProps) => {
 
   const orderedMessages = [...messages].sort((a, b) => a.createdAt - b.createdAt);
 
-  // 自动滚动到底部
+  // 平滑滚动到底部
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
     }
   }, [orderedMessages]);
 
   if (!currentConversationId) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p>请选择或创建对话</p>
-      </div>
+      <motion.div
+        className="flex flex-col items-center justify-center h-full text-gray-400"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <CommentOutlined className="text-5xl mb-4" />
+        <p className="text-lg">请选择或创建对话</p>
+      </motion.div>
+    );
+  }
+
+  if (orderedMessages.length === 0) {
+    return (
+      <motion.div
+        className="flex flex-col items-center justify-center h-full text-gray-300"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <SmileOutlined className="text-5xl mb-4" />
+        <p className="text-lg">发送第一条 JD 开始吧</p>
+      </motion.div>
     );
   }
 
   return (
     <div
       ref={containerRef}
-      className="flex-1 max-h-[calc(100vh-340px)] overflow-auto"
+      className="flex-1 max-h-[calc(100vh-340px)] overflow-auto px-4 py-2 space-y-3 scroll-smooth"
     >
-      {orderedMessages.map((message, index) => (
-        <motion.div
-          key={message.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <MessageBubble
-            message={message}
-            isPending={status === 'pending' && index === orderedMessages.length - 1}
-            updateMessage={updateMessage}
-            deleteMessage={deleteMessage}
-          />
-        </motion.div>
-      ))}
+      <AnimatePresence initial={false}>
+        {orderedMessages.map((message, index) => (
+          <motion.div
+            key={message.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            layout
+          >
+            <MessageBubble
+              message={message}
+              isPending={status === 'pending' && index === orderedMessages.length - 1}
+              updateMessage={updateMessage}
+              deleteMessage={deleteMessage}
+            />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 };
