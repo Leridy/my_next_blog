@@ -4,6 +4,7 @@ import { ConfigCard } from './ConfigCard';
 import { Configuration } from '@/IndexedDB/HelloBoss/types';
 import BuyMeCoffee from '@/Components/BuyMeCoffee';
 import { Empty } from 'antd';
+import CommentsBoard from '@/Components/CommentsBoard';
 
 interface ConfigGridProps {
   configurations: Configuration[];
@@ -93,6 +94,15 @@ export const ConfigGrid: React.FC<ConfigGridProps> = ({ configurations, onEdit, 
               className="h-full md:col-span-2 lg:col-span-3 xl:col-span-4"
             >
               <BuyMeCoffee />
+            </motion.div>
+
+            <motion.div
+              key="buy-me-coffee"
+              layout
+              variants={itemVariants}
+              className="h-full md:col-span-2 lg:col-span-3 xl:col-span-4"
+            >
+              <CommentsBoard />
             </motion.div>
           </>
         )}
