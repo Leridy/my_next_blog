@@ -2,8 +2,16 @@
 
 .widthAnimation {
   position: relative;
-  min-height: 40vh;
+  min-height: 35vh;
   transition: all 0.5s;
+
+  @media screen and (max-width: 768px) {
+    min-height: 30vh;
+  }
+
+  @media screen and (max-width: 640px) {
+    min-height: 25vh;
+  }
 
   &.normal {
     opacity: 0;
@@ -27,13 +35,24 @@
   }
 }
 
-.hotBoard {
+.hotBoardCard {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  
+  @media screen and (max-width: 640px) {
+    padding: 0.5rem;
+  }
 }
 
 .hotBoardNewsList {
-  height: calc(100% - 35px);
-  margin-bottom: 16px;
+  height: calc(100% - 2.5rem);
+  margin-bottom: 1rem;
   overflow: auto;
+
+  @media screen and (max-width: 640px) {
+    height: calc(100% - 2rem);
+    margin-bottom: 0.5rem;
+  }
 
   &:hover {
     &::-webkit-scrollbar-thumb {

@@ -88,10 +88,9 @@ export default function NewsItem(props: NewsItemProps) {
             NewsItem-wrapper
             hover:font-bold
             ease-in-out
-            mb-2
         `}
     >
-      <p className={`w-1/12 NewsItem-news-index text-center ${IndexColor[index]}`}>{index + 1}</p>
+      <p className={`w-8 sm:w-1/12 NewsItem-news-index text-center ${IndexColor[index]}`}>{index + 1}</p>
       <span
         className={`
             overflow-hidden 
@@ -107,7 +106,12 @@ export default function NewsItem(props: NewsItemProps) {
         onAuxClick={handleLinkClick}
         data-title={title}
       />
-      <span style={{ color: 'var(--color-text-secondary)' }}>{renderExtraData}</span>
+      <span
+        className="hidden sm:inline-block"
+        style={{ color: 'var(--color-text-secondary)' }}
+      >
+        {renderExtraData}
+      </span>
     </div>
   );
 }

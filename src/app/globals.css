@@ -2,6 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 添加 rem 基础设置 */
+html {
+  font-size: 16px; /* 基础字体大小 */
+}
+
+/* 媒体查询，针对不同屏幕尺寸调整基础字体大小 */
+@media screen and (max-width: 1536px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  html {
+    font-size: 11px;
+  }
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-text);
@@ -22,82 +58,83 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--color-primary-transparent);
   border-radius: 10px;
   display: none;
   transition: all 0.5s;
 }
 
 :root {
-  --text-size: 14px;
+  --text-size: 1rem;
 
-  /* 主色调 */
-  --color-background: rgba(223, 242, 235, 0.95);
-  --color-primary: rgba(185, 229, 232, 0.9);
-  --color-secondary: rgba(122, 178, 211, 0.85);
-  --color-tertiary: rgba(74, 98, 138, 0.95);
-  --color-quaternary: rgba(203, 220, 235, 0.85);
+  /* 主色调 - 更现代简约的配色，减少蓝色，增加透明度 */
+  --color-background: rgba(250, 250, 250, 0.95);
+  --color-primary: #6d9886;
+  --color-primary-transparent: rgba(109, 152, 134, 0.4);
+  --color-secondary: rgba(169, 169, 169, 0.85);
+  --color-tertiary: #393e46;
+  --color-quaternary: rgba(233, 233, 233, 0.9);
 
   /* 文本颜色 */
-  --color-text: rgba(40, 44, 52, 0.9);
+  --color-text: rgba(40, 40, 40, 0.9);
   --color-text-light: rgba(255, 255, 255, 0.95);
-  --color-text-dark: rgba(0, 0, 0, 0.85);
-  --color-text-secondary: rgba(102, 102, 102, 0.75);
+  --color-text-dark: rgba(20, 20, 20, 0.9);
+  --color-text-secondary: rgba(100, 100, 100, 0.8);
 
   /* 边框颜色 */
-  --color-border: rgba(204, 204, 204, 0.6);
-  --color-border-dark: rgba(51, 51, 51, 0.7);
+  --color-border: rgba(220, 220, 220, 0.8);
+  --color-border-dark: rgba(100, 100, 100, 0.7);
 
   /* 功能色 */
-  --color-success: rgba(40, 167, 69, 0.9);
-  --color-success-hover: rgba(33, 136, 56, 0.95);
-  --color-success-active: rgba(30, 126, 52, 1);
+  --color-success: rgba(16, 185, 129, 0.85);
+  --color-success-hover: rgba(5, 150, 105, 0.9);
+  --color-success-active: rgba(4, 120, 87, 0.95);
   --color-success-text: rgba(255, 255, 255, 0.95);
 
   /* 应用变量 */
-  --color-navbar-background: var(--color-tertiary);
-  --color-hot-border-background: rgba(185, 229, 232, 0.8);
-  --color-card-background: rgba(203, 220, 235, 0.75);
-  --color-transparent-background: rgba(255, 255, 255, 0.6);
+  --color-navbar-background: rgba(57, 62, 70, 0.95);
+  --color-hot-border-background: rgba(109, 152, 134, 0.3);
+  --color-card-background: rgba(255, 255, 255, 0.75);
+  --color-transparent-background: rgba(255, 255, 255, 0.65);
 
   /* 编辑器友好的颜色 */
-    --color-editor-background: rgba(255, 255, 255, 0.7);
-    --color-editor-text: rgba(0, 0, 0, 0.9);
+  --color-editor-background: rgba(255, 255, 255, 0.8);
+  --color-editor-text: rgba(40, 40, 40, 0.95);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* 主色调 - 暗色模式 */
-    --color-background: rgba(26, 54, 54, 0.95);
-    --color-primary: rgba(103, 125, 106, 0.85);
-    --color-secondary: rgba(64, 83, 76, 0.9);
-    --color-tertiary: rgba(26, 54, 54, 1);
-    --color-quaternary: rgba(98, 149, 132, 0.8);
+    /* 主色调 - 暗色模式，减少蓝色，增加透明度 */
+    --color-background: rgba(28, 28, 30, 0.95);
+    --color-primary: #8fb3a0;
+    --color-primary-transparent: rgba(143, 179, 160, 0.4);
+    --color-secondary: rgba(100, 100, 100, 0.85);
+    --color-tertiary: rgba(44, 44, 46, 0.95);
+    --color-quaternary: rgba(58, 58, 60, 0.9);
 
     /* 文本颜色 - 暗色模式 */
-    --color-text: rgba(226, 226, 226, 0.9);
+    --color-text: rgba(230, 230, 230, 0.9);
     --color-text-light: rgba(255, 255, 255, 0.95);
-    --color-text-dark: rgba(0, 0, 0, 0.85);
-    --color-text-secondary: rgba(204, 204, 204, 0.8);
+    --color-text-dark: rgba(180, 180, 180, 0.9);
+    --color-text-secondary: rgba(180, 180, 180, 0.8);
 
     /* 边框颜色 - 暗色模式 */
-    --color-border: rgba(204, 204, 204, 0.4);
-    --color-border-dark: rgba(51, 51, 51, 0.8);
+    --color-border: rgba(70, 70, 70, 0.8);
+    --color-border-dark: rgba(100, 100, 100, 0.7);
 
     /* 功能色 - 暗色模式 */
-    --color-success: rgba(40, 167, 69, 0.75);
-    --color-success-hover: rgba(33, 136, 56, 0.8);
-    --color-success-active: rgba(30, 126, 52, 0.85);
+    --color-success: rgba(16, 185, 129, 0.75);
+    --color-success-hover: rgba(5, 150, 105, 0.8);
+    --color-success-active: rgba(4, 120, 87, 0.85);
     --color-success-text: rgba(255, 255, 255, 0.95);
 
     /* 应用变量 - 暗色模式 */
-    --color-transparent-background: rgba(0, 0, 0, 0.6);
-    --color-card-background: rgba(98, 149, 132, 0.3);
-    --color-hot-border-background: rgba(103, 125, 106, 0.6);
+    --color-transparent-background: rgba(28, 28, 30, 0.75);
+    --color-card-background: rgba(44, 44, 46, 0.75);
+    --color-hot-border-background: rgba(143, 179, 160, 0.3);
 
     /* 编辑器友好的颜色 - 暗色模式 */
-
-    --color-editor-background: rgba(255, 255, 255, 0.5);
-    --color-editor-text: rgba(255, 255, 255, 0.9);
+    --color-editor-background: rgba(44, 44, 46, 0.8);
+    --color-editor-text: rgba(230, 230, 230, 0.95);
   }
 }
