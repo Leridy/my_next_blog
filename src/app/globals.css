@@ -64,7 +64,7 @@ body {
   transition: all 0.5s;
 }
 
-:root {
+:root[data-theme='default'] {
   --text-size: 1rem;
 
   /* 主色调 - 更现代简约的配色，减少蓝色，增加透明度 */
@@ -103,7 +103,7 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root[data-theme='default'] {
     /* 主色调 - 暗色模式，减少蓝色，增加透明度 */
     --color-background: rgba(28, 28, 30, 0.95);
     --color-primary: #8fb3a0;
@@ -136,5 +136,257 @@ body {
     /* 编辑器友好的颜色 - 暗色模式 */
     --color-editor-background: rgba(44, 44, 46, 0.8);
     --color-editor-text: rgba(230, 230, 230, 0.95);
+  }
+}
+
+/* 春天主题配色 - 清新明亮 */
+:root[data-theme='spring'] {
+  --color-background: rgba(245, 255, 250, 0.95);
+  --color-primary: #7ac143; /* 嫩绿色 */
+  --color-primary-transparent: rgba(122, 193, 67, 0.4);
+  --color-secondary: rgba(255, 215, 0, 0.85); /* 金黄色 */
+  --color-tertiary: #5cb3ff; /* 天蓝色 */
+  --color-quaternary: rgba(255, 240, 245, 0.9); /* 粉白色 */
+
+  --color-text: rgba(50, 50, 50, 0.9);
+  --color-text-light: rgba(255, 255, 255, 0.95);
+  --color-text-dark: rgba(30, 30, 30, 0.9);
+  --color-text-secondary: rgba(120, 120, 120, 0.8);
+
+  --color-border: rgba(200, 230, 200, 0.8);
+  --color-border-dark: rgba(150, 180, 150, 0.7);
+
+  --color-success: rgba(122, 193, 67, 0.85);
+  --color-success-hover: rgba(102, 173, 47, 0.9);
+  --color-success-active: rgba(82, 153, 27, 0.95);
+  --color-success-text: rgba(255, 255, 255, 0.95);
+
+  --color-navbar-background: rgba(122, 193, 67, 0.95);
+  --color-hot-border-background: rgba(255, 215, 0, 0.3);
+  --color-card-background: rgba(255, 255, 255, 0.75);
+  --color-transparent-background: rgba(255, 255, 255, 0.65);
+
+  --color-editor-background: rgba(255, 255, 255, 0.8);
+  --color-editor-text: rgba(50, 50, 50, 0.95);
+}
+
+/* 办公主题配色 - 专业简洁 */
+:root[data-theme='office'] {
+  --color-background: rgba(240, 240, 240, 0.95);
+  --color-primary: #2b579a; /* 微软蓝 */
+  --color-primary-transparent: rgba(43, 87, 154, 0.4);
+  --color-secondary: rgba(128, 128, 128, 0.85);
+  --color-tertiary: #e81123; /* 微软红 */
+  --color-quaternary: rgba(255, 255, 255, 0.9);
+
+  --color-text: rgba(50, 50, 50, 0.9);
+  --color-text-light: rgba(255, 255, 255, 0.95);
+  --color-text-dark: rgba(30, 30, 30, 0.9);
+  --color-text-secondary: rgba(100, 100, 100, 0.8);
+
+  --color-border: rgba(200, 200, 200, 0.8);
+  --color-border-dark: rgba(150, 150, 150, 0.7);
+
+  --color-success: rgba(16, 124, 16, 0.85);
+  --color-success-hover: rgba(6, 104, 6, 0.9);
+  --color-success-active: rgba(0, 84, 0, 0.95);
+  --color-success-text: rgba(255, 255, 255, 0.95);
+
+  --color-navbar-background: rgba(43, 87, 154, 0.95);
+  --color-hot-border-background: rgba(232, 17, 35, 0.3);
+  --color-card-background: rgba(255, 255, 255, 0.75);
+  --color-transparent-background: rgba(255, 255, 255, 0.65);
+
+  --color-editor-background: rgba(255, 255, 255, 0.8);
+  --color-editor-text: rgba(50, 50, 50, 0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='office'] {
+    --color-background: rgba(30, 35, 40, 0.95);
+    --color-primary: #3a6ea5;
+    --color-primary-transparent: rgba(58, 110, 165, 0.4);
+    --color-secondary: rgba(100, 100, 110, 0.85);
+    --color-tertiary: #c13535;
+    --color-quaternary: rgba(40, 45, 50, 0.9);
+
+    --color-text: rgba(220, 230, 240, 0.9);
+    --color-text-light: rgba(240, 250, 255, 0.95);
+    --color-text-dark: rgba(190, 200, 210, 0.9);
+    --color-text-secondary: rgba(170, 180, 190, 0.8);
+
+    --color-border: rgba(70, 75, 80, 0.8);
+    --color-border-dark: rgba(50, 55, 60, 0.7);
+
+    --color-success: rgba(16, 124, 16, 0.75);
+    --color-success-hover: rgba(6, 104, 6, 0.8);
+    --color-success-active: rgba(0, 84, 0, 0.85);
+    --color-success-text: rgba(255, 255, 255, 0.95);
+
+    --color-navbar-background: rgba(40, 45, 50, 0.95);
+    --color-hot-border-background: rgba(232, 17, 35, 0.3);
+    --color-card-background: rgba(40, 45, 50, 0.75);
+    --color-transparent-background: rgba(40, 45, 50, 0.65);
+
+    --color-editor-background: rgba(40, 45, 50, 0.8);
+    --color-editor-text: rgba(220, 230, 240, 0.95);
+  }
+}
+
+/* 程序员主题配色 - 深色科技感 */
+:root[data-theme='programmer'] {
+  --color-background: rgba(30, 30, 35, 0.95);
+  --color-primary: #4d8bf0;
+  --color-primary-transparent: rgba(77, 139, 240, 0.4);
+  --color-secondary: rgba(100, 100, 110, 0.85);
+  --color-tertiary: #2a2a35;
+  --color-quaternary: rgba(40, 40, 45, 0.9);
+
+  --color-text: rgba(220, 220, 230, 0.9);
+  --color-text-light: rgba(255, 255, 255, 0.95);
+  --color-text-dark: rgba(180, 180, 190, 0.9);
+  --color-text-secondary: rgba(160, 160, 170, 0.8);
+
+  --color-border: rgba(70, 70, 80, 0.8);
+  --color-border-dark: rgba(50, 50, 60, 0.7);
+
+  --color-success: rgba(66, 181, 156, 0.75);
+  --color-success-hover: rgba(56, 161, 136, 0.8);
+  --color-success-active: rgba(46, 141, 116, 0.85);
+  --color-success-text: rgba(255, 255, 255, 0.95);
+
+  --color-navbar-background: rgba(40, 40, 45, 0.95);
+  --color-hot-border-background: rgba(77, 139, 240, 0.3);
+  --color-card-background: rgba(40, 40, 45, 0.75);
+  --color-transparent-background: rgba(40, 40, 45, 0.65);
+
+  --color-editor-background: rgba(40, 40, 45, 0.8);
+  --color-editor-text: rgba(220, 220, 230, 0.95);
+}
+
+/* 秋冬主题配色 - 温暖大地色 */
+:root[data-theme='autumn'] {
+  --color-background: rgba(250, 245, 235, 0.95);
+  --color-primary: #8b5a2b;
+  --color-primary-transparent: rgba(139, 90, 43, 0.4);
+  --color-secondary: rgba(210, 180, 140, 0.85);
+  --color-tertiary: #6b4423;
+  --color-quaternary: rgba(245, 235, 220, 0.9);
+
+  --color-text: rgba(60, 50, 40, 0.9);
+  --color-text-light: rgba(255, 255, 255, 0.95);
+  --color-text-dark: rgba(40, 30, 20, 0.9);
+  --color-text-secondary: rgba(100, 90, 80, 0.8);
+
+  --color-border: rgba(200, 180, 160, 0.8);
+  --color-border-dark: rgba(150, 130, 110, 0.7);
+
+  --color-success: rgba(139, 90, 43, 0.85);
+  --color-success-hover: rgba(120, 70, 33, 0.9);
+  --color-success-active: rgba(100, 60, 23, 0.95);
+  --color-success-text: rgba(255, 255, 255, 0.95);
+
+  --color-navbar-background: rgba(139, 90, 43, 0.95);
+  --color-hot-border-background: rgba(210, 180, 140, 0.3);
+  --color-card-background: rgba(255, 255, 255, 0.75);
+  --color-transparent-background: rgba(255, 255, 255, 0.65);
+
+  --color-editor-background: rgba(255, 255, 255, 0.8);
+  --color-editor-text: rgba(60, 50, 40, 0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='spring'] {
+    --color-background: rgba(30, 40, 35, 0.95);
+    --color-primary: #5cb85c;
+    --color-primary-transparent: rgba(92, 184, 92, 0.4);
+    --color-secondary: rgba(255, 193, 7, 0.85);
+    --color-tertiary: #4a90e2;
+    --color-quaternary: rgba(40, 50, 45, 0.9);
+
+    --color-text: rgba(220, 230, 220, 0.9);
+    --color-text-light: rgba(240, 250, 240, 0.95);
+    --color-text-dark: rgba(190, 200, 190, 0.9);
+    --color-text-secondary: rgba(170, 180, 170, 0.8);
+
+    --color-border: rgba(70, 80, 70, 0.8);
+    --color-border-dark: rgba(50, 60, 50, 0.7);
+
+    --color-success: rgba(92, 184, 92, 0.75);
+    --color-success-hover: rgba(72, 164, 72, 0.8);
+    --color-success-active: rgba(52, 144, 52, 0.85);
+    --color-success-text: rgba(255, 255, 255, 0.95);
+
+    --color-navbar-background: rgba(40, 50, 45, 0.95);
+    --color-hot-border-background: rgba(255, 193, 7, 0.3);
+    --color-card-background: rgba(40, 50, 45, 0.75);
+    --color-transparent-background: rgba(40, 50, 45, 0.65);
+
+    --color-editor-background: rgba(40, 50, 45, 0.8);
+    --color-editor-text: rgba(220, 230, 220, 0.95);
+  }
+}
+
+/* 夏日主题配色 - 明亮活泼 */
+:root[data-theme='summer'] {
+  --color-background: rgba(255, 253, 245, 0.95); /* 浅米白背景 */
+  --color-primary: #4fb3d3; /* 清爽蓝色 */
+  --color-primary-transparent: rgba(79, 179, 211, 0.4);
+  --color-secondary: rgba(255, 177, 66, 0.85); /* 阳光橙色 */
+  --color-tertiary: #3a7d7b; /* 海洋绿 */
+  --color-quaternary: rgba(255, 241, 230, 0.9); /* 沙滩色 */
+
+  --color-text: rgba(50, 50, 50, 0.9);
+  --color-text-light: rgba(255, 255, 255, 0.95);
+  --color-text-dark: rgba(30, 30, 30, 0.9);
+  --color-text-secondary: rgba(120, 120, 120, 0.8);
+
+  --color-border: rgba(200, 230, 240, 0.8); /* 浅蓝色边框 */
+  --color-border-dark: rgba(100, 150, 180, 0.7);
+
+  --color-success: rgba(66, 181, 156, 0.85); /* 海绿色 */
+  --color-success-hover: rgba(56, 161, 136, 0.9);
+  --color-success-active: rgba(46, 141, 116, 0.95);
+  --color-success-text: rgba(255, 255, 255, 0.95);
+
+  --color-navbar-background: rgba(79, 179, 211, 0.95); /* 主色 */
+  --color-hot-border-background: rgba(255, 177, 66, 0.3); /* 次色 */
+  --color-card-background: rgba(255, 255, 255, 0.75);
+  --color-transparent-background: rgba(255, 255, 255, 0.65);
+
+  --color-editor-background: rgba(255, 255, 255, 0.8);
+  --color-editor-text: rgba(50, 50, 50, 0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='summer'] {
+    /* 暗色模式夏日主题 */
+    --color-background: rgba(30, 40, 50, 0.95);
+    --color-primary: #5fc8e8;
+    --color-primary-transparent: rgba(95, 200, 232, 0.4);
+    --color-secondary: rgba(255, 197, 86, 0.85);
+    --color-tertiary: #4a8d8b;
+    --color-quaternary: rgba(40, 50, 60, 0.9);
+
+    --color-text: rgba(220, 230, 240, 0.9);
+    --color-text-light: rgba(240, 250, 255, 0.95);
+    --color-text-dark: rgba(190, 200, 210, 0.9);
+    --color-text-secondary: rgba(170, 180, 190, 0.8);
+
+    --color-border: rgba(70, 90, 100, 0.8);
+    --color-border-dark: rgba(50, 70, 80, 0.7);
+
+    --color-success: rgba(76, 191, 166, 0.75);
+    --color-success-hover: rgba(66, 171, 146, 0.8);
+    --color-success-active: rgba(56, 151, 126, 0.85);
+    --color-success-text: rgba(255, 255, 255, 0.95);
+
+    --color-navbar-background: rgba(40, 50, 60, 0.95);
+    --color-hot-border-background: rgba(255, 197, 86, 0.3);
+    --color-card-background: rgba(40, 50, 60, 0.75);
+    --color-transparent-background: rgba(40, 50, 60, 0.65);
+
+    --color-editor-background: rgba(40, 50, 60, 0.8);
+    --color-editor-text: rgba(220, 230, 240, 0.95);
   }
 }

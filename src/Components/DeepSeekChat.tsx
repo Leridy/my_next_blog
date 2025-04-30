@@ -103,13 +103,14 @@ interface DeepSeekChatProps {
   modalMode?: boolean;
 }
 
-// 在组件内添加<style>标签或在外部CSS文件中添加
+// 更新滚动容器样式使用CSS变量
 const scrollContainerStyle = `
   .scroll-container {
     scrollbar-width: thin;
     scrollbar-color: var(--color-border) transparent;
     overflow-y: auto;
     overscroll-behavior: contain;
+    background-color: var(--color-background);
   }
   
   .scroll-container::-webkit-scrollbar {
@@ -123,6 +124,31 @@ const scrollContainerStyle = `
   .scroll-container::-webkit-scrollbar-thumb {
     background-color: var(--color-border);
     border-radius: 3px;
+  }
+
+  /* 添加消息气泡样式 */
+  .message-user {
+    background-color: var(--color-secondary);
+    color: var(--color-text-dark);
+  }
+
+  .message-assistant {
+    background-color: var(--color-quaternary);
+    color: var(--color-text-dark);
+  }
+
+  .input-container {
+    background-color: var(--color-editor-background);
+    border-color: var(--color-border);
+  }
+
+  .send-button {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+  }
+
+  .send-button:hover {
+    background-color: var(--color-primary-transparent);
   }
 `;
 
@@ -582,7 +608,7 @@ const DeepSeekChat: React.FC<DeepSeekChatProps> = (props) => {
           <p>DeepSeek助手是基于DeepSeek大语言模型开发的智能聊天工具。</p>
           <p>它能够：</p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>回答您的对本页感兴趣的问题(每天十次)</li>
+            <li>回答您的在本页感兴趣的问题(每天十次)</li>
             <li>自动感知当前页面内容，提供上下文相关的回答</li>
             <li>支持多轮对话，记忆上下文信息</li>
             <li>提供相关链接参考</li>

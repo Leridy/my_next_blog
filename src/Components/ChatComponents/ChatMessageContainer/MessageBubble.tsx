@@ -70,10 +70,11 @@ const MessageBubble: FC<MessageBubbleProps> = ({ message, isPending, updateMessa
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      <div className={`flex-shrink-0 flex items-start justify-center text-white`}>
+      <div className={`flex-shrink-0 flex items-start justify-center`}>
         <Avatar
           name={isAI ? 'HelloBoss' : user?.name || '用户'}
           size="small"
+          className={isAI ? 'bg-[var(--color-secondary)]' : 'bg-[var(--color-secondary)]'}
         />
       </div>
 
@@ -82,7 +83,7 @@ const MessageBubble: FC<MessageBubbleProps> = ({ message, isPending, updateMessa
           className={`
             relative p-4 rounded-2xl mx-1.5 max-w-[80%] overflow-x-auto break-words
             transition-all duration-200 ease-in-out
-            ${isAI ? 'bg-[var(--color-quaternary)] text-[var(--color-text-dark)] mr-auto border border-[var(--color-border)]' : 'bg-[var(--color-primary)] text-[var(--color-text-dark)] ml-auto'}
+            ${isAI ? 'bg-[var(--color-quaternary)] text-[var(--color-text-dark)] mr-auto border border-[var(--color-border)]' : 'bg-[var(--color-secondary)] text-[var(--color-text-dark)] ml-auto'}
             ${isHovered ? 'shadow-md' : 'shadow-sm'}
           `}
         >
@@ -124,7 +125,7 @@ const MessageBubble: FC<MessageBubbleProps> = ({ message, isPending, updateMessa
                           style={atomDark}
                           language={match?.[1]}
                           PreTag="div"
-                          className="rounded-lg"
+                          className="rounded-lg border border-[var(--color-border)] bg-[var(--color-editor-background)]"
                           {...props}
                         >
                           {code}
@@ -202,7 +203,7 @@ const MessageBubble: FC<MessageBubbleProps> = ({ message, isPending, updateMessa
                     type="text"
                     icon={<EditOutlined />}
                     onClick={handleEdit}
-                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-dark)]"
+                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary-transparent)]"
                   />
                 </Tooltip>
                 <Tooltip title="删除">
@@ -210,7 +211,7 @@ const MessageBubble: FC<MessageBubbleProps> = ({ message, isPending, updateMessa
                     type="text"
                     icon={<DeleteOutlined />}
                     onClick={handleDelete}
-                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-dark)]"
+                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-error)] hover:bg-[var(--color-error-transparent)]"
                   />
                 </Tooltip>
               </motion.div>

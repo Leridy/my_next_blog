@@ -21,14 +21,17 @@ const Header: FC<HeaderProps> = ({ leftContent = 'HELLO BOSS，你的AI求职军
 
   return (
     <motion.header
-      className="h-16 px-4 grid items-center border-b border-[var(--color-border)] bg-[var(--color-navbar-background)]"
+      className="h-16 px-4 flex justify-between items-center border-b border-[var(--color-border)] bg-[var(--color-navbar-background)]"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
       style={{
         color: 'var(--color-text-light)',
         gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-        width: '100%',
+      }}
+      whileHover={{
+        backgroundColor: 'var(--color-navbar-background-hover)',
+        transition: { duration: 0.2 },
       }}
     >
       <div className="flex items-center min-w-0">{typeof leftContent === 'string' ? <InputtingText text={leftContent} /> : leftContent}</div>
@@ -45,9 +48,13 @@ const Header: FC<HeaderProps> = ({ leftContent = 'HELLO BOSS，你的AI求职军
           <>
             <motion.button
               className="p-2 rounded-full hover:bg-[var(--color-primary)]"
-              whileHover={{ scale: 1.1 }}
+              whileHover={{
+                scale: 1.1,
+                backgroundColor: 'var(--color-primary-hover)',
+              }}
               whileTap={{ scale: 0.95 }}
               style={{ color: 'inherit' }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
             >
               <FiMoreHorizontal />
             </motion.button>
