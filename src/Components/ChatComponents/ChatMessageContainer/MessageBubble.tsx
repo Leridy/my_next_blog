@@ -74,7 +74,6 @@ const MessageBubble: FC<MessageBubbleProps> = ({ message, isPending, updateMessa
         <Avatar
           name={isAI ? 'HelloBoss' : user?.name || '用户'}
           size="small"
-          className={isAI ? 'bg-[var(--color-secondary)]' : 'bg-[var(--color-secondary)]'}
         />
       </div>
 
