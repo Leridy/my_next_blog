@@ -8,6 +8,7 @@ import { useUserSettingContext } from '@/Provider/UserSettingProvider';
 import './MainBoard.style.scss';
 import ScrollController from '@/Components/MainBoard/ScrollController/ScrollController';
 import BrowserFingerprint from '@/Components/BrowserFingerprint/BrowserFingerprint';
+import { motion } from 'framer-motion';
 
 interface MainBoardProps {
   keyword: string;
@@ -162,15 +163,25 @@ export default function MainBoard(props: MainBoardProps) {
   }, [TopicItemsToRender, items, topicSetting, updateTopicSetting]);
 
   return (
-    // 使用 grid 布局将 HotBoard 和 UserBoard 放在一起
-    <div className={'grid grid-cols-1 md:grid-cols-5 pt-16 h-full main-board'}>
-      <div className={'relative col-span-1 md:col-span-4 h-full hot-board-wrapper'}>
+    <motion.div
+      className="grid grid-cols-1 md:grid-cols-5 pt-16 h-full main-board"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className="relative col-span-1 md:col-span-4 h-full hot-board-wrapper"
+        initial={{ x: -20 }}
+        animate={{ x: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+      >
         <div
           ref={HotBoardRef}
-          className={'relative grid grid-cols-1 gap-4 sm:gap-6 p-2 sm:p-4 ' + 'sm:grid-cols-2 ' + 'md:grid-cols-2 ' + 'lg:grid-cols-3 ' + 'xl:grid-cols-4 ' + '2xl:grid-cols-5 ' + 'h-full ' + 'overflow-y-auto'}
+          className="relative grid grid-cols-1 gap-4 sm:gap-6 p-2 sm:p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 h-full overflow-y-auto"
           style={{
             height: 'calc(100vh - 4rem)',
             overflowY: 'scroll',
+            scrollBehavior: 'smooth',
           }}
         >
           {renderHotBoard}
@@ -179,11 +190,17 @@ export default function MainBoard(props: MainBoardProps) {
           onScrollUp={handleScrollUp}
           onScrollDown={handleScrollDown}
         />
-      </div>
+      </motion.div>
 
-      <div className={'hidden md:block col-span-1 pl-0 pr-2 sm:pr-4 pt-2 sm:pt-4 pb-2 sm:pb-4 h-full ' + 'gap-4 sm:gap-6 overflow-y-scroll relative'}>
+      <motion.div
+        className="hidden md:block col-span-1 pl-0 pr-2 sm:pr-4 pt-2 sm:pt-4 pb-2 sm:pb-4 h-full gap-4 sm:gap-6 overflow-y-scroll relative"
+        initial={{ x: 20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.4 }}
+        style={{ scrollBehavior: 'smooth' }}
+      >
         <UserBoard />
-      </div>
+      </motion.div>
 
       {openedLink && (
         <LinkFrame
@@ -193,6 +210,6 @@ export default function MainBoard(props: MainBoardProps) {
         />
       )}
       <BrowserFingerprint />
-    </div>
+    </motion.div>
   );
 }

@@ -23,15 +23,7 @@ const sanitizeString = (str: string) => {
   return checkSensitiveWords(escapeString(str));
 };
 
-// Tailwind颜色配置
-const tailwindColors = {
-  bg: 'bg-[rgba(223,242,235,0.95)] dark:bg-[rgba(26,54,54,0.95)]',
-  primary: 'bg-[rgba(185,229,232,0.9)] dark:bg-[rgba(103,125,106,0.85)]',
-  text: 'text-[rgba(40,44,52,0.9)] dark:text-[rgba(226,226,226,0.9)]',
-  border: 'border-[rgba(204,204,204,0.6)] dark:border-[rgba(204,204,204,0.4)]',
-  card: 'bg-[rgba(203,220,235,0.75)] dark:bg-[rgba(98,149,132,0.3)]',
-};
-
+// 删除Tailwind颜色配置
 // 类型定义
 type Message = {
   id: string;
@@ -211,7 +203,7 @@ const CommentSystem: React.FC = () => {
   };
 
   return (
-    <div className={`w-full ${tailwindColors.bg} ${tailwindColors.text} rounded-lg px-4 py-5 h-[780px]`}>
+    <div className={`w-full bg-[var(--color-card-background)] text-[var(--color-text)] rounded-lg px-4 py-5 h-[780px]`}>
       <div className="mb-5">
         <Form
           form={form}
@@ -229,6 +221,7 @@ const CommentSystem: React.FC = () => {
                 prefix={<UserOutlined className="site-form-item-icon" />}
                 placeholder="您的昵称"
                 maxLength={20}
+                className="bg-[var(--color-editor-background)] border-[var(--color-border)]"
               />
             </Form.Item>
 
@@ -240,6 +233,7 @@ const CommentSystem: React.FC = () => {
               <Input
                 prefix={<MailOutlined className="site-form-item-icon" />}
                 placeholder="您的邮箱，非必填"
+                className="bg-[var(--color-editor-background)] border-[var(--color-border)]"
               />
             </Form.Item>
           </div>
@@ -250,145 +244,119 @@ const CommentSystem: React.FC = () => {
             rules={[{ required: true, message: '请输入留言内容' }]}
           >
             <Input.TextArea
-              placeholder="请输入您的留言内容..."
-              maxLength={200}
+              placeholder="写下您的留言..."
+              autoSize={{ minRows: 3, maxRows: 6 }}
+              maxLength={500}
               showCount
-              rows={4}
-              disabled={!canComment}
-              onClick={!canComment ? showTimeModal : undefined}
+              className="bg-[var(--color-editor-background)] border-[var(--color-border)]"
             />
           </Form.Item>
 
-          {messages.length === 0 && (
-            <Form.Item
-              name="knownFrom"
-              label="您从何处知道这个网站"
-            >
-              <AutoComplete options={[{ value: 'Google' }, { value: 'Bing' }, { value: '百度' }, { value: '其他搜索引擎' }, { value: '朋友推荐' }, { value: '社交媒体' }, { value: '其他' }]}>
-                <Input placeholder="请选择或输入" />
-              </AutoComplete>
-            </Form.Item>
-          )}
+          <Form.Item
+            name="knownFrom"
+            label="您是如何发现这个网站的？(选填)"
+          >
+            <AutoComplete
+              placeholder="例如：搜索引擎、朋友推荐等"
+              className="bg-[var(--color-editor-background)] border-[var(--color-border)]"
+              options={[{ value: '搜索引擎' }, { value: '朋友推荐' }, { value: '社交媒体' }, { value: '偶然发现' }]}
+            />
+          </Form.Item>
 
-          <div className="grid grid-cols-1 gap-4 w-full">
+          <div className="flex items-center mb-4">
             <Form.Item
               name="captcha"
               label="验证码"
               rules={[{ required: true, message: '请输入验证码' }]}
-              className={'w-full'}
+              className="mb-0 flex-1 mr-2"
             >
-              <div className="flex items-center space-x-2 w-full">
-                <Input
-                  prefix={<SafetyCertificateOutlined className="site-form-item-icon" />}
-                  placeholder="输入验证码"
-                  value={userCaptcha}
-                  onChange={(e) => setUserCaptcha(e.target.value)}
-                  maxLength={6}
-                  disabled={!canComment}
-                />
-                <div
-                  className="w-[120px] rounded h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-800 font-mono text-lg cursor-pointer select-none"
-                  onClick={refreshCaptcha}
-                >
-                  {captchaCode}
-                </div>
-              </div>
+              <Input
+                prefix={<SafetyCertificateOutlined />}
+                placeholder="请输入验证码"
+                value={userCaptcha}
+                onChange={(e) => setUserCaptcha(e.target.value)}
+                maxLength={6}
+                className="bg-[var(--color-editor-background)] border-[var(--color-border)]"
+              />
             </Form.Item>
+
+            <div className="flex items-end h-full">
+              <div
+                className="h-10 px-3 flex items-center justify-center font-mono text-lg select-none cursor-pointer bg-[var(--color-primary-transparent)] text-[var(--color-text)] rounded"
+                onClick={refreshCaptcha}
+              >
+                {captchaCode}
+              </div>
+            </div>
           </div>
 
-          <Form.Item
-            name="pageUrl"
-            hidden
-          >
-            <Input value={window.location.href} />
-          </Form.Item>
-
-          <Form.Item
-            name="userAgent"
-            hidden
-          >
-            <Input value={navigator.userAgent} />
-          </Form.Item>
-
-          <Button
-            type="primary"
-            htmlType="submit"
-            icon={<SendOutlined />}
-            loading={loading}
-            disabled={!canComment}
-            style={{
-              backgroundColor: 'rgba(40,167,69,0.9)',
-              borderColor: 'rgba(40,167,69,0.9)',
-            }}
-            block
-          >
-            提交留言
-          </Button>
-
-          {!canComment && (
-            <div
-              className="mt-4 mr-4 text-yellow-600 dark:text-yellow-400 text-sm cursor-pointer"
-              onClick={showTimeModal}
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              icon={<SendOutlined />}
+              loading={loading}
+              disabled={!canComment}
+              className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-transparent)] border-none"
+              onClick={!canComment ? showTimeModal : undefined}
             >
-              距离下次评论还需等待 {remainingHours} 小时
-            </div>
-          )}
+              {canComment ? '提交留言' : `请等待 ${remainingHours} 小时后再次留言`}
+            </Button>
+          </Form.Item>
+
+          <input
+            type="hidden"
+            name="pageUrl"
+            value={typeof window !== 'undefined' ? window.location.href : ''}
+          />
+          <input
+            type="hidden"
+            name="userAgent"
+            value={typeof window !== 'undefined' ? window.navigator.userAgent : ''}
+          />
         </Form>
       </div>
 
-      <div className="text-xs opacity-60 mb-4">
-        <MailOutlined className="mr-1" />
-        留言功能由
-        <a
-          href="https://formspree.io/"
-          target="_blank"
-          rel="noreferrer"
-          className="underline"
-        >
-          Formspree
-        </a>
-        提供，您的留言将不会被公开
-      </div>
+      <Divider className="border-[var(--color-border)]">留言列表</Divider>
 
-      <Divider
-        className="my-4"
-        orientation="left"
+      <div
+        className="overflow-y-auto"
+        style={{ maxHeight: '400px' }}
       >
-        你的全部留言
-      </Divider>
-
-      <div className="space-y-4 max-h-[220px] overflow-y-auto">
-        {loading && (
-          <div className="py-4 flex justify-center">
-            <Spin tip="提交中..." />
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <Spin size="large" />
           </div>
-        )}
-
-        {messages.length > 0 ? (
-          messages.map((message) => (
+        ) : messages.length === 0 ? (
+          <div className="text-center py-10 text-[var(--color-text-secondary)]">暂无留言，来添加第一条吧！</div>
+        ) : (
+          messages.map((msg) => (
             <div
-              key={message.id}
-              className={`p-4 rounded-lg border ${tailwindColors.border} ${tailwindColors.card} ${message.isLocal ? 'border-l-4 border-l-[rgba(40,167,69,0.9)]' : ''}`}
+              key={msg.id}
+              className={`mb-4 p-4 rounded-lg bg-[var(--color-card-background)] border border-[var(--color-border)]`}
             >
               <div className="flex items-start">
-                <img
-                  src={message.avatar}
-                  alt={message.name}
-                  className="w-10 h-10 rounded-full mr-3"
-                />
+                <div className="mr-3">
+                  {msg.avatar ? (
+                    <img
+                      src={msg.avatar}
+                      alt={msg.name}
+                      className="w-10 h-10 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-[var(--color-primary-transparent)] flex items-center justify-center text-[var(--color-text)]">{msg.name.charAt(0).toUpperCase()}</div>
+                  )}
+                </div>
                 <div className="flex-1">
-                  <div className="flex items-center flex-wrap">
-                    <span className="font-medium mr-2">{message.name}</span>
-                    {message.isLocal && <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-1.5 py-0.5 rounded-full">你</span>}
-                    <span className="text-xs opacity-60 ml-auto">{format(new Date(message.timestamp), 'yyyy-MM-dd HH:mm')}</span>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-bold">{msg.name}</span>
+                    <span className="text-xs text-[var(--color-text-secondary)]">{format(new Date(msg.timestamp), 'yyyy-MM-dd HH:mm')}</span>
                   </div>
-                  <div className="mt-2 text-sm whitespace-pre-wrap break-words">{message.content}</div>
+                  <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                 </div>
               </div>
             </div>
           ))
-        ) : (
-          <div className="text-center py-6 opacity-60">暂无留言，成为第一个留言的人吧！</div>
         )}
       </div>
     </div>

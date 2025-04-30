@@ -1,6 +1,7 @@
 import Card from '@/Components/Card';
 import { useSiteSettingContext } from '@/Provider/SiteSettingProvider';
 import useSettingMap from '@/Components/hooks/useSettingMap';
+import { motion } from 'framer-motion';
 
 const SITE_SETTING_KEY = 'UserBoard.CopyrightBoard';
 const defaultContent = `<p>
@@ -15,6 +16,7 @@ const defaultContent = `<p>
     Powered by <a href={'https://vercel.com/'} target={'_blank'} rel={'noreferrer'}>Vercel</a>
     and <a href={'https://nextjs.org/'} target={'_blank'} rel={'noreferrer'}>Next.js</a>
   </p>`;
+
 export default function CopyrightBoard() {
   const { setting } = useSiteSettingContext();
   const { content } = useSettingMap<{ content: string }>({
@@ -24,14 +26,24 @@ export default function CopyrightBoard() {
       content: defaultContent,
     },
   });
+
   return (
     <Card header={'版权声明'}>
-      <div
-        className={'grid gap-4'}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="prose dark:prose-invert max-w-none text-sm p-4 rounded-lg"
+        style={{
+          background: 'var(--color-transparent-background)',
+          color: 'var(--color-text-secondary)',
+        }}
         dangerouslySetInnerHTML={{ __html: String(content) }}
-      >
-        {/*powered by vercel and nextjs*/}
-      </div>
+        whileHover={{
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          scale: 1.01,
+        }}
+      />
     </Card>
   );
 }

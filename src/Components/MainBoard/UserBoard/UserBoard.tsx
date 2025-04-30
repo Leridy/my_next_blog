@@ -14,6 +14,7 @@ import { useUserSettingContext } from '@/Provider/UserSettingProvider';
 import BuyMeCoffee from '@/Components/BuyMeCoffee';
 import WeatherForecast from '@/Components/Weather';
 import DeepSeekChat from '@/Components/DeepSeekChat';
+import { motion } from 'framer-motion';
 
 const BOARD_ORDER_KEY = 'userBoardOrder';
 
@@ -66,37 +67,50 @@ const DraggableCard = ({ id, index, moveCard, isDraggable, children, header, sty
   });
 
   return (
-    <div
+    <motion.div
       // @ts-expect-error drag可能为null
       ref={(node) => (isDraggable ? drop(drag(node)) : null)}
       style={{
-        opacity: isDragging ? 0.5 : 1,
         cursor: isDraggable ? 'move' : 'default',
-        transition: 'opacity 0.2s, transform 0.2s',
-        transform: isDragging ? 'scale(1.02)' : 'scale(1)',
       }}
       data-handler-id={handlerId}
-      className={`${isDraggable ? 'hover:shadow-lg' : ''}`}
+      className={`${isDraggable ? 'hover:shadow-lg' : ''} mb-4`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{
+        opacity: isDragging ? 0.5 : 1,
+        y: 0,
+        scale: isDragging ? 1.02 : 1,
+      }}
+      transition={{
+        duration: 0.3,
+        type: 'spring',
+        stiffness: 300,
+        damping: 20,
+      }}
+      whileHover={isDraggable ? { scale: 1.02 } : {}}
     >
       <Card
         header={header}
         style={style}
-        className={'mx-2'}
+        className={'mx-2 transition-all duration-300 hover:shadow-md'}
       >
         {isDraggable ? (
-          <div
-            className="absolute  inset-0 flex items-center justify-center pointer-events-none hover:opacity-100 transition-opacity duration-200"
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isDragging ? 0.8 : 0 }}
+            whileHover={{ opacity: 0.5 }}
             style={{
               backgroundColor: 'rgba(0,0,0,0.03)',
             }}
           >
             <span className="font-medium text-gray-700">点击拖动此卡片</span>
-          </div>
+          </motion.div>
         ) : (
           children
         )}
       </Card>
-    </div>
+    </motion.div>
   );
 };
 

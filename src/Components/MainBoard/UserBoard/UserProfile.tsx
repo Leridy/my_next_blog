@@ -13,6 +13,7 @@ import { UserInfo } from '@/Components/UserComponents/hooks/useUserAuthData';
 import { useSiteSettingContext } from '@/Provider/SiteSettingProvider';
 import useSettingMap from '@/Components/hooks/useSettingMap';
 import useApi from '@/app/manage/hooks/useApi';
+import { motion } from 'framer-motion';
 
 const SITE_SETTING_KEY = 'UserBoard.UserProfile';
 
@@ -198,23 +199,32 @@ export default function UserProfile() {
       header={<h1>用户</h1>}
       actions={renderActions}
     >
-      {/*使用grid 布局， 将内容分为 三行三列，其中第一 二个项目占 三列，*/}
-      <div className={'h-full grid grid-rows-3 grid-cols-3 gap-2'}>
-        <div
+      <motion.div
+        className={'h-full grid grid-rows-3 grid-cols-3 gap-4'}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
           className={'flex justify-center items-center user-profile-avatar'}
           style={{ gridColumn: 'span 3' }}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: 'spring', stiffness: 300 }}
         >
           <Avatar
             size={'medium'}
             name={name || '客人'}
           />
-        </div>
+        </motion.div>
 
-        <div
+        <motion.div
           className={'flex justify-center items-center'}
           style={{ gridColumn: 'span 3' }}
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <strong className={'text-lg'}>
+          <strong className={'text-lg bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent'}>
             {name ? (
               <InputtingText
                 text={`${name},${oldSaying}`}
@@ -229,10 +239,17 @@ export default function UserProfile() {
               />
             )}
           </strong>
-        </div>
+        </motion.div>
 
-        {name ? renderInfo : renderVisitorInfo}
-      </div>
+        <motion.div
+          className="col-span-3 grid grid-cols-3 gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          {name ? renderInfo : renderVisitorInfo}
+        </motion.div>
+      </motion.div>
     </Card>
   );
 }

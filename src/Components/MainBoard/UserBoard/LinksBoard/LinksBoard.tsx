@@ -2,6 +2,7 @@ import useSettingMap from '@/Components/hooks/useSettingMap';
 import { useSiteSettingContext } from '@/Provider/SiteSettingProvider';
 import { useMemo } from 'react';
 import { Tooltip } from 'antd';
+import { motion } from 'framer-motion';
 
 const SITE_SETTING_KEY = 'UserBoard.LinksBoard';
 
@@ -25,24 +26,48 @@ export default function LinksBoard() {
       });
   }, [links]);
 
-  const renderLinks = useMemo(() => {
-    return linkList.map(({ title, url, desc }) => {
-      return (
-        <Tooltip
-          title={desc}
-          key={title}
-        >
-          <a
-            href={url}
-            rel={'noreferrer'}
-            target={'_blank'}
-          >
-            {title}
-          </a>
-        </Tooltip>
-      );
-    });
-  }, [linkList]);
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
-  return <div className={'grid gap-4 grid-cols-3'}>{renderLinks}</div>;
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 },
+  };
+
+  return (
+    <motion.div
+      className={'grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3'}
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
+      {linkList.map(({ title, url, desc }) => (
+        <motion.div
+          key={title}
+          variants={item}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <Tooltip title={desc}>
+            <a
+              href={url}
+              rel={'noreferrer'}
+              target={'_blank'}
+              className="flex items-center justify-center text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+            >
+              {title}
+            </a>
+          </Tooltip>
+        </motion.div>
+      ))}
+    </motion.div>
+  );
 }
