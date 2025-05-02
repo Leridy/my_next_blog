@@ -7,8 +7,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { CopyOutlined, CheckOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import mermaid from 'mermaid';
-import { Message } from '@/IndexedDB/HelloBoss/types';
-import { HelloBossContextType } from '@/Provider/HelloBossProvider/HelloBossProvider';
+import { Message } from '@/IndexedDB/AIChat/types';
+import { AIChatContextType } from '@/Provider/AIChatProvider/AIChatProvider';
 import { useUserContext } from '@/Provider/UserProvider';
 import { Spin, Tooltip, Button, message as antdMessage } from 'antd';
 import Avatar from '@/Components/NavBar/Avatar';
@@ -23,8 +23,8 @@ mermaid.initialize({
 interface MessageBubbleProps {
   message: Message;
   isPending?: boolean;
-  updateMessage: HelloBossContextType['updateMessage'];
-  deleteMessage: HelloBossContextType['deleteMessage'];
+  updateMessage: AIChatContextType['updateMessage'];
+  deleteMessage: AIChatContextType['deleteMessage'];
 }
 
 const MessageBubble: FC<MessageBubbleProps> = ({ message, isPending, updateMessage, deleteMessage }) => {

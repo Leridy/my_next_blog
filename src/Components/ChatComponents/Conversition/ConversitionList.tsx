@@ -6,7 +6,7 @@ import { VariableSizeList as List, ListChildComponentProps } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { format, isToday, isYesterday, parseISO } from 'date-fns';
 import { ChevronDown, Plus } from 'lucide-react';
-import { Conversation } from '@/IndexedDB/HelloBoss/types';
+import { Conversation } from '@/IndexedDB/AIChat/types';
 import ConversationItem from '@/Components/ChatComponents/Conversition/ConversationItem';
 import LoadingPanel from '@/Components/MainBoard/HotBoard/LoadingPanel';
 

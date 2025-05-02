@@ -1,11 +1,11 @@
 import React, { createContext, useReducer, useEffect, useMemo, Dispatch, ReactNode, FC, useState, useContext, useCallback } from 'react';
-import { appReducer, initialState } from './appReducer';
-import { HelloBossState, AppAction, Conversation, Configuration, ConfigurationType, Message, Preference, MessageRole, MessageStatus } from '@/IndexedDB/HelloBoss/types';
-import { ChatDatabase } from '@/IndexedDB/HelloBoss/ChatDatabase';
+import { ChatAppReducer, initialState } from './chatAppReducer';
+import { ChatState, AppAction, Conversation, Configuration, ConfigurationType, Message, Preference, MessageRole, MessageStatus } from '@/IndexedDB/AIChat/types';
+import { ChatDatabase } from '@/IndexedDB/AIChat/ChatDatabase';
 import useStreamApi, { parseSSEData } from '@/app/manage/hooks/useStreamApi';
-import useDebouncedStateSync from '@/Provider/HelloBossProvider/dbHook';
+import useDebouncedStateSync from '@/Provider/AIChatProvider/dbHook';
 
-export interface HelloBossContextType extends HelloBossState {
+export interface AIChatContextType extends ChatState {
   loading: boolean;
   isStreaming: boolean;
   isSending: boolean;
@@ -36,16 +36,22 @@ export interface HelloBossContextType extends HelloBossState {
   abortStream: () => void;
 }
 
-const HelloBossContext = createContext<HelloBossContextType | undefined>(undefined);
+const AIChatContext = createContext<AIChatContextType | undefined>(undefined);
 
-export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null }> = ({ children, userId }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState);
+export interface AIChatProviderProps {
+  userId: string | null;
+  bizName?: string;
+  apiURL?: string;
+  children: ReactNode;
+}
+export const AIChatProvider: FC<AIChatProviderProps> = ({ children, userId, bizName, apiURL = 'https://ai.huashui.cc/api/ai/hello-boss' }) => {
+  const [state, dispatch] = useReducer(ChatAppReducer, initialState);
   const [loading, setLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
 
   const db = useMemo(() => {
-    return userId ? new ChatDatabase(userId) : null;
+    return userId ? new ChatDatabase(userId, bizName) : null;
   }, [userId]);
 
   useDebouncedStateSync(db, state);
@@ -78,7 +84,7 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     configurations: Configuration[];
     messages: Message[];
   }>({
-    apiURL: 'https://ai.huashui.cc/api/ai/hello-boss',
+    apiURL,
     onChunk: useCallback(
       (chunk: string) => {
         setIsStreaming(true);
@@ -397,13 +403,13 @@ export const HelloBossProvider: FC<{ children: ReactNode; userId: string | null 
     }
   }, [userId, initializeDB, loadInitialData]);
 
-  return <HelloBossContext.Provider value={value}>{children}</HelloBossContext.Provider>;
+  return <AIChatContext.Provider value={value}>{children}</AIChatContext.Provider>;
 };
 
-export const useHelloBossContext = () => {
-  const context = useContext(HelloBossContext);
+export const useAIChatContext = () => {
+  const context = useContext(AIChatContext);
   if (!context) {
-    throw new Error('useHelloBossContext must be used within a HelloBossProvider');
+    throw new Error('useAIChatContext must be used within a AIChatProvider');
   }
   return context;
 };

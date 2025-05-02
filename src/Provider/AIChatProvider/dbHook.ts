@@ -1,9 +1,9 @@
 // 提取同步逻辑到自定义hook
 import { useCallback, useEffect } from 'react';
-import { ChatDatabase } from '@/IndexedDB/HelloBoss/ChatDatabase';
-import { HelloBossState } from '@/IndexedDB/HelloBoss/types';
+import { ChatDatabase } from '@/IndexedDB/AIChat/ChatDatabase';
+import { ChatState } from '@/IndexedDB/AIChat/types';
 
-const useDebouncedStateSync = (db: ChatDatabase | null, state: HelloBossState) => {
+const useDebouncedStateSync = (db: ChatDatabase | null, state: ChatState) => {
   const syncConversations = useCallback(async () => {
     if (!db || !state.conversations) return;
 

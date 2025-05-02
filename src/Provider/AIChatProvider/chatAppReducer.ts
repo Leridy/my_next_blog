@@ -1,7 +1,6 @@
-// appReducer.ts
-import { HelloBossState, AppAction } from '@/IndexedDB/HelloBoss/types';
+import { ChatState, AppAction } from '@/IndexedDB/AIChat/types';
 
-export const initialState: HelloBossState = {
+export const initialState: ChatState = {
   conversations: [], // 会话列表
   currentConversation: null, // 当前会话
   streamMessage: undefined, // 流消息
@@ -12,8 +11,7 @@ export const initialState: HelloBossState = {
   error: null,
 };
 
-export function appReducer(state: HelloBossState, action: AppAction): HelloBossState {
-  console.log('appReducer', action);
+export function ChatAppReducer(state: ChatState, action: AppAction): ChatState {
   switch (action.type) {
     case 'INITIALIZE_START':
       return { ...state, status: 'loading' };

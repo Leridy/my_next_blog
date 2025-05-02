@@ -1,7 +1,7 @@
-import { useHelloBossContext } from '@/Provider/HelloBossProvider/HelloBossProvider';
+import { useAIChatContext } from '@/Provider/AIChatProvider/AIChatProvider';
 
 function SessionTitle() {
-  const { currentConversation } = useHelloBossContext();
+  const { currentConversation } = useAIChatContext();
 
   // use tailwindcss to style the title
   return (

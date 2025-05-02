@@ -6,8 +6,11 @@ export class ChatDatabase {
   private db: IDBDatabase | null = null;
   private version = 1;
 
-  constructor(private userId: string) {
-    this.dbName = `boss-ai-${userId}`;
+  constructor(
+    private userId: string,
+    private bizName?: string
+  ) {
+    this.dbName = `boss-ai-${userId}${bizName ? `-${bizName}` : ''}`;
   }
 
   async initialize(): Promise<IDBDatabase> {
@@ -17,6 +20,7 @@ export class ChatDatabase {
         dbName: this.dbName,
         version: this.version,
         userId: this.userId,
+        bizName: this.bizName,
       });
       const request = indexedDB.open(this.dbName, this.version);
 

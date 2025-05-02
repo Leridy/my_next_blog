@@ -3,10 +3,10 @@
  *
  */
 import ConversationList from '@/Components/ChatComponents/Conversition/ConversitionList';
-import { useHelloBossContext } from '@/Provider/HelloBossProvider/HelloBossProvider';
+import { useAIChatContext } from '@/Provider/AIChatProvider/AIChatProvider';
 
 function ConversationPanel() {
-  const { conversations, currentConversation, pinConversation, archiveConversation, selectConversation, createConversation, deleteConversation, loading } = useHelloBossContext();
+  const { conversations, currentConversation, pinConversation, archiveConversation, selectConversation, createConversation, deleteConversation, loading } = useAIChatContext();
 
   /**
    * create and select a new conversation

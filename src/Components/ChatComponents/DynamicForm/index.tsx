@@ -6,7 +6,7 @@ import { ConfigGrid } from './ConfigGrid';
 import { ConfigEditorModal } from './ConfigEditorModal';
 import { useConfigActions } from './hooks/useConfigActions';
 import { useConfigLimits } from './hooks/useConfigLimits';
-import { Configuration, ConfigurationType } from '@/IndexedDB/HelloBoss/types';
+import { Configuration, ConfigurationType } from '@/IndexedDB/AIChat/types';
 
 export const DynamicForm: React.FC<ConfigFormProps> = ({ configurations, onAdd, onUpdate, onDelete }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);

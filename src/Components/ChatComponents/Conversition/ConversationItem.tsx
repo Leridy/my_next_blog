@@ -1,5 +1,5 @@
 // ConversationItem.tsx
-import { Conversation } from '@/IndexedDB/HelloBoss/types';
+import { Conversation } from '@/IndexedDB/AIChat/types';
 import React, { useState, MouseEvent } from 'react';
 import { format } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';

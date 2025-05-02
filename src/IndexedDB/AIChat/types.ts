@@ -67,7 +67,7 @@ export type TableName = keyof DatabaseTables;
 // types.ts (扩展部分)
 export type AppStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 
-export interface HelloBossState {
+export interface ChatState {
   conversations: Conversation[];
   currentConversation: Conversation | null;
   messages: Message[];
@@ -80,7 +80,7 @@ export interface HelloBossState {
 
 export type AppAction =
   | { type: 'INITIALIZE_START' }
-  | { type: 'INITIALIZE_SUCCESS'; payload: Partial<HelloBossState> }
+  | { type: 'INITIALIZE_SUCCESS'; payload: Partial<ChatState> }
   | { type: 'INITIALIZE_FAILURE'; error: string }
   | { type: 'SET_CURRENT_CONVERSATION'; payload: Conversation | null }
   | { type: 'ADD_CONVERSATION'; payload: Conversation }

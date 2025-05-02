@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, message as antdMessage, Space } from 'antd';
 import dynamic from 'next/dynamic';
-import { Configuration, ConfigurationType, Conversation, MessageStatus } from '@/IndexedDB/HelloBoss/types';
+import { Configuration, ConfigurationType, Conversation, MessageStatus } from '@/IndexedDB/AIChat/types';
 import { FullscreenExitOutlined, FullscreenOutlined, PlusOutlined, SendOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 

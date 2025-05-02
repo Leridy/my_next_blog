@@ -5,11 +5,15 @@ import { SiteSettingProvider } from '@/Provider/SiteSettingProvider';
 import AIChatContainer from '@/Components/AIChat/AIChatContainer';
 import { UserProvider } from '@/Provider/UserProvider';
 
-export default function HelloBoss() {
+export default function ResuMate() {
   return (
     <SiteSettingProvider>
       <UserProvider>
-        <AIChatContainer />
+        <AIChatContainer
+          bizName={'ResuMate'}
+          slogan={'简历有AI，匹配无阻碍'}
+          apiURL={'https://ai.huashui.cc/api/ai/resumate'}
+        />
       </UserProvider>
     </SiteSettingProvider>
   );

@@ -3,15 +3,15 @@ import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CommentOutlined, SmileOutlined } from '@ant-design/icons';
 import MessageBubble from './MessageBubble';
-import { Conversation, Message, MessageStatus } from '@/IndexedDB/HelloBoss/types';
-import { HelloBossContextType } from '@/Provider/HelloBossProvider/HelloBossProvider';
+import { Conversation, Message, MessageStatus } from '@/IndexedDB/AIChat/types';
+import { AIChatContextType } from '@/Provider/AIChatProvider/AIChatProvider';
 
 interface MessageBoardProps {
   currentConversationId?: Conversation['id'];
   messages?: Message[];
   status?: MessageStatus;
-  updateMessage: HelloBossContextType['updateMessage'];
-  deleteMessage: HelloBossContextType['deleteMessage'];
+  updateMessage: AIChatContextType['updateMessage'];
+  deleteMessage: AIChatContextType['deleteMessage'];
 }
 
 const MessageBoard = (props: MessageBoardProps) => {

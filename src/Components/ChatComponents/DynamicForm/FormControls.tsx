@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Space } from 'antd';
 import { FileTextOutlined, UserSwitchOutlined, CommentOutlined, PlusOutlined } from '@ant-design/icons';
-import { ConfigurationType } from '@/IndexedDB/HelloBoss/types';
+import { ConfigurationType } from '@/IndexedDB/AIChat/types';
 
 interface FormControlsProps {
   onAdd: (type: ConfigurationType) => void;

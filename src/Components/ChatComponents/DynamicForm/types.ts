@@ -1,4 +1,4 @@
-import { Configuration } from '@/IndexedDB/HelloBoss/types';
+import { Configuration } from '@/IndexedDB/AIChat/types';
 
 export interface ConfigFormProps {
   configurations: Configuration[];

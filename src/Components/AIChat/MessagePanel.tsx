@@ -3,14 +3,14 @@
  * @description MessagePanel component for displaying messages in a chat application.
  */
 
-import { useHelloBossContext } from '@/Provider/HelloBossProvider/HelloBossProvider';
+import { useAIChatContext } from '@/Provider/AIChatProvider/AIChatProvider';
 
 export { useEffect, useState } from 'react';
 import MessageBoard from '@/Components/ChatComponents/ChatMessageContainer/MessageBoard';
 import MessageInputBox from '@/Components/ChatComponents/ChatMessageContainer/MessageInputBox';
 
 function MessagePanel() {
-  const { currentConversation, messages, sendMessage, streamMessage, updateMessage, deleteMessage, createConversation } = useHelloBossContext();
+  const { currentConversation, messages, sendMessage, streamMessage, updateMessage, deleteMessage, createConversation } = useAIChatContext();
   return (
     <>
       <MessageBoard

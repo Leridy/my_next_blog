@@ -1,4 +1,4 @@
-import { Configuration, ConfigurationType } from '@/IndexedDB/HelloBoss/types';
+import { Configuration, ConfigurationType } from '@/IndexedDB/AIChat/types';
 import { message } from 'antd';
 
 export const useConfigLimits = (configurations: Configuration[]) => {

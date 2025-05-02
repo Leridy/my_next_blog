@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConfigCard } from './ConfigCard';
-import { Configuration } from '@/IndexedDB/HelloBoss/types';
+import { Configuration } from '@/IndexedDB/AIChat/types';
 import BuyMeCoffee from '@/Components/BuyMeCoffee';
 import { Empty } from 'antd';
 import CommentsBoard from '@/Components/CommentsBoard';

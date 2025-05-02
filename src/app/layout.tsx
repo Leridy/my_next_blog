@@ -46,6 +46,27 @@ export const metadata: Metadata = {
   ],
 };
 
+function computedTheme(): string {
+  const month = new Date().getMonth() + 1;
+  let autoTheme = 'default';
+
+  // 春季主题 (3-5月)
+  if (month >= 3 && month <= 5) {
+    autoTheme = 'spring';
+  }
+  // 夏季主题 (6-8月)
+  else if (month >= 6 && month <= 8) {
+    autoTheme = 'summer';
+  }
+  // 秋季主题 (9-11月)
+  else if (month >= 9 && month <= 11) {
+    autoTheme = 'autumn';
+  }
+  // 冬季使用默认主题 (12-2月)
+
+  return autoTheme;
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -63,6 +84,7 @@ export default async function RootLayout({
     <html
       lang="en"
       className={'h-full'}
+      data-theme={computedTheme()}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: code }} />

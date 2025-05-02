@@ -2,11 +2,11 @@
  * ConversationPanel.tsx
  *
  */
-import { useHelloBossContext } from '@/Provider/HelloBossProvider/HelloBossProvider';
+import { useAIChatContext } from '@/Provider/AIChatProvider/AIChatProvider';
 import { DynamicForm } from '@/Components/ChatComponents/DynamicForm';
 
 function ConfigurationPanel() {
-  const { configurations, addConfiguration, updateConfiguration, deleteConfiguration } = useHelloBossContext();
+  const { configurations, addConfiguration, updateConfiguration, deleteConfiguration } = useAIChatContext();
 
   /**
    * handle delete conversation
