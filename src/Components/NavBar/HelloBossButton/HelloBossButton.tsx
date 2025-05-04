@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Button, Tooltip } from 'antd';
+import { Dropdown, Space, Tooltip } from 'antd';
 import { ReactNode, useState } from 'react';
 import useSettingMap from '@/Components/hooks/useSettingMap';
 import { useSiteSettingContext } from '@/Provider/SiteSettingProvider';
@@ -26,6 +26,12 @@ const HelloBossButton = ({ tooltipContent = '点击探索全新功能' }: Attrac
 
   const handleClick = () => {
     router.push('/hello-boss');
+  };
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    if (key === 'ResuMate') {
+      router.push('/resu-mate');
+    }
   };
 
   return (
@@ -67,37 +73,49 @@ const HelloBossButton = ({ tooltipContent = '点击探索全新功能' }: Attrac
         onHoverStart={() => setIsTooltipVisible(true)}
         onHoverEnd={() => setIsTooltipVisible(false)}
       >
-        <Button
-          type="primary"
-          size="middle"
-          onClick={handleClick}
-          className="relative overflow-hidden"
-          danger
-        >
-          <motion.span
-            className="relative z-10 font-bold"
-            whileHover={{ scale: 1.05 }}
-          >
-            HELLO BOSS
-          </motion.span>
-
-          <motion.div
-            className="absolute inset-0 bg-blue-500 opacity-0"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileHover={{ opacity: 0.2, scale: 1.2 }}
-            transition={{ duration: 0.3 }}
-          />
-
-          <motion.div
-            className="absolute inset-0 bg-white rounded-full"
-            initial={{ scale: 0, opacity: 0 }}
-            whileTap={{
-              scale: 2,
-              opacity: 0.3,
-              transition: { duration: 0.5 },
+        <Space.Compact>
+          <Dropdown.Button
+            type="primary"
+            size="middle"
+            onClick={handleClick}
+            className="relative overflow-hidden"
+            trigger={['click']}
+            danger
+            menu={{
+              onClick: handleMenuClick,
+              items: [
+                {
+                  key: 'ResuMate',
+                  label: 'ResuMate - HR 的简历好帮手',
+                },
+              ],
             }}
-          />
-        </Button>
+          >
+            <motion.span
+              className="relative z-10 font-bold"
+              whileHover={{ scale: 1.05 }}
+            >
+              HELLO BOSS
+            </motion.span>
+
+            <motion.div
+              className="absolute inset-0 bg-blue-500 opacity-0"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileHover={{ opacity: 0.2, scale: 1.2 }}
+              transition={{ duration: 0.3 }}
+            />
+
+            <motion.div
+              className="absolute inset-0 bg-white rounded-full"
+              initial={{ scale: 0, opacity: 0 }}
+              whileTap={{
+                scale: 2,
+                opacity: 0.3,
+                transition: { duration: 0.5 },
+              }}
+            />
+          </Dropdown.Button>
+        </Space.Compact>
       </motion.div>
     </Tooltip>
   );
