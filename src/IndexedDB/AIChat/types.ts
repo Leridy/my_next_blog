@@ -1,7 +1,7 @@
 // types.ts
 export type MessageRole = 'user' | 'assistant' | 'system';
 export type MessageStatus = 'pending' | 'sent' | 'failed';
-export type ConfigurationType = 'resume' | 'boss-role' | 'display' | 'preference' | 'extra' | 'prompt';
+export type ConfigurationType = 'resume' | 'boss-role' | 'display' | 'preference' | 'extra' | 'prompt' | 'jd';
 export type ThemePreference = 'light' | 'dark';
 
 export interface Conversation {

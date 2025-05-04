@@ -97,7 +97,7 @@ export const ConfigGrid: React.FC<ConfigGridProps> = ({ configurations, onEdit, 
             </motion.div>
 
             <motion.div
-              key="buy-me-coffee"
+              key="comments-board"
               layout
               variants={itemVariants}
               className="h-full md:col-span-2 lg:col-span-3 xl:col-span-4"

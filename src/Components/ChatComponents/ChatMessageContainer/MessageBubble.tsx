@@ -176,6 +176,125 @@ const MessageBubble: FC<MessageBubbleProps> = ({ message, isPending, updateMessa
                     {children}
                   </td>
                 ),
+                ol: ({ children, ...props }) => (
+                  <ol
+                    className="list-decimal pl-5"
+                    {...props}
+                  >
+                    {children}
+                  </ol>
+                ),
+                ul: ({ children, ...props }) => (
+                  <ul
+                    className="list-disc pl-5"
+                    {...props}
+                  >
+                    {children}
+                  </ul>
+                ),
+
+                a: ({ href, children, ...props }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--color-primary)] hover:underline"
+                    {...props}
+                  >
+                    {children}
+                  </a>
+                ),
+                h1: ({ children, ...props }) => (
+                  <h1
+                    className="text-2xl font-bold mt-6 mb-4"
+                    {...props}
+                  >
+                    {children}
+                  </h1>
+                ),
+                h2: ({ children, ...props }) => (
+                  <h2
+                    className="text-xl font-bold mt-5 mb-3"
+                    {...props}
+                  >
+                    {children}
+                  </h2>
+                ),
+                h3: ({ children, ...props }) => (
+                  <h3
+                    className="text-lg font-bold mt-4 mb-2"
+                    {...props}
+                  >
+                    {children}
+                  </h3>
+                ),
+                h4: ({ children, ...props }) => (
+                  <h4
+                    className="text-base font-bold mt-3 mb-2"
+                    {...props}
+                  >
+                    {children}
+                  </h4>
+                ),
+                h5: ({ children, ...props }) => (
+                  <h5
+                    className="text-sm font-bold mt-2 mb-1"
+                    {...props}
+                  >
+                    {children}
+                  </h5>
+                ),
+                h6: ({ children, ...props }) => (
+                  <h6
+                    className="text-xs font-bold mt-2 mb-1"
+                    {...props}
+                  >
+                    {children}
+                  </h6>
+                ),
+                p: ({ children, ...props }) => (
+                  <p
+                    className="my-2 leading-relaxed"
+                    {...props}
+                  >
+                    {children}
+                  </p>
+                ),
+                hr: () => <hr className="my-4 border-t border-[var(--color-border)]" />,
+                br: () => <br />,
+                img: ({ src, alt, ...props }) => (
+                  <img
+                    src={src}
+                    alt={alt}
+                    className="max-w-full h-auto rounded-lg my-4"
+                    loading="lazy"
+                    {...props}
+                  />
+                ),
+                strong: ({ children, ...props }) => (
+                  <strong
+                    className="font-bold"
+                    {...props}
+                  >
+                    {children}
+                  </strong>
+                ),
+                em: ({ children, ...props }) => (
+                  <em
+                    className="italic"
+                    {...props}
+                  >
+                    {children}
+                  </em>
+                ),
+                del: ({ children, ...props }) => (
+                  <del
+                    className="line-through"
+                    {...props}
+                  >
+                    {children}
+                  </del>
+                ),
               }}
             >
               {message.content}

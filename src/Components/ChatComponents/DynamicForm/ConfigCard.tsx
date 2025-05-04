@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { ConfigCardProps } from './types';
 import { DeleteOutlined, SettingOutlined, FileTextOutlined } from '@ant-design/icons';
+import { CONFIG_TYPES } from './ConfigEditorModal';
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor').then((mod) => mod.default.Markdown), { ssr: false });
 
@@ -15,7 +16,9 @@ export const ConfigCard: React.FC<ConfigCardProps> = ({ config, onEdit, onDelete
   >
     <div className="bg-[var(--color-card-background)] rounded-lg shadow-md h-full flex flex-col overflow-hidden border border-[var(--color-border)] transition-all duration-200 hover:border-[var(--color-secondary)]">
       <div className="p-2 border-b border-[var(--color-border)] flex justify-between items-center bg-[var(--color-quaternary)]">
-        <h3 className="font-medium text-[var(--color-text)] truncate text-lg">{config.name}</h3>
+        <h3 className="font-medium text-[var(--color-text)] truncate text-lg">
+          【{CONFIG_TYPES.filter((type) => type.value === config.type)[0]?.label}】- {config.name}
+        </h3>
         <div className="flex space-x-3">
           <motion.button
             onClick={(e) => {

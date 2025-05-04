@@ -14,6 +14,10 @@ export interface ConfigEditorModalProps {
   onCancel: () => void;
 }
 
+export interface ConfigEditorModalRef {
+  open: (config?: Configuration) => Promise<Configuration | undefined>;
+}
+
 export interface ConfigCardProps {
   config: Configuration;
   onEdit: () => void;

@@ -18,6 +18,13 @@ export const useConfigLimits = (configurations: Configuration[]) => {
         }
         return true;
 
+      case 'jd':
+        if (configurations.filter((c) => c.type === 'jd').length >= 1) {
+          message.warning('最多只能添加一份JD');
+          return false;
+        }
+        return true;
+
       default:
         return true;
     }
