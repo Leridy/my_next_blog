@@ -51,7 +51,7 @@ const MessageBoard = (props: MessageBoardProps) => {
         animate={{ opacity: 1 }}
       >
         <SmileOutlined className="text-5xl mb-4" />
-        <p className="text-lg">发送第一条 JD 开始吧</p>
+        <p className="text-lg">发条消息试试吧</p>
       </motion.div>
     );
   }

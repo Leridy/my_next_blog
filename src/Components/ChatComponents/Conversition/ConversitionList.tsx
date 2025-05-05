@@ -9,6 +9,7 @@ import { ChevronDown, Plus } from 'lucide-react';
 import { Conversation } from '@/IndexedDB/AIChat/types';
 import ConversationItem from '@/Components/ChatComponents/Conversition/ConversationItem';
 import LoadingPanel from '@/Components/MainBoard/HotBoard/LoadingPanel';
+import { UserAddOutlined } from '@ant-design/icons';
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -19,6 +20,7 @@ interface ConversationListProps {
   onNewConversation?: () => void;
   onDelete?: (id: string) => void;
   loading?: boolean;
+  isLogin?: boolean;
 }
 
 interface GroupedConversations {
@@ -41,6 +43,7 @@ const GroupHeader: React.FC<{
       className="flex items-center justify-between px-4 py-3 bg-quaternary/50 text-text cursor-pointer"
       onClick={onToggle}
       whileHover={{ backgroundColor: 'var(--color-quaternary)' }}
+      whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.15 }}
       initial={false}
     >
@@ -59,7 +62,7 @@ const GroupHeader: React.FC<{
 };
 
 const ConversationList: React.FC<ConversationListProps> = (props) => {
-  const { conversations, currentId, onSelect, onPin, onArchive, onNewConversation, onDelete, loading = false } = props;
+  const { conversations, currentId, onSelect, onPin, onArchive, onNewConversation, onDelete, loading = false, isLogin } = props;
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
@@ -162,7 +165,12 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
           if (index < currentIndex + group.conversations.length) {
             const conv = group.conversations[index - currentIndex];
             return (
-              <div style={style}>
+              <motion.div
+                style={style}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+              >
                 <ConversationItem
                   conversation={conv}
                   isActive={conv.id === currentId}
@@ -171,7 +179,7 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
                   onArchive={onArchive}
                   onDelete={onDelete}
                 />
-              </div>
+              </motion.div>
             );
           }
           currentIndex += group.conversations.length;
@@ -208,26 +216,32 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
 
   return (
     <div className="flex flex-col h-full select-none bg-background">
-      {loading ? (
-        <LoadingPanel />
-      ) : (
-        <>
-          <div className="p-4 border-b border-border">
-            <Input.Search
-              placeholder="搜索会话..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              allowClear
-              className="w-full rounded-lg"
-              size="large"
-            />
-          </div>
+      <>
+        <motion.div
+          className="p-4 border-b border-border"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Input.Search
+            placeholder="搜索会话..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            allowClear
+            className="w-full rounded-lg"
+            size="large"
+          />
+        </motion.div>
 
+        <motion.div
+          className="p-3 border-b border-border"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, delay: 0.1 }}
+        >
           <motion.div
-            className="p-3 border-b border-border"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             <Button
               onClick={onNewConversation}
@@ -243,8 +257,30 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
               新会话
             </Button>
           </motion.div>
+        </motion.div>
 
-          <div className="flex-1 overflow-hidden">
+        <motion.div
+          className="flex-1 overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          {!isLogin && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex items-center justify-center h-full"
+            >
+              <p className="text-gray-500">
+                <UserAddOutlined />
+                请登录以查看会话
+              </p>
+            </motion.div>
+          )}
+          {isLogin && loading ? (
+            <LoadingPanel />
+          ) : (
             <AutoSizer>
               {({ height, width }) => (
                 <List
@@ -258,9 +294,9 @@ const ConversationList: React.FC<ConversationListProps> = (props) => {
                 </List>
               )}
             </AutoSizer>
-          </div>
-        </>
-      )}
+          )}
+        </motion.div>
+      </>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import useStreamApi, { parseSSEData } from '@/app/manage/hooks/useStreamApi';
 import useDebouncedStateSync from '@/Provider/AIChatProvider/dbHook';
 
 export interface AIChatContextType extends ChatState {
+  isLogin: boolean;
   loading: boolean;
   isStreaming: boolean;
   isSending: boolean;
@@ -54,6 +55,8 @@ export const AIChatProvider: FC<AIChatProviderProps> = ({ onRequestLogin, childr
   const db = useMemo(() => {
     return userId ? new ChatDatabase(userId, bizName) : null;
   }, [userId]);
+
+  const isLogin = useMemo(() => !!userId, [userId]);
 
   useDebouncedStateSync(db, state);
 
@@ -334,6 +337,7 @@ export const AIChatProvider: FC<AIChatProviderProps> = ({ onRequestLogin, childr
   const value = useMemo(
     () => ({
       ...state,
+      isLogin,
       loading,
       isStreaming,
       isSending,

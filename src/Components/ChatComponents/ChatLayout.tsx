@@ -12,8 +12,15 @@ interface HeaderProps {
   rightContent?: ReactNode;
 }
 
+const getLayoutStyles = ({ isLargeScreen, isMediumScreen }: Record<string, boolean>) => {
+  if (isLargeScreen) return '300px minmax(0, 1fr) 450px';
+  if (isMediumScreen) return '250px minmax(0, 1fr) 300px';
+  return 'minmax(0, 1fr)';
+};
 const Header: FC<HeaderProps> = ({ leftContent = 'HELLO BOSS，你的AI求职军师，开口就是offer敲门砖', centerContent, rightContent }) => {
   const router = useRouter();
+  const isLargeScreen = useMediaQuery({ minWidth: 1280 });
+  const isMediumScreen = useMediaQuery({ minWidth: 768, maxWidth: 1279 });
 
   const handleBackToMainBoard = () => {
     router.push('/');
@@ -21,16 +28,16 @@ const Header: FC<HeaderProps> = ({ leftContent = 'HELLO BOSS，你的AI求职军
 
   return (
     <motion.header
-      className="h-16 px-4 flex justify-between items-center border-b border-[var(--color-border)] bg-[var(--color-navbar-background)]"
+      className="h-16 px-4 grid justify-between items-center border-b border-[var(--color-border)] bg-[var(--color-navbar-background)]"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
       style={{
         color: 'var(--color-text-light)',
-        gridTemplateColumns: 'auto minmax(0, 1fr) auto',
+        gridTemplateColumns: getLayoutStyles({ isLargeScreen, isMediumScreen }),
       }}
       whileHover={{
-        backgroundColor: 'var(--color-navbar-background-hover)',
+        backgroundColor: 'var(--color-navbar-background)',
         transition: { duration: 0.2 },
       }}
     >
@@ -81,12 +88,6 @@ const CustomLayout: FC<{
   const isLargeScreen = useMediaQuery({ minWidth: 1280 });
   const isMediumScreen = useMediaQuery({ minWidth: 768, maxWidth: 1279 });
 
-  const getLayoutStyles = () => {
-    if (isLargeScreen) return '300px minmax(0, 1fr) 450px';
-    if (isMediumScreen) return '250px minmax(0, 1fr) 300px';
-    return 'minmax(0, 1fr)';
-  };
-
   return (
     <div className="h-screen flex flex-col bg-[var(--color-background)]">
       {header}
@@ -96,7 +97,7 @@ const CustomLayout: FC<{
         transition={{ duration: 0.3 }}
         className="grid flex-1 overflow-hidden"
         style={{
-          gridTemplateColumns: getLayoutStyles(),
+          gridTemplateColumns: getLayoutStyles({ isLargeScreen, isMediumScreen }),
           width: '100%',
         }}
       >

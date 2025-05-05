@@ -6,7 +6,7 @@ import ConversationList from '@/Components/ChatComponents/Conversition/Conversit
 import { useAIChatContext } from '@/Provider/AIChatProvider/AIChatProvider';
 
 function ConversationPanel() {
-  const { conversations, currentConversation, pinConversation, archiveConversation, selectConversation, createConversation, deleteConversation, loading } = useAIChatContext();
+  const { conversations, currentConversation, pinConversation, archiveConversation, selectConversation, createConversation, deleteConversation, loading, isLogin } = useAIChatContext();
 
   /**
    * create and select a new conversation
@@ -30,6 +30,7 @@ function ConversationPanel() {
       onPin={pinConversation}
       onDelete={deleteConversation}
       loading={loading}
+      isLogin={isLogin}
     />
   );
 }

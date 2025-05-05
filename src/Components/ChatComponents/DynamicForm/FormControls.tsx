@@ -17,8 +17,8 @@ export const FormControls: React.FC<FormControlsProps> = ({ onAdd }) => (
       icon={<PlusOutlined />}
       type="primary"
       style={{
-        backgroundColor: 'var(--color-quaternary)',
-        borderColor: 'var(--color-quaternary)',
+        backgroundColor: 'var(--color-primary)',
+        borderColor: 'var(--color-primary)',
         display: 'flex',
         alignItems: 'center',
         gap: '6px',
