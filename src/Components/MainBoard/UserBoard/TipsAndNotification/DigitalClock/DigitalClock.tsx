@@ -52,7 +52,7 @@ export default function DigitalClock(props: DigitalClockProps) {
         )}
 
         <motion.span
-          className={'text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent'}
+          className={'text-2xl font-bold bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-primary)] bg-clip-text text-transparent'}
           key={time.toLocaleTimeString()}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -224,7 +224,7 @@ export default function UserProfile() {
           animate={{ y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <strong className={'text-lg bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent'}>
+          <strong className={'text-lg bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-primary)] bg-clip-text text-opacity-10 text-[var(--color-primary-transparent)]'}>
             {name ? (
               <InputtingText
                 text={`${name},${oldSaying}`}
