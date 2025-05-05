@@ -43,8 +43,9 @@ export interface AIChatProviderProps {
   bizName?: string;
   apiURL?: string;
   children: ReactNode;
+  onRequestLogin?: () => void;
 }
-export const AIChatProvider: FC<AIChatProviderProps> = ({ children, userId, bizName, apiURL = 'https://ai.huashui.cc/api/ai/hello-boss' }) => {
+export const AIChatProvider: FC<AIChatProviderProps> = ({ onRequestLogin, children, userId, bizName, apiURL = 'https://ai.huashui.cc/api/ai/hello-boss' }) => {
   const [state, dispatch] = useReducer(ChatAppReducer, initialState);
   const [loading, setLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
@@ -222,7 +223,10 @@ export const AIChatProvider: FC<AIChatProviderProps> = ({ children, userId, bizN
 
   const createConversation = useCallback(
     async (title: string) => {
-      if (!db) throw new Error('Database not initialized');
+      if (!db) {
+        if (!userId) onRequestLogin?.();
+        throw new Error('Database not initialized');
+      }
       const newConversation = {
         title,
         createdAt: Date.now(),
@@ -317,7 +321,10 @@ export const AIChatProvider: FC<AIChatProviderProps> = ({ children, userId, bizN
 
   const updateConversation = useCallback(
     async (id: string, updates: Partial<Conversation>) => {
-      if (!db) throw new Error('Database not initialized');
+      if (!db) {
+        if (!userId) onRequestLogin?.();
+        throw new Error('Database not initialized');
+      }
       await db.updateConversation(id, updates);
       dispatch({ type: 'UPDATE_CONVERSATION', payload: { id, updates } });
     },
@@ -364,7 +371,10 @@ export const AIChatProvider: FC<AIChatProviderProps> = ({ children, userId, bizN
         dispatch({ type: 'DELETE_MESSAGE', payload: id });
       },
       addConfiguration: async (config: Omit<Configuration, 'id'>) => {
-        if (!db) throw new Error('Database not initialized');
+        if (!db) {
+          if (!userId) onRequestLogin?.();
+          throw new Error('Database not initialized');
+        }
         const id = await db.addConfiguration(config);
         const newConfig = { ...config, id, createdAt: Date.now(), updatedAt: Date.now() };
         dispatch({ type: 'ADD_CONFIGURATION', payload: newConfig });

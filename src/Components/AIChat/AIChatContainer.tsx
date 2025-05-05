@@ -6,21 +6,24 @@ import ConversationPanel from '@/Components/AIChat/ConversationPanel';
 import SessionTitle from '@/Components/AIChat/SessionTitle';
 import MessagePanel from '@/Components/AIChat/MessagePanel';
 import ConfigurationPanel from '@/Components/AIChat/ConfigurationPanel';
+import UserModal from '@/Components/UserComponents/UserModal';
 
 interface Props {
   bizName?: string;
   slogan?: string;
   apiURL?: string;
 }
+
 function AIChatContainer(props: Props) {
   const { bizName, slogan, apiURL } = props;
-  const { user } = useUserContext();
+  const { user, modalVisible, hideModal, handleModalSuccess, modalType, showModal } = useUserContext();
 
   return (
     <AIChatProvider
       userId={user?.id.toString() || null}
       bizName={bizName || ''}
       apiURL={apiURL}
+      onRequestLogin={() => showModal(true)}
     >
       <ChatLayout
         leftContent={slogan || 'HELLO BOSS，用 AI 打败已读不回'}
@@ -29,6 +32,15 @@ function AIChatContainer(props: Props) {
         sessionPanel={<ConversationPanel />}
         configPanel={<ConfigurationPanel />}
       />
+      {modalVisible && (
+        <UserModal
+          visible={modalVisible}
+          onClose={hideModal}
+          onLogin={handleModalSuccess}
+          onRegister={handleModalSuccess}
+          defaultType={modalType}
+        />
+      )}
     </AIChatProvider>
   );
 }

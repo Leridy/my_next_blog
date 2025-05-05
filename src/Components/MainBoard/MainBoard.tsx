@@ -9,6 +9,8 @@ import './MainBoard.style.scss';
 import ScrollController from '@/Components/MainBoard/ScrollController/ScrollController';
 import BrowserFingerprint from '@/Components/BrowserFingerprint/BrowserFingerprint';
 import { motion } from 'framer-motion';
+import { useUserContext } from '@/Provider/UserProvider';
+import UserModal from '../UserComponents/UserModal';
 
 interface MainBoardProps {
   keyword: string;
@@ -20,6 +22,7 @@ interface MainBoardProps {
  */
 export default function MainBoard(props: MainBoardProps) {
   const { keyword } = props;
+  const { modalVisible, hideModal, handleModalSuccess, modalType } = useUserContext();
   const [openedLink, setOpenedLink] = useState<string>('');
   const [focus, setFocus] = useState<number | null>(null);
 
@@ -207,6 +210,16 @@ export default function MainBoard(props: MainBoardProps) {
           url={openedLink}
           onClose={() => setOpenedLink('')}
           title={'Opened Link'}
+        />
+      )}
+
+      {modalVisible && (
+        <UserModal
+          visible={modalVisible}
+          onClose={hideModal}
+          onLogin={handleModalSuccess}
+          onRegister={handleModalSuccess}
+          defaultType={modalType}
         />
       )}
       <BrowserFingerprint />
