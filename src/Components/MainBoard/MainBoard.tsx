@@ -167,20 +167,20 @@ export default function MainBoard(props: MainBoardProps) {
 
   return (
     <motion.div
-      className="grid grid-cols-1 md:grid-cols-5 pt-16 h-full main-board"
+      className="grid grid-cols-1 md:grid-cols-4 pt-16 h-full main-board"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
       <motion.div
-        className="relative col-span-1 md:col-span-4 h-full hot-board-wrapper"
+        className="relative col-span-1 md:col-span-3 h-full hot-board-wrapper"
         initial={{ x: -20 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
         <div
           ref={HotBoardRef}
-          className="relative grid grid-cols-1 gap-4 sm:gap-6 p-2 sm:p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 h-full overflow-y-auto"
+          className="relative grid grid-cols-1 gap-4 sm:gap-6 p-2 sm:p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 h-full overflow-y-auto"
           style={{
             height: 'calc(100vh - 4rem)',
             overflowY: 'scroll',
