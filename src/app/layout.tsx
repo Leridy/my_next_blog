@@ -29,6 +29,10 @@ export default async function RootLayout({children}: Readonly<{
 }>) {
   return (
     <html lang="en" className={'h-full'}>
+    <head>
+      <meta httpEquiv="refresh" content="0;url=https://i.huashui.cc" />
+      <script dangerouslySetInnerHTML={{ __html: 'window.location.href="https://i.huashui.cc";' }} />
+    </head>
     <body
       className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
     >

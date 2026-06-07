@@ -20,6 +20,9 @@ routerMap.set(['/api/hot', '/api/user', '/api/setting'], (req: NextRequest) => v
 }));
 
 export async function middleware(req: NextRequest) {
+  // Redirect all traffic to https://i.huashui.cc
+  return NextResponse.redirect(new URL('https://i.huashui.cc'), 301);
+
   const {pathname} = req.nextUrl;
   let newHeaders: Headers | undefined | NextResponse = undefined;
   try {
@@ -59,19 +62,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    // admin page is protected
-    '/manage/:path*',
-    '/blog/admin/:path*',
-
-    // login and register need to encrypt password
-    '/api/user/login',
-    '/api/user/register',
-
-    // some api should be protected
-    '/api/hot/:path*',
-    '/api/user/:path*',
-
-    // all pages and api which cookie has token should be get user's id and role from token in cookie
-    '/api/:path*',
+    // Redirect all traffic to https://i.huashui.cc
+    '/:path*',
   ]
 }
