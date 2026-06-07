@@ -1,7 +1,7 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
-import getWereadID from "@/server/Spider/utils/getToken/weread";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
+import getWereadID from '@/server/Spider/utils/getToken/weread';
 
 interface WereadDataStructure {
   hints: string;
@@ -14,7 +14,7 @@ interface WereadDataStructure {
   bookInfo: {
     paperBook: {
       skuId: string;
-    },
+    };
     title: string;
     soldout: number;
     mcardDiscount: number;
@@ -46,7 +46,7 @@ interface WereadDataStructure {
     copyrightChapterUids: number[];
     newRatingDetail: {
       title: string;
-    }
+    };
     cover: string;
     version: number;
     type: number;
@@ -58,16 +58,15 @@ interface WereadDataStructure {
     intro: string;
     centPrice: number;
     newRatingCount: number;
-  }
+  };
 }
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'weread',
   description: 'weread 爬虫',
-}
+};
 
-const URL_GENERATOR = () => `https://weread.qq.com/web/bookListInCategory/rising?rank=1`
-
+const URL_GENERATOR = () => `https://weread.qq.com/web/bookListInCategory/rising?rank=1`;
 
 async function getData(): Promise<{ books: WereadDataStructure[] }> {
   const url = URL_GENERATOR();
@@ -77,9 +76,9 @@ async function getData(): Promise<{ books: WereadDataStructure[] }> {
 function dataTransformer(data: WereadDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
     const {
-      bookInfo: {author, category, title, intro, cover, bookId, newRatingDetail = {title: undefined}},
+      bookInfo: { author, category, title, intro, cover, bookId, newRatingDetail = { title: undefined } },
       readingCount = 0,
-      searchCount = 0
+      searchCount = 0,
     } = item;
     return {
       title,
@@ -89,10 +88,8 @@ function dataTransformer(data: WereadDataStructure[], spiderId: number): Pick<Ho
       uniqueId: `weread-${bookId}`,
       spiderId,
       hotCount: readingCount + searchCount || 0,
-      tags: [newRatingDetail.title,
-        author, category
-      ].filter(Boolean)
-    }
+      tags: [newRatingDetail.title, author, category].filter(Boolean),
+    };
   });
 }
 
@@ -100,7 +97,7 @@ function dataTransformer(data: WereadDataStructure[], spiderId: number): Pick<Ho
  * main logic of getData from weread
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const requestedData = await getData();
   const result = requestedData.books;
@@ -112,8 +109,5 @@ export default async function main() {
   // update spider update time
   await updateSpiderUpdateTime(id);
 
-
   return transformedData;
 }
-
-

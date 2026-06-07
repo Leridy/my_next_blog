@@ -4,7 +4,7 @@ export function mergeHeaderObj(headerObj1: Record<string, string | string[]>, he
   // 2. 如果它们的 value 中有一个或都是 string[] 则将他们合并成 string[]
   // 如果 key 不相同，则按照原有的值做合并
 
-  const obj = {...headerObj1};
+  const obj = { ...headerObj1 };
 
   Object.keys(headerObj2).forEach((key) => {
     if (obj[key] === undefined) {
@@ -24,7 +24,7 @@ export function mergeHeaderObj(headerObj1: Record<string, string | string[]>, he
         }
       }
     }
-  })
+  });
 
   return obj;
 }

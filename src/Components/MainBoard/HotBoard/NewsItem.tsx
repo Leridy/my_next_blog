@@ -1,6 +1,6 @@
 import './NewsItem.styles.scss';
-import {useCallback, useMemo} from "react";
-import {HotNews} from "@prisma/client";
+import { useCallback, useMemo } from 'react';
+import { HotNews } from '@prisma/client';
 
 export interface NewsItemProps extends HotNews {
   index: number;
@@ -11,11 +11,7 @@ export interface NewsItemProps extends HotNews {
 /**
  * use gold yellow and red to show the index to make it more eye-catching
  */
-const IndexColor = [
-  'text-amber-600',
-  'text-amber-500',
-  'text-amber-400',
-]
+const IndexColor = ['text-amber-600', 'text-amber-500', 'text-amber-400'];
 
 /**
  * NewsItem Component
@@ -24,13 +20,13 @@ const IndexColor = [
  */
 
 export default function NewsItem(props: NewsItemProps) {
-  const {index, title, url, tags, hotCount, description, keyword, onClick, id} = props;
+  const { index, title, url, tags, hotCount, description, keyword, onClick, id } = props;
 
   const handleLinkClick = useCallback(() => {
     if (url && onClick) {
       onClick(url, id);
     }
-  }, [id, onClick, url])
+  }, [id, onClick, url]);
 
   const renderExtraData = useMemo(() => {
     // Make number as a number with number unit like 10,000 → 1万, 12000 → 1.2万,
@@ -46,7 +42,7 @@ export default function NewsItem(props: NewsItemProps) {
     }
 
     return '';
-  }, [hotCount, tags])
+  }, [hotCount, tags]);
 
   const renderTitleWithHighlight = useMemo(() => {
     let newTitle = title;
@@ -65,23 +61,22 @@ export default function NewsItem(props: NewsItemProps) {
 
     // 如果 title 包含 红 蓝 橙 字符，进行替换
     const colorMap: Record<string, string> = {
-      '红': 'bg-red-500',
-      '蓝': 'bg-blue-500',
-      '橙': 'bg-orange-500'
+      红: 'bg-red-500',
+      蓝: 'bg-blue-500',
+      橙: 'bg-orange-500',
     };
-
 
     for (const color in colorMap) {
       const reg = new RegExp(`${color}(\\d+)`, 'g');
-      newTitle = newTitle.replace(reg, (_, num) => {
-        return `<span class="${colorMap[color]} text-white font-bold rounded-md px-1">${num}</span>`;
-      }).replace(/,/g, ' ');
+      newTitle = newTitle
+        .replace(reg, (_, num) => {
+          return `<span class="${colorMap[color]} text-white font-bold rounded-md px-1">${num}</span>`;
+        })
+        .replace(/,/g, ' ');
     }
 
-
-
     return newTitle;
-  }, [keyword, title])
+  }, [keyword, title]);
 
   return (
     <div
@@ -93,10 +88,9 @@ export default function NewsItem(props: NewsItemProps) {
             NewsItem-wrapper
             hover:font-bold
             ease-in-out
-            mb-2
         `}
     >
-      <p className={`w-1/12 NewsItem-news-index text-center ${IndexColor[index]}`}>{index + 1}</p>
+      <p className={`w-8 sm:w-1/12 NewsItem-news-index text-center ${IndexColor[index]}`}>{index + 1}</p>
       <span
         className={`
             overflow-hidden 
@@ -107,16 +101,17 @@ export default function NewsItem(props: NewsItemProps) {
             NewsItem-news-title
             inline-block
           `}
-        dangerouslySetInnerHTML={{__html: renderTitleWithHighlight}}
+        dangerouslySetInnerHTML={{ __html: renderTitleWithHighlight }}
         onClick={handleLinkClick}
         onAuxClick={handleLinkClick}
         data-title={title}
       />
       <span
-        style={{color: 'var(--color-text-secondary)'}}
+        className="hidden sm:inline-block"
+        style={{ color: 'var(--color-text-secondary)' }}
       >
-          {renderExtraData}
+        {renderExtraData}
       </span>
     </div>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface ThePaperDataStructure {
   contId: string;
@@ -23,7 +23,7 @@ interface ThePaperDataStructure {
     value: string;
     bigPicValue: string;
     videoSize: string;
-  }
+  };
   nodeInfo: {
     nodeId: number;
     name: string;
@@ -49,7 +49,7 @@ interface ThePaperDataStructure {
     showSpecialTopDesc: boolean;
     topBarTypeCustomColor: boolean;
     showVideoBottomRightBtn: boolean;
-  }
+  };
   videos: {
     videoId: string;
     hdurl: string;
@@ -65,7 +65,7 @@ interface ThePaperDataStructure {
     videoDes: string;
     playInfos: string;
     outLink: boolean;
-  }
+  };
   nodeId: number;
   contType: number;
   pubTimeLong: number;
@@ -89,19 +89,20 @@ interface ThePaperDataStructure {
   voiceInfo: {
     imgSrc: string;
     isHaveVoice: string;
-  }
+  };
   softAdTypeStr: string;
 }
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'pengpai',
   description: 'pengpai 爬虫',
-}
+};
 
-const URL_GENERATOR = () => `https://cache.thepaper.cn/contentapi/wwwIndex/rightSidebar`
+const URL_GENERATOR = () => `https://cache.thepaper.cn/contentapi/wwwIndex/rightSidebar`;
 
-
-async function getData(): Promise<{ data: { hotNews: ThePaperDataStructure[] } }> {
+async function getData(): Promise<{
+  data: { hotNews: ThePaperDataStructure[] };
+}> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
@@ -116,8 +117,8 @@ function dataTransformer(data: ThePaperDataStructure[], spiderId: number): Pick<
       uniqueId: `thepepar-${item.contId}`,
       spiderId,
       hotCount: Number(item.interactionNum) || 0,
-      tags: Array.isArray(item.tagList) ? item.tagList.map(tag => tag.tag) : [item.name.slice(0, 4)]
-    }
+      tags: Array.isArray(item.tagList) ? item.tagList.map((tag) => tag.tag) : [item.name.slice(0, 4)],
+    };
   });
 }
 
@@ -125,14 +126,13 @@ function dataTransformer(data: ThePaperDataStructure[], spiderId: number): Pick<
  * main logic of getData from 36kr
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const requestedData = await getData();
 
   const result = requestedData.data.hotNews;
 
   const transformedData = dataTransformer(result, id);
-
 
   // data transform to your own format
   await checkAndOperateNews(transformedData);
@@ -142,5 +142,3 @@ export default async function main() {
 
   return transformedData;
 }
-
-

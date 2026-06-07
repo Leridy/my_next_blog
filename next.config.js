@@ -1,10 +1,11 @@
-import {config} from "dotenv";
+import { config } from 'dotenv';
 
 config();
 
 const nextConfig = {
   env: {
     DATABASE_URL: process.env.DATABASE_URL,
+    CURRENT_ENV: process.env.CURRENT_ENV,
   },
   // typescript: {
   //   ignoreBuildErrors: true,
@@ -19,20 +20,19 @@ const nextConfig = {
   experimental: {
     turbo: {
       rules: {
-        'scss': {
+        scss: {
           loaders: [
             {
               loader: 'sass-loader',
               options: {
                 api: 'modern',
-              }
-            }
-          ]
-
+              },
+            },
+          ],
         },
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 export default nextConfig;

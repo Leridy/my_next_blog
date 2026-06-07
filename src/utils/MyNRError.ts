@@ -1,7 +1,6 @@
-import {NextRequest, NextResponse} from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 import * as jose from 'jose';
-import {User} from "@prisma/client";
-
+import { User } from '@prisma/client';
 
 /**
  * This class is used to create custom Next Response Errors.
@@ -31,7 +30,6 @@ export class MyNRError extends Error {
    * @type {Record<string, string | string[]>}
    */
   headers: unknown;
-
 
   /**
    * Creates an instance of MyNRError.
@@ -77,39 +75,49 @@ export class MyNRError extends Error {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export async function APIErrorHandler(req: NextRequest, res: NextResponse, next: Function) {
+export async function APIErrorHandler(
+  req: NextRequest,
+  res: NextResponse,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  next: Function
+) {
   try {
-
     /**
      * get token from cookie if token exists, use jwt to verify token, for expired token, redirect to homepage
      */
 
     try {
-      const token = req.cookies.get('token')?.value
+      const token = req.cookies.get('token')?.value;
       if (token) {
         // verify token
         const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET || '');
-        // const user = jwt.verify(token, secret) as { exp: number, iat: number };
-        const {payload: user} = await jose.jwtVerify<User>(token, secret);
+        const { payload: user } = await jose.jwtVerify<User>(token, secret);
         if ((user?.exp || 1) * 1000 < Date.now()) throw new Error('token expired');
       }
     } catch (e) {
       console.error(e);
-      return NextResponse.redirect(req.nextUrl.origin, {headers: {'Set-Cookie': `token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;`}});
+      return NextResponse.redirect(req.nextUrl.origin, {
+        headers: {
+          'Set-Cookie': `token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;`,
+        },
+      });
     }
 
     return await next(req, res);
   } catch (e) {
     if (e instanceof MyNRError) {
-      return NextResponse.json({message: e.message, details: e.getData()}, {
-        status: e.statusCode,
-        headers: e.getHeaders()
-      });
+      return NextResponse.json(
+        { message: e.message, details: e.getData() },
+        {
+          status: e.statusCode,
+          headers: e.getHeaders(),
+        }
+      );
     }
     console.error(e);
     if (e instanceof Error) {
-      return NextResponse.json({message: e.message}, {status: 500});
+      return NextResponse.json({ message: e.message }, { status: 500 });
     }
-    return NextResponse.json(e, {status: 400});
+    return NextResponse.json(e, { status: 400 });
   }
 }

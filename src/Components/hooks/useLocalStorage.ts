@@ -1,4 +1,4 @@
-import {useCallback, useState} from "react";
+import { useCallback, useState } from 'react';
 
 interface UseLocalStorageProps<T> {
   key: string;
@@ -11,12 +11,12 @@ interface UseLocalStorageReturn<T> {
 }
 
 export default function useLocalStorage<T>(props: UseLocalStorageProps<T>): UseLocalStorageReturn<T> {
-  const {key, initialValue} = props;
+  const { key, initialValue } = props;
 
   const LS = localStorage || {
     getItem: () => null,
     setItem: () => null,
-  }
+  };
   const [value, setValue] = useState<T>(() => {
     const storedValue = LS.getItem(key);
     if (storedValue) {
@@ -33,10 +33,13 @@ export default function useLocalStorage<T>(props: UseLocalStorageProps<T>): UseL
     }
   });
 
-  const setStoredValue = useCallback((value: T) => {
-    LS.setItem(key, JSON.stringify(value));
-    setValue(value);
-  }, [LS, key]);
+  const setStoredValue = useCallback(
+    (value: T) => {
+      LS.setItem(key, JSON.stringify(value));
+      setValue(value);
+    },
+    [LS, key]
+  );
 
-  return {value, setValue: setStoredValue};
+  return { value, setValue: setStoredValue };
 }

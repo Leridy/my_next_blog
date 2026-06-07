@@ -8,4 +8,3 @@ export interface HotTopic {
   createdAt?: string;
   updatedAt?: string;
 }
-

@@ -1,5 +1,5 @@
 // Note: Middleware for the server
-import type {NextApiRequest, NextApiResponse} from "next";
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export type MiddlewareHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<void>;
 

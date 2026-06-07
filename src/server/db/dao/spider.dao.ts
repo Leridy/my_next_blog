@@ -1,6 +1,5 @@
-import {HotSpider as HS} from "@/server/db/models/spider";
-import {HotSpider} from "@prisma/client";
-
+import { HotSpider as HS } from '@/server/db/models/spider';
+import { HotSpider } from '@prisma/client';
 
 class SpiderDao {
   public async get(query: Partial<Pick<HotSpider, 'name' | 'description' | 'updatedAt'>> | string) {
@@ -9,8 +8,8 @@ class SpiderDao {
     if (typeof query === 'string') {
       return HS.findUnique({
         where: {
-          name: query
-        }
+          name: query,
+        },
       });
     } else {
       return HS.findMany({
@@ -18,30 +17,28 @@ class SpiderDao {
           ...query,
           name: {
             contains: query.name,
-            mode: 'insensitive'
+            mode: 'insensitive',
           },
           description: {
             contains: query.description,
-            mode: 'insensitive'
+            mode: 'insensitive',
           },
           updatedAt: {
-            gt: query.updatedAt
-          }
+            gt: query.updatedAt,
+          },
         },
         orderBy: {
-          updatedAt: 'asc'
-        }
+          updatedAt: 'asc',
+        },
       });
     }
-
   }
 
   public async create(query: Pick<HotSpider, 'name' | 'description'>) {
     return HS.create({
-      data: query
+      data: query,
     });
   }
-
 
   public async update(id: number) {
     return HS.update({
@@ -50,8 +47,8 @@ class SpiderDao {
       },
       data: {
         updatedAt: new Date(),
-      }
-    })
+      },
+    });
   }
 }
 

@@ -10,10 +10,22 @@ export default function WebSiteAnalyze() {
       s.parentNode.insertBefore(hm, s);
     })();
   
-  `
+  `;
+
   return (
-    <script
-      dangerouslySetInnerHTML={{__html: code}}
-    />
+    <>
+      <script dangerouslySetInnerHTML={{ __html: code }} />
+      <noscript>
+        <iframe
+          src="https://www.googletagmanager.com/ns.html?id=GTM-N76Z7R9X"
+          height="0"
+          width="0"
+          style={{
+            display: 'none',
+            visibility: 'hidden',
+          }}
+        ></iframe>
+      </noscript>
+    </>
   );
 }

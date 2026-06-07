@@ -1,34 +1,34 @@
 import kr from './36kr.spider';
 import ithome from './ithome.spider';
 import hupu from './hupu.spider';
-import bilibili from "@/server/Spider/bilibili.spider";
-import juejin from "@/server/Spider/juejin.spider";
-import v2ex from "@/server/Spider/v2ex.spider";
-import toutiao from "@/server/Spider/toutiao.spider";
-import zhihu from "@/server/Spider/zhihu.spider";
-import huxiu from "@/server/Spider/huxiu.spider";
-import sina from "@/server/Spider/sina.spider";
-import thepaper from "@/server/Spider/thepaper.spider";
-import tiktok from "@/server/Spider/tiktok.spider";
-import ifanr from "@/server/Spider/ifanr.spider";
-import sspai from "@/server/Spider/sspai.spider";
-import tieba from "@/server/Spider/tieba.spider";
-import fiveOneCTO from "@/server/Spider/51cto.spider";
-import coolapk from "@/server/Spider/coolapk.spider";
-import weread from "@/server/Spider/weread.spider";
-import lottery from "@/server/Spider/lottery.spider"; 
-import QQNews from "@/server/Spider/QQNews.spider";
-import geekpark from "@/server/Spider/geekpark.spider";
-import woshipm from "@/server/Spider/woshipm.spider";
-import {MyNRError} from "@/utils/MyNRError";
-import {shuffleArray} from "@/utils/shuffleArray";
+import bilibili from '@/server/Spider/bilibili.spider';
+import juejin from '@/server/Spider/juejin.spider';
+import v2ex from '@/server/Spider/v2ex.spider';
+import toutiao from '@/server/Spider/toutiao.spider';
+import zhihu from '@/server/Spider/zhihu.spider';
+import huxiu from '@/server/Spider/huxiu.spider';
+import sina from '@/server/Spider/sina.spider';
+import thepaper from '@/server/Spider/thepaper.spider';
+import tiktok from '@/server/Spider/tiktok.spider';
+import ifanr from '@/server/Spider/ifanr.spider';
+import sspai from '@/server/Spider/sspai.spider';
+import tieba from '@/server/Spider/tieba.spider';
+import fiveOneCTO from '@/server/Spider/51cto.spider';
+import coolapk from '@/server/Spider/coolapk.spider';
+import weread from '@/server/Spider/weread.spider';
+import lottery from '@/server/Spider/lottery.spider';
+import QQNews from '@/server/Spider/QQNews.spider';
+import geekpark from '@/server/Spider/geekpark.spider';
+import woshipm from '@/server/Spider/woshipm.spider';
+import { MyNRError } from '@/utils/MyNRError';
+import { shuffleArray } from '@/utils/shuffleArray';
 
 interface SpiderProps {
   spiderNames?: string[];
 }
 
 export default async function Spider(props?: SpiderProps) {
-  const {spiderNames = []} = props || {};
+  const { spiderNames = [] } = props || {};
   try {
     const updateResult = [];
     let tasks = [];
@@ -84,7 +84,7 @@ export default async function Spider(props?: SpiderProps) {
           default:
             return () => {
               throw new MyNRError(`爬虫 ${name} 不存在`, 404);
-            }
+            };
         }
       });
     }
@@ -100,26 +100,28 @@ export default async function Spider(props?: SpiderProps) {
         } else {
           // 为了避免并发过高，我们需要设置一个间隔时间
           setTimeout(() => {
-            tasks[i]()
+            tasks[i]();
           }, 10000 * i);
         }
-
       } catch (e) {
         console.error(e);
         if (e instanceof MyNRError) throw e;
         if (e instanceof Error) {
           console.error(e);
-          throw new MyNRError(`爬虫出错 ${e.message}`, 500, {originError: e});
+          throw new MyNRError(`爬虫出错 ${e.message}`, 500, { originError: e });
         }
       }
     }
 
-    return {state: 'success', message: '已经成功触发爬虫，正在爬取数据', updateResult};
+    return {
+      state: 'success',
+      message: '已经成功触发爬虫，正在爬取数据',
+      updateResult,
+    };
   } catch (e) {
     if (e instanceof MyNRError) throw e;
     if (e instanceof Error) {
-      throw new MyNRError(`爬虫出错 ${e.message}`, 500, {originError: e});
+      throw new MyNRError(`爬虫出错 ${e.message}`, 500, { originError: e });
     }
-
   }
 }

@@ -1,10 +1,10 @@
-import type {ColumnProps} from "antd/es/table";
-import {Button, Card, CardProps, message, Modal, Space, Table, TableColumnProps,} from "antd";
-import FilterForm from "@/app/manage/Components/FilterForm";
-import useApi from "@/app/manage/hooks/useApi";
-import {ReactNode, useCallback, useEffect, useMemo, useState} from "react";
-import {usePathname, useRouter} from "next/navigation";
-import {OrderByApiQuery, PageApiQuery} from "@/server/db/dao/type";
+import type { ColumnProps } from 'antd/es/table';
+import { Button, Card, CardProps, message, Modal, Space, Table, TableColumnProps } from 'antd';
+import FilterForm from '@/app/manage/Components/FilterForm';
+import useApi from '@/app/manage/hooks/useApi';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { OrderByApiQuery, PageApiQuery } from '@/server/db/dao/type';
 
 interface ManageListProps<T> {
   title: ReactNode;
@@ -14,7 +14,7 @@ interface ManageListProps<T> {
   showOperation?: boolean; // 是否显示操作列
   showCreate?: boolean; // 是否显示创建按钮
   manageName?: string; // 目前正在管理的模块的名称
-  cardProps?: CardProps
+  cardProps?: CardProps;
   onEdit?: (record: T) => Promise<void> | void;
   onDelete?: (record: T) => Promise<void> | void;
   onCreate?: () => Promise<void> | void;
@@ -23,86 +23,81 @@ interface ManageListProps<T> {
 }
 
 const headers = {
-  'x-no-cache': 'true'
-}
+  'x-no-cache': 'true',
+};
 
 export default function ManageList<T>(props: ManageListProps<T>) {
-  const {
-    title,
-    apiURL,
-    columns,
-    usePagination = false,
-    showOperation = true,
-    showCreate = true,
-    cardProps = {},
-    manageName,
-    onEdit,
-    onDelete,
-    onCreate,
-    onClickItem,
-    children,
-  } = props;
+  const { title, apiURL, columns, usePagination = false, showOperation = true, showCreate = true, cardProps = {}, manageName, onEdit, onDelete, onCreate, onClickItem, children } = props;
 
   const router = useRouter();
   const pathname = usePathname() || '';
 
-  const {get, del, items, pagedItems, loading} = useApi<T>({
+  const { get, del, items, pagedItems, loading } = useApi<T>({
     apiURL,
     exception: manageName === 'user' ? true : undefined,
-    headers
+    headers,
   });
 
-  // @ts-expect-error T won't have page and pageSize property
-  const [queryData, setQueryData] = useState<Partial<T & PageApiQuery & OrderByApiQuery>>(usePagination ? {
-    page: 1,
-    pageSize: 15
-  } : {});
-
-  const handleDelete = useCallback(async (record: T) => {
-    // if onDelete is not provided, use default delete function
-    if (!onDelete) {
-      Modal.confirm({
-        title: '删除',
-        content: '确认删除吗, 删除后不可恢复',
-        onOk: async () => {
-          try {
-            // @ts-expect-error there must have ID
-            await del(record.id);
-            message.success('删除成功');
-            await get(queryData);
-          } catch (e) {
-            console.error(e);
-            message.error('删除失败');
-          }
+  const [queryData, setQueryData] = useState<Partial<T & PageApiQuery & OrderByApiQuery>>(
+    // @ts-expect-error T won't have page and pageSize property
+    usePagination
+      ? {
+          page: 1,
+          pageSize: 15,
         }
-      });
-      return;
-    } else {
-      try {
-        onDelete(record);
-        await get(queryData);
-      } catch (e) {
-        console.error(e);
-        message.error('操作失败');
-      }
+      : {}
+  );
 
-    }
-  }, [del, get, onDelete, queryData]);
-
-  const handleEdit = useCallback(async (record: T) => {
-    if (onEdit) {
-      try {
-        await onEdit(record);
-        get(queryData);
-      } catch (e) {
-        console.error(e);
-        message.error('操作失败');
+  const handleDelete = useCallback(
+    async (record: T) => {
+      // if onDelete is not provided, use default delete function
+      if (!onDelete) {
+        Modal.confirm({
+          title: '删除',
+          content: '确认删除吗, 删除后不可恢复',
+          onOk: async () => {
+            try {
+              // @ts-expect-error there must have ID
+              await del(record.id);
+              message.success('删除成功');
+              await get(queryData);
+            } catch (e) {
+              console.error(e);
+              message.error('删除失败');
+            }
+          },
+        });
+        return;
+      } else {
+        try {
+          onDelete(record);
+          await get(queryData);
+        } catch (e) {
+          console.error(e);
+          message.error('操作失败');
+        }
       }
-    } else {
-      // @ts-expect-error there must have ID
-      router.push(`${pathname}/${record.id}`);
-    }
-  }, [get, onEdit, pathname, queryData, router]);
+    },
+    [del, get, onDelete, queryData]
+  );
+
+  const handleEdit = useCallback(
+    async (record: T) => {
+      if (onEdit) {
+        try {
+          await onEdit(record);
+          get(queryData);
+        } catch (e) {
+          console.error(e);
+          message.error('操作失败');
+        }
+      } else {
+        // @ts-expect-error there must have ID
+        router.push(`${pathname}/${record.id}`);
+      }
+    },
+    [get, onEdit, pathname, queryData, router]
+  );
 
   const handleCreate = useCallback(async () => {
     if (onCreate) {
@@ -116,67 +111,69 @@ export default function ManageList<T>(props: ManageListProps<T>) {
     } else {
       // the create name is formPath
       router.push(`${pathname}/create`);
-
     }
   }, [get, onCreate, pathname, queryData, router]);
 
-
-  const columnsConfig = useMemo<TableColumnProps<T>[]>(() => [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 80,
-      align: 'center'
-    },
-    ...columns,
-    showOperation ? {
-      title: '操作',
-      key: 'action',
-      render: (record: T) => {
-        return (
-          <Space>
-            <Button
-              size={"small"}
-              type={"link"}
-              onClick={() => {
-                handleEdit(record);
-              }}
-            >编辑</Button>
-            <Button
-              danger
-              size={"small"}
-              type={"link"}
-              onClick={() => {
-                handleDelete(record);
-              }}
-            >
-              删除
-            </Button>
-          </Space>
-        )
-      }
-    } : {},
-  ], [columns, handleDelete, handleEdit, showOperation]);
+  const columnsConfig = useMemo<TableColumnProps<T>[]>(
+    () => [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+        width: 80,
+        align: 'center',
+      },
+      ...columns,
+      showOperation
+        ? {
+            title: '操作',
+            key: 'action',
+            render: (record: T) => {
+              return (
+                <Space>
+                  <Button
+                    size={'small'}
+                    type={'link'}
+                    onClick={() => {
+                      handleEdit(record);
+                    }}
+                  >
+                    编辑
+                  </Button>
+                  <Button
+                    danger
+                    size={'small'}
+                    type={'link'}
+                    onClick={() => {
+                      handleDelete(record);
+                    }}
+                  >
+                    删除
+                  </Button>
+                </Space>
+              );
+            },
+          }
+        : {},
+    ],
+    [columns, handleDelete, handleEdit, showOperation]
+  );
 
   const renderTitle = useMemo(() => {
     return (
-      <div
-        style={{display: 'flex', justifyContent: 'space-between'}}
-      >
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h3>{title}</h3>
-        {
-          showCreate && (
-            <Button
-              size={'small'}
-              type={"primary"}
-              onClick={handleCreate}
-            >+</Button>
-          )
-        }
-
+        {showCreate && (
+          <Button
+            size={'small'}
+            type={'primary'}
+            onClick={handleCreate}
+          >
+            +
+          </Button>
+        )}
       </div>
-    )
+    );
   }, [handleCreate, showCreate, title]);
 
   useEffect(() => {
@@ -188,22 +185,27 @@ export default function ManageList<T>(props: ManageListProps<T>) {
       {...cardProps}
       title={renderTitle}
       className={'h-full'}
-      size={"small"}
+      size={'small'}
     >
-      {
-        children && (
-          <div className={'mb-4'}>
-            <FilterForm
-              onSearch={(newState) => setQueryData(prev => ({...prev, ...newState, page: prev.page ? 1 : undefined}))}>
-              {children}
-            </FilterForm>
-          </div>
-        )
-      }
+      {children && (
+        <div className={'mb-4'}>
+          <FilterForm
+            onSearch={(newState) =>
+              setQueryData((prev) => ({
+                ...prev,
+                ...newState,
+                page: prev.page ? 1 : undefined,
+              }))
+            }
+          >
+            {children}
+          </FilterForm>
+        </div>
+      )}
 
       <Table
-        size={"small"}
-        scroll={{y: 'calc(100vh - 350px)'}}
+        size={'small'}
+        scroll={{ y: 'calc(100vh - 350px)' }}
         pagination={{
           defaultPageSize: 15,
           total: usePagination ? pagedItems.page.total : items.length,
@@ -215,10 +217,10 @@ export default function ManageList<T>(props: ManageListProps<T>) {
               setQueryData((prev) => ({
                 ...prev,
                 page,
-                pageSize
+                pageSize,
               }));
             }
-          }
+          },
         }}
         dataSource={usePagination ? pagedItems.data : items}
         columns={columnsConfig}
@@ -226,12 +228,10 @@ export default function ManageList<T>(props: ManageListProps<T>) {
         rowKey={'id'}
         onRow={(record) => {
           return {
-            onClick: () => onClickItem?.(record)
-          }
+            onClick: () => onClickItem?.(record),
+          };
         }}
       />
     </Card>
-  )
+  );
 }
-
-

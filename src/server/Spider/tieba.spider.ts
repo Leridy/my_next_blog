@@ -1,6 +1,6 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface TiebaDataStructure {
   topic_id: number;
@@ -22,19 +22,20 @@ interface TiebaDataStructure {
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'tieba',
   description: 'tieba 爬虫',
-}
+};
 
-const URL_GENERATOR = () => `https://tieba.baidu.com/hottopic/browse/topicList`
+const URL_GENERATOR = () => `https://tieba.baidu.com/hottopic/browse/topicList`;
 
-
-async function getData(): Promise<{ data: { bang_topic: { topic_list: TiebaDataStructure[] } } }> {
+async function getData(): Promise<{
+  data: { bang_topic: { topic_list: TiebaDataStructure[] } };
+}> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
 
 function dataTransformer(data: TiebaDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
-    const {topic_name, topic_desc, topic_pic, topic_url, topic_id} = item;
+    const { topic_name, topic_desc, topic_pic, topic_url, topic_id } = item;
     return {
       title: topic_name,
       description: topic_desc,
@@ -43,8 +44,8 @@ function dataTransformer(data: TiebaDataStructure[], spiderId: number): Pick<Hot
       uniqueId: `tieba-${topic_id}`,
       spiderId,
       hotCount: item.discuss_num || 0,
-      tags: [topic_name.slice(0, 4)]
-    }
+      tags: [topic_name.slice(0, 4)],
+    };
   });
 }
 
@@ -52,10 +53,9 @@ function dataTransformer(data: TiebaDataStructure[], spiderId: number): Pick<Hot
  * main logic of getData from tieba
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const requestedData = await getData();
-
 
   const result: TiebaDataStructure[] = requestedData.data.bang_topic.topic_list;
 
@@ -66,8 +66,5 @@ export default async function main() {
   // update spider update time
   await updateSpiderUpdateTime(id);
 
-
   return transformedData;
 }
-
-

@@ -1,5 +1,5 @@
-import {Setting} from '../models/setting';
-import {setting} from "@prisma/client";
+import { Setting } from '../models/setting';
+import { setting } from '@prisma/client';
 
 class SettingDao {
   public async get(query: Partial<setting> | null): Promise<setting[] | setting | null> {
@@ -14,50 +14,50 @@ class SettingDao {
     } else if (query.id) {
       return Setting.findUnique({
         where: {
-          id: Number(query.id)
-        }
+          id: Number(query.id),
+        },
       });
     } else {
       return Setting.findMany({
         where: {
           ...query,
           label: {
-            contains: query.label
+            contains: query.label,
           },
           key: {
-            contains: query.key
+            contains: query.key,
           },
           value: {
-            contains: query.value
+            contains: query.value,
           },
         },
         orderBy: {
-          id: 'asc'
-        }
+          id: 'asc',
+        },
       });
     }
   }
 
   public async create(data: Omit<setting, 'id'>): Promise<setting> {
     return Setting.create({
-      data
+      data,
     });
   }
 
   public async update(id: string, data: Omit<setting, 'id'>): Promise<setting> {
     return Setting.update({
       where: {
-        id: Number(id)
+        id: Number(id),
       },
-      data: data
+      data: data,
     });
   }
 
   public async del(id: string): Promise<setting> {
     return Setting.delete({
       where: {
-        id: Number(id)
-      }
+        id: Number(id),
+      },
     });
   }
 }

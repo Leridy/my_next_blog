@@ -1,0 +1,82 @@
+/* 响应式设计辅助类 */
+
+.responsive-container {
+  width: 100%;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 640px) {
+  .responsive-container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .responsive-container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .responsive-container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .responsive-container {
+    max-width: 1536px;
+  }
+}
+
+/* 响应式字体大小类 */
+.text-responsive-xs {
+  font-size: 0.75rem;
+}
+
+.text-responsive-sm {
+  font-size: 0.875rem;
+}
+
+.text-responsive-base {
+  font-size: 1rem;
+}
+
+.text-responsive-lg {
+  font-size: 1.125rem;
+}
+
+.text-responsive-xl {
+  font-size: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .text-responsive-xs {
+    font-size: 0.7rem;
+  }
+
+  .text-responsive-sm {
+    font-size: 0.8rem;
+  }
+
+  .text-responsive-base {
+    font-size: 0.9rem;
+  }
+
+  .text-responsive-lg {
+    font-size: 1rem;
+  }
+
+  .text-responsive-xl {
+    font-size: 1.125rem;
+  }
+}

@@ -1,15 +1,14 @@
-import {HotNews} from "@prisma/client";
-import {HotNews as HN} from "../models/news";
-import {OrderBy, PageDataBaseQuery} from "@/server/db/dao/type";
-
+import { HotNews } from '@prisma/client';
+import { HotNews as HN } from '../models/news';
+import { OrderBy, PageDataBaseQuery } from '@/server/db/dao/type';
 
 class NewsDao {
   public async get(query: Partial<Omit<HotNews, 'tags'>> | number, page?: PageDataBaseQuery, orderByRule?: OrderBy) {
     if (typeof query === 'number') {
       return HN.findUnique({
         where: {
-          id: query
-        }
+          id: query,
+        },
       });
     }
     return HN.findMany({
@@ -20,20 +19,20 @@ class NewsDao {
         ...query,
         title: {
           contains: query.title,
-          mode: 'insensitive'
+          mode: 'insensitive',
         },
         description: {
           contains: query.description,
-          mode: 'insensitive'
+          mode: 'insensitive',
         },
         uniqueId: query.uniqueId,
         updatedAt: {
-          gte: query.updatedAt
-        }
+          gte: query.updatedAt,
+        },
       },
       orderBy: {
-        ...orderByRule
-      }
+        ...orderByRule,
+      },
     });
   }
 
@@ -43,17 +42,17 @@ class NewsDao {
         ...query,
         title: {
           contains: query.title,
-          mode: 'insensitive'
+          mode: 'insensitive',
         },
         description: {
           contains: query.description,
-          mode: 'insensitive'
+          mode: 'insensitive',
         },
         uniqueId: query.uniqueId,
         updatedAt: {
-          gte: query.updatedAt
-        }
-      }
+          gte: query.updatedAt,
+        },
+      },
     });
   }
 
@@ -67,35 +66,35 @@ class NewsDao {
     return HN.count({
       where: {
         updatedAt: {
-          gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
-        }
-      }
+          gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+        },
+      },
     });
   }
 
   public async create(query: Pick<HotNews, 'title' | 'description' | 'url' | 'uniqueId'>) {
     return HN.create({
-      data: query
+      data: query,
     });
   }
 
-  public async update(id: number, data: Pick<HotNews, | 'title' | 'description' | 'url'>) {
+  public async update(id: number, data: Pick<HotNews, 'title' | 'description' | 'url'>) {
     return HN.update({
       where: {
-        id: id
+        id: id,
       },
       data: {
         ...data,
-      }
-    })
+      },
+    });
   }
 
   public async delete(query: Pick<HotNews, 'id'>) {
     return HN.delete({
       where: {
-        id: query.id
-      }
-    })
+        id: query.id,
+      },
+    });
   }
 }
 

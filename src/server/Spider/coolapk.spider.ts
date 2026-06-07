@@ -1,7 +1,7 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
-import {genHeaders} from "@/server/Spider/utils/getToken/coolapk";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
+import { genHeaders } from '@/server/Spider/utils/getToken/coolapk';
 
 interface CoolApkDataStructure {
   id: number;
@@ -165,7 +165,7 @@ interface CoolApkDataStructure {
     feed_plugin_open_url: string;
     feed_reply_plugin: string;
     feed_reply_plugin_open_url: string;
-  },
+  };
 
   relationRows: {
     id: number;
@@ -189,37 +189,27 @@ interface CoolApkDataStructure {
     relation_addition_logo: string;
     relation_addition_title: string;
     subTitle: string;
-  }
+  };
   _tid: number;
 }
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'coolapk',
   description: 'coolapk 爬虫',
-}
+};
 
-const URL_GENERATOR = () => `https://api.coolapk.com/v6/page/dataList?url=/feed/statList?cacheExpires=300&statType=day&sortField=detailnum&title=今日热门&title=今日热门&subTitle=&page=1`
-
+const URL_GENERATOR = () => `https://api.coolapk.com/v6/page/dataList?url=/feed/statList?cacheExpires=300&statType=day&sortField=detailnum&title=今日热门&title=今日热门&subTitle=&page=1`;
 
 async function getData(): Promise<{ data: CoolApkDataStructure[] }> {
   const url = URL_GENERATOR();
   return await http.get(url, {
-    headers: await genHeaders()
+    headers: await genHeaders(),
   });
 }
 
 function dataTransformer(data: CoolApkDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
-
   return data.map((item) => {
-    const {
-      id,
-      message: title,
-      ttitle: description,
-      tpic: image,
-      shareUrl: url,
-      likenum: hotCount,
-      tags,
-    } = item;
+    const { id, message: title, ttitle: description, tpic: image, shareUrl: url, likenum: hotCount, tags } = item;
     return {
       title,
       description,
@@ -230,7 +220,7 @@ function dataTransformer(data: CoolApkDataStructure[], spiderId: number): Pick<H
       hotCount,
       // tags should remove # and split by ','
       tags: tags?.replace(/#/g, '').split(','),
-    }
+    };
   });
 }
 
@@ -238,8 +228,7 @@ function dataTransformer(data: CoolApkDataStructure[], spiderId: number): Pick<H
  * main logic of getData from huxiu
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
-
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const requestedData = await getData();
 
@@ -252,8 +241,5 @@ export default async function main() {
   // update spider update time
   await updateSpiderUpdateTime(id);
 
-
   return transformedData;
 }
-
-

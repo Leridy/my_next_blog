@@ -1,6 +1,6 @@
 // 写一个方法传入的内容是上面注释的html，返回一个对象，对象的属性是开奖时间，开奖号码，开奖类型，开奖名称
 
-import {load} from "cheerio";
+import { load } from 'cheerio';
 
 /**
  * 需要说明的是他们的对照关系
@@ -11,7 +11,6 @@ import {load} from "cheerio";
  * 开奖期数是 kj-list-item > a > span > div.kj-list-item__title__left > span.kj-info-scale > span.kj-num
  * 跳转链接是 kj-list-item > a
  */
-
 
 export interface LotteryResult {
   code: string; // 彩票代码
@@ -37,7 +36,7 @@ export function parseLotteryHtml(html: string): LotteryResult[] {
       date: $item.find('.kj-date').text() || '',
       period: $item.find('.kj-num').text() || '',
       link: 'https://m.500.com' + $item.find('a').attr('data-href') || '',
-      numbers: ''
+      numbers: '',
     };
 
     // 获取所有号码球
@@ -49,7 +48,7 @@ export function parseLotteryHtml(html: string): LotteryResult[] {
       const colorMap: Record<string, string> = {
         'red-ball': '红',
         'blue-ball': '蓝',
-        'orange-ball': '橙'
+        'orange-ball': '橙',
       };
 
       // 遍历颜色
@@ -58,7 +57,6 @@ export function parseLotteryHtml(html: string): LotteryResult[] {
           numbers.push(colorMap[color] + number);
         }
       }
-
     });
 
     // 获取试机号(如果有)

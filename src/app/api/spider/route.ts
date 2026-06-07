@@ -1,7 +1,7 @@
-import {NextRequest, NextResponse} from "next/server";
-import {APIErrorHandler} from "@/utils/MyNRError";
-import SpiderDao from "@/server/db/dao/spider.dao";
-import {HotSpider} from "@prisma/client";
+import { NextRequest, NextResponse } from 'next/server';
+import { APIErrorHandler } from '@/utils/MyNRError';
+import SpiderDao from '@/server/db/dao/spider.dao';
+import { HotSpider } from '@prisma/client';
 
 /**
  * handle GET /api/spider route
@@ -12,7 +12,7 @@ async function get(req: NextRequest) {
 
   const result = await SpiderDao.get(originQuery);
 
-  return NextResponse.json(result, {status: 200});
+  return NextResponse.json(result, { status: 200 });
 }
 
 export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);

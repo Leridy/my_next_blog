@@ -1,6 +1,6 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface SspaiDataStructure {
   id: number;
@@ -22,7 +22,7 @@ interface SspaiDataStructure {
     slug: string;
     avatar: string;
     nickname: string;
-  }
+  };
   corner: {
     id: number;
     name: string;
@@ -30,7 +30,7 @@ interface SspaiDataStructure {
     icon: string;
     memo: string;
     color: string;
-  }
+  };
   special_columns: string[];
   status: number;
   created_time: number;
@@ -76,15 +76,11 @@ interface SspaiDataStructure {
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'sspai',
   description: 'sspai 爬虫',
-}
+};
 
-const URL_GENERATOR = (type: string) => `https://sspai.com/api/v1/article/tag/page/get?limit=15&tag=${type}`
+const URL_GENERATOR = (type: string) => `https://sspai.com/api/v1/article/tag/page/get?limit=15&tag=${type}`;
 
-
-const ListType = [
-  "热门文章", "应用推荐", "生活方式", "效率技巧", "少数派播客"
-]
-
+const ListType = ['热门文章', '应用推荐', '生活方式', '效率技巧', '少数派播客'];
 
 async function getData(type: string): Promise<{ data: SspaiDataStructure[] }> {
   const url = URL_GENERATOR(type);
@@ -93,43 +89,41 @@ async function getData(type: string): Promise<{ data: SspaiDataStructure[] }> {
 
 function dataTransformer(data: SspaiDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   const idSet = new Set<number>();
-  return data.filter(
-    ({id}) => {
+  return data
+    .filter(({ id }) => {
       // filter duplicate id
       if (idSet.has(id)) {
         return false;
       }
       idSet.add(id);
       return true;
-    }
-  ).map((item) => {
-    const {title, banner, summary, id, like_count, comment_count, view_count, tags, author} = item;
-    return {
-      title: title,
-      description: summary,
-      image: banner || '',
-      url: `https://sspai.com/post/${id}`,
-      uniqueId: `sspai-${id}`,
-      spiderId,
-      hotCount: like_count + comment_count + view_count || 0,
-      tags: tags.length > 0 ? tags.map(tag => tag.title) : [author.nickname]
-    }
-  });
+    })
+    .map((item) => {
+      const { title, banner, summary, id, like_count, comment_count, view_count, tags, author } = item;
+      return {
+        title: title,
+        description: summary,
+        image: banner || '',
+        url: `https://sspai.com/post/${id}`,
+        uniqueId: `sspai-${id}`,
+        spiderId,
+        hotCount: like_count + comment_count + view_count || 0,
+        tags: tags.length > 0 ? tags.map((tag) => tag.title) : [author.nickname],
+      };
+    });
 }
 
 /**
  * main logic of getData from huxiu
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
-
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const tasks = ListType.map(async (type) => {
     return await getData(type);
   });
 
   const requestedData = await Promise.all(tasks);
-
 
   const result: SspaiDataStructure[] = requestedData.reduce((acc, cur) => {
     return acc.concat(cur.data);
@@ -142,8 +136,5 @@ export default async function main() {
   // update spider update time
   await updateSpiderUpdateTime(id);
 
-
   return transformedData;
 }
-
-

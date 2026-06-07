@@ -1,14 +1,16 @@
-import HotBoard from "./HotBoard/HotBoard";
-import UserBoard from "@/Components/MainBoard/UserBoard/UserBoard";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import LinkFrame from "@/Components/LinkFrame/LinkFrame";
-import useApi from "@/app/manage/hooks/useApi";
-import {HotNewsStatistics, HotTopic} from "@prisma/client";
-import {useUserSettingContext} from "@/Provider/UserSettingProvider";
+import HotBoard from './HotBoard/HotBoard';
+import UserBoard from '@/Components/MainBoard/UserBoard/UserBoard';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import LinkFrame from '@/Components/LinkFrame/LinkFrame';
+import useApi from '@/app/manage/hooks/useApi';
+import { HotNewsStatistics, HotTopic } from '@prisma/client';
+import { useUserSettingContext } from '@/Provider/UserSettingProvider';
 import './MainBoard.style.scss';
-import ScrollController from "@/Components/MainBoard/ScrollController/ScrollController";
-import BrowserFingerprint from "@/Components/BrowserFingerprint/BrowserFingerprint";
-
+import ScrollController from '@/Components/MainBoard/ScrollController/ScrollController';
+import BrowserFingerprint from '@/Components/BrowserFingerprint/BrowserFingerprint';
+import { motion } from 'framer-motion';
+import { useUserContext } from '@/Provider/UserProvider';
+import UserModal from '../UserComponents/UserModal';
 
 interface MainBoardProps {
   keyword: string;
@@ -19,59 +21,65 @@ interface MainBoardProps {
  * @description 这是用来展示首页所有内容的一个框架
  */
 export default function MainBoard(props: MainBoardProps) {
-  const {keyword} = props;
+  const { keyword } = props;
+  const { modalVisible, hideModal, handleModalSuccess, modalType } = useUserContext();
   const [openedLink, setOpenedLink] = useState<string>('');
   const [focus, setFocus] = useState<number | null>(null);
 
   const HotBoardRef = useRef<HTMLDivElement>(null);
 
-  const {get, items} = useApi<HotTopic>({apiURL: 'hot'});
-  const {edit: updateNewsStatistics} = useApi<HotNewsStatistics>({
+  const { get, items } = useApi<HotTopic>({ apiURL: 'hot' });
+  const { edit: updateNewsStatistics } = useApi<HotNewsStatistics>({
     apiURL: 'statistic/news',
     headers: {
-      'x-ignore-error': 'true'
-    }
+      'x-ignore-error': 'true',
+    },
   });
 
-  const {edit: updateTopicStatistics} = useApi({
+  const { edit: updateTopicStatistics } = useApi({
     apiURL: 'statistic/news/topic',
     headers: {
-      'x-ignore-error': 'true'
-    }
-  })
+      'x-ignore-error': 'true',
+    },
+  });
 
-  const {topicSetting, updateTopicSetting} = useUserSettingContext();
-  const {order, exclude} = useMemo(() => topicSetting, [topicSetting]);
+  const { topicSetting, updateTopicSetting } = useUserSettingContext();
+  const { order, exclude } = useMemo(() => topicSetting, [topicSetting]);
 
-  const handleOpenLink = useCallback(async (url: string, id: number, topicId?: number) => {
-    window.open(url, '_blank');
-    try {
-      await updateNewsStatistics(String(id), {});
-      if (topicId) {
-        await updateTopicStatistics(String(topicId), {});
+  const handleOpenLink = useCallback(
+    async (url: string, id: number, topicId?: number) => {
+      window.open(url, '_blank');
+      try {
+        await updateNewsStatistics(String(id), {});
+        if (topicId) {
+          await updateTopicStatistics(String(topicId), {});
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [updateNewsStatistics]);
+    },
+    [updateNewsStatistics, updateTopicStatistics]
+  );
 
-  const handleToggleShow = useCallback((id: number) => {
-    const newSetting = {
-      ...topicSetting,
-      exclude: exclude.includes(id) ? exclude.filter(ele => ele !== id) : [...exclude, id]
-    }
-    updateTopicSetting(newSetting);
-  }, [exclude, topicSetting, updateTopicSetting]);
-
+  const handleToggleShow = useCallback(
+    (id: number) => {
+      const newSetting = {
+        ...topicSetting,
+        exclude: exclude.includes(id) ? exclude.filter((ele) => ele !== id) : [...exclude, id],
+      };
+      updateTopicSetting(newSetting);
+    },
+    [exclude, topicSetting, updateTopicSetting]
+  );
 
   const TopicItemsToRender = useMemo<HotTopic[]>(() => {
     // 声明一个空数组 newOrderedItems
     const newOrderedItems: HotTopic[] = [];
     // 遍历 items, 首先排除enable 为 false 的项
-    const filteredItems = items.filter(item => item.enable);
+    const filteredItems = items.filter((item) => item.enable);
 
     // 遍历 filteredItems
-    filteredItems.forEach(item => {
+    filteredItems.forEach((item) => {
       if (order[item.id] !== undefined) {
         newOrderedItems[order[item.id]] = item;
       } else {
@@ -79,69 +87,65 @@ export default function MainBoard(props: MainBoardProps) {
       }
     });
 
-    return newOrderedItems.filter(ele => ele !== undefined);
-
-
+    return newOrderedItems.filter((ele) => ele !== undefined);
   }, [items, order]);
 
+  const handleItemMove = useCallback(
+    (from: number, to: number) => {
+      // 做一个对 TopicItemsToRender 的深拷贝
+      const newTopicItems = [...TopicItemsToRender];
+      // 交换 from 和 to 的位置
+      const [removed] = newTopicItems.splice(from, 1);
+      newTopicItems.splice(to, 0, removed);
 
-  const handleItemMove = useCallback((from: number, to: number) => {
-    // 做一个对 TopicItemsToRender 的深拷贝
-    const newTopicItems = [...TopicItemsToRender];
-    // 交换 from 和 to 的位置
-    const [removed] = newTopicItems.splice(from, 1);
-    newTopicItems.splice(to, 0, removed);
+      // 通过 newTopicItems 生成新的 order
+      const newOrder = {} as Record<number, number>;
+      newTopicItems.forEach((topic, index) => {
+        newOrder[topic.id] = index;
+      });
 
-    // 通过 newTopicItems 生成新的 order
-    const newOrder = {} as Record<number, number>;
-    newTopicItems.forEach((topic, index) => {
-      newOrder[topic.id] = index;
-    });
+      // 更新 topicSetting
+      const newSetting = {
+        ...topicSetting,
+        order: newOrder,
+      };
 
-    // 更新 topicSetting
-    const newSetting = {
-      ...topicSetting,
-      order: newOrder,
-    }
-
-    updateTopicSetting(newSetting);
-  }, [TopicItemsToRender, topicSetting, updateTopicSetting]);
+      updateTopicSetting(newSetting);
+    },
+    [TopicItemsToRender, topicSetting, updateTopicSetting]
+  );
 
   const handleScrollUp = useCallback(() => {
     if (HotBoardRef.current) {
-      HotBoardRef.current.scrollBy({top: -500, behavior: 'smooth'});
+      HotBoardRef.current.scrollBy({ top: -500, behavior: 'smooth' });
     }
   }, []);
 
   const handleScrollDown = useCallback(() => {
     if (HotBoardRef.current) {
-      HotBoardRef.current.scrollBy({top: 500, behavior: 'smooth'});
+      HotBoardRef.current.scrollBy({ top: 500, behavior: 'smooth' });
     }
   }, []);
 
-
   const renderHotBoard = useMemo(() => {
-    return (
-      TopicItemsToRender.filter(topic => topic.enable).map((topic, i) => <HotBoard
+    return TopicItemsToRender.filter((topic) => topic.enable).map((topic, i) => (
+      <HotBoard
         index={i}
         title={topic.name}
         key={topic.id}
         keyword={keyword}
         {...topic}
         onOpenFrame={handleOpenLink}
-
         onFocus={setFocus}
         isFocus={focus === topic.id}
         colSpan={focus === topic.id ? 2 : undefined}
         rowSpan={focus === topic.id ? 2 : undefined}
-
         show={!exclude.includes(topic.id)}
         onMoveItem={handleItemMove}
         onToggleShow={handleToggleShow}
-      />)
-    )
-  }, [TopicItemsToRender, keyword, handleOpenLink, focus, exclude, handleItemMove, handleToggleShow])
-
+      />
+    ));
+  }, [TopicItemsToRender, keyword, handleOpenLink, focus, exclude, handleItemMove, handleToggleShow]);
 
   useEffect(() => {
     get();
@@ -156,33 +160,31 @@ export default function MainBoard(props: MainBoardProps) {
       const newSetting = {
         ...topicSetting,
         order: newOrder,
-      }
+      };
       updateTopicSetting(newSetting);
     }
   }, [TopicItemsToRender, items, topicSetting, updateTopicSetting]);
 
   return (
-    // 使用 grid 布局将 HotBoard 和 UserBoard 放在一起
-    <div
-      className={'grid grid-cols-5 pt-16 h-full main-board'}
+    <motion.div
+      className="grid grid-cols-1 md:grid-cols-4 pt-16 h-full main-board"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
     >
-      <div
-        className={'relative col-span-5 md:col-span-4 h-full hot-board-wrapper'}
+      <motion.div
+        className="relative col-span-1 md:col-span-3 h-full hot-board-wrapper"
+        initial={{ x: -20 }}
+        animate={{ x: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
       >
         <div
           ref={HotBoardRef}
-          className={
-            'relative grid grid-cols-1  gap-6 p-4   ' +
-            'sm:grid-cols-2 ' +
-            'md:grid-cols-2 ' +
-            'lg:grid-cols-3 ' +
-            'xl:grid-cols-5 ' +
-            'h-full ' +
-            'overflow-y-auto'
-          }
+          className="relative grid grid-cols-1 gap-4 sm:gap-6 p-2 sm:p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 h-full overflow-y-auto"
           style={{
             height: 'calc(100vh - 4rem)',
             overflowY: 'scroll',
+            scrollBehavior: 'smooth',
           }}
         >
           {renderHotBoard}
@@ -191,23 +193,36 @@ export default function MainBoard(props: MainBoardProps) {
           onScrollUp={handleScrollUp}
           onScrollDown={handleScrollDown}
         />
-      </div>
+      </motion.div>
 
-
-      <div
-        className={
-          'hidden md:block col-span-1 pl-0 pr-4 pt-4 pb-4 h-full ' +
-          'gap-6 overflow-y-scroll relative'
-        }
+      <motion.div
+        className="hidden md:block col-span-1 pl-0 pr-2 sm:pr-4 pt-2 sm:pt-4 pb-2 sm:pb-4 h-full gap-4 sm:gap-6 overflow-y-scroll relative"
+        initial={{ x: 20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.4 }}
+        style={{ scrollBehavior: 'smooth' }}
       >
-        <UserBoard/>
-      </div>
+        <UserBoard />
+      </motion.div>
 
+      {openedLink && (
+        <LinkFrame
+          url={openedLink}
+          onClose={() => setOpenedLink('')}
+          title={'Opened Link'}
+        />
+      )}
 
-      {
-        openedLink && <LinkFrame url={openedLink} onClose={() => setOpenedLink('')} title={'Opened Link'}/>
-      }
-      <BrowserFingerprint/>
-    </div>
-  )
+      {modalVisible && (
+        <UserModal
+          visible={modalVisible}
+          onClose={hideModal}
+          onLogin={handleModalSuccess}
+          onRegister={handleModalSuccess}
+          defaultType={modalType}
+        />
+      )}
+      <BrowserFingerprint />
+    </motion.div>
+  );
 }

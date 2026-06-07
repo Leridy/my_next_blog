@@ -1,18 +1,18 @@
-import { Button, ButtonProps, message, Tooltip } from "antd";
-import useApi from "@/app/manage/hooks/useApi";
-import { HotSpider } from "@prisma/client";
-import { useCallback, useEffect, useMemo } from "react";
-import { NetworkError } from "@/http";
-import BrandIcon from "@/Components/MainBoard/HotBoard/BrandIcon";
-import { useRouter } from "next/navigation";
-import CommonStatisticCard from "./CommonStatisticCard";
-import MyPieChart from "./MyPieChart";
+import { Button, ButtonProps, message, Tooltip } from 'antd';
+import useApi from '@/app/manage/hooks/useApi';
+import { HotSpider } from '@prisma/client';
+import { useCallback, useEffect, useMemo } from 'react';
+import { NetworkError } from '@/http';
+import BrandIcon from '@/Components/MainBoard/HotBoard/BrandIcon';
+import { useRouter } from 'next/navigation';
+import CommonStatisticCard from './CommonStatisticCard';
+import MyPieChart from './MyPieChart';
 
 const headers = {
-  "x-no-cache": "true",
+  'x-no-cache': 'true',
 };
 
-const buttonColors: ButtonProps["color"][] = ["default", "primary", "danger"];
+const buttonColors: ButtonProps['color'][] = ['default', 'primary', 'danger'];
 
 export default function SpiderStatisticBoard() {
   const router = useRouter();
@@ -21,61 +21,54 @@ export default function SpiderStatisticBoard() {
     items: spiders,
     loading,
   } = useApi<HotSpider>({
-    apiURL: "spider",
+    apiURL: 'spider',
     headers,
   });
 
   const { get: triggerSpiderRefresh, loading: triggerLoading } = useApi({
-    apiURL: "spider/trigger",
+    apiURL: 'spider/trigger',
     headers: {
-      "x-ignore-error": "true",
-      "x-no-cache": "true",
+      'x-ignore-error': 'true',
+      'x-no-cache': 'true',
     },
   });
 
-  const {
-    oldestSpider,
-    hourlyCount,
-    dailyCount,
-    outdatedCount,
-    hourlyRate,
-    dailyRate,
-    halfHourlyCount,
-    quarterlyCount,
-    oldestSpiderLastUpdate,
-  } = useMemo(() => {
+  const { oldestSpider, hourlyCount, dailyCount, outdatedCount, hourlyRate, dailyRate, halfHourlyCount, quarterlyCount, oldestSpiderLastUpdate } = useMemo(() => {
     const now = new Date().getTime();
 
     // 计算各时间段的爬虫数量
-    const counts = spiders.reduce((acc, spider) => {
-      const diff = now - new Date(spider.updatedAt).getTime();
+    const counts = spiders.reduce(
+      (acc, spider) => {
+        const diff = now - new Date(spider.updatedAt).getTime();
 
-      if (diff < 1000 * 60 * 60) {
-        acc.hourly++;
-      } else if (diff < 1000 * 60 * 60 * 6) {
-        acc.halfHourly++;
-      } else if (diff < 1000 * 60 * 60 * 12) {
-        acc.quarterly++;
-      } else if (diff < 1000 * 60 * 60 * 24) {
-        acc.daily++;
-      } else {
-        acc.outdated++;
+        if (diff < 1000 * 60 * 60) {
+          acc.hourly++;
+        } else if (diff < 1000 * 60 * 60 * 6) {
+          acc.halfHourly++;
+        } else if (diff < 1000 * 60 * 60 * 12) {
+          acc.quarterly++;
+        } else if (diff < 1000 * 60 * 60 * 24) {
+          acc.daily++;
+        } else {
+          acc.outdated++;
+        }
+
+        // 追踪最旧的爬虫
+        if (!acc.oldest || diff > now - new Date(acc.oldest.updatedAt).getTime()) {
+          acc.oldest = spider;
+        }
+
+        return acc;
+      },
+      {
+        hourly: 0,
+        daily: 0,
+        outdated: 0,
+        halfHourly: 0,
+        quarterly: 0,
+        oldest: null as HotSpider | null,
       }
-
-      // 追踪最旧的爬虫
-      if (!acc.oldest || diff > now - new Date(acc.oldest.updatedAt).getTime()) {
-        acc.oldest = spider;
-      }
-
-      return acc;
-    }, {
-      hourly: 0,
-      daily: 0,
-      outdated: 0,
-      halfHourly: 0,
-      quarterly: 0,
-      oldest: null as HotSpider | null
-    });
+    );
 
     const total = spiders.length;
 
@@ -93,7 +86,7 @@ export default function SpiderStatisticBoard() {
   }, [spiders]);
 
   const handleManage = useCallback(() => {
-    router.push("/manage/hot/spider");
+    router.push('/manage/hot/spider');
   }, [router]);
 
   const handleRefresh = useCallback(
@@ -101,9 +94,9 @@ export default function SpiderStatisticBoard() {
       try {
         // @ts-expect-error name is ok
         await triggerSpiderRefresh({ name });
-        message.success("更新成功");
+        message.success('更新成功');
       } catch (e) {
-        message.error((e as NetworkError).message);
+        message.error((e as NetworkError).bizMessage);
       } finally {
         getSpiders();
       }
@@ -131,7 +124,7 @@ export default function SpiderStatisticBoard() {
         >
           <Button
             color={color}
-            variant={"outlined"}
+            variant={'outlined'}
             onClick={() => handleRefresh(spider.name)}
             disabled={triggerLoading}
           >
@@ -149,7 +142,7 @@ export default function SpiderStatisticBoard() {
 
   return (
     <CommonStatisticCard
-      title={"爬虫状态概览"}
+      title={'爬虫状态概览'}
       loading={loading || triggerLoading}
       onRefresh={() => {
         getSpiders();
@@ -161,22 +154,22 @@ export default function SpiderStatisticBoard() {
           <span className="text-gray-600 text-sm">最久未更新</span>
           <div className="flex items-center mt-2">
             {oldestSpider && <BrandIcon src={oldestSpider.name} />}
-            <span className="text-xl font-bold">
-              {oldestSpider?.name || "-"}
-            </span>
+            <span className="text-xl font-bold">{oldestSpider?.name || '-'}</span>
           </div>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">{oldestSpider?.name} 上次更新时间</span>
           <span className="text-xl font-bold mt-2">
-            {oldestSpiderLastUpdate?.updatedAt ? new Date(oldestSpiderLastUpdate.updatedAt).toLocaleDateString('zh-CN', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            }) : "-"}
+            {oldestSpiderLastUpdate?.updatedAt
+              ? new Date(oldestSpiderLastUpdate.updatedAt).toLocaleDateString('zh-CN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : '-'}
           </span>
         </div>
 
@@ -193,52 +186,52 @@ export default function SpiderStatisticBoard() {
 
       <div
         style={{
-          width: "100%",
-          display: "flex",
-          minHeight: "200px",
-          flexWrap: "wrap",
-          marginBottom: "1rem",
+          width: '100%',
+          display: 'flex',
+          minHeight: '200px',
+          flexWrap: 'wrap',
+          marginBottom: '1rem',
         }}
       >
         <MyPieChart
           style={{
-            height: "200px",
-            width: "100%",
+            height: '200px',
+            width: '100%',
           }}
           options={{
             series: [
               {
-                type: "pie",
-                radius: "70%",
+                type: 'pie',
+                radius: '70%',
                 label: {
                   show: true,
-                  formatter: "{b}: {c} ({d}%)",
+                  formatter: '{b}: {c} ({d}%)',
                 },
                 avoidLabelOverlap: false,
                 itemStyle: {
                   borderRadius: 5,
-                  borderColor: "#fff",
+                  borderColor: '#fff',
                   borderWidth: 2,
                 },
                 data: [
                   {
-                    name: "1小时内更新",
+                    name: '1小时内更新',
                     value: hourlyCount,
                   },
                   {
-                    name: "6小时内更新",
+                    name: '6小时内更新',
                     value: halfHourlyCount,
                   },
                   {
-                    name: "12小时内更新",
+                    name: '12小时内更新',
                     value: quarterlyCount,
                   },
                   {
-                    name: "24小时内更新",
+                    name: '24小时内更新',
                     value: dailyCount,
                   },
                   {
-                    name: "超过24小时未更新",
+                    name: '超过24小时未更新',
                     value: outdatedCount,
                   },
                 ],
@@ -249,9 +242,9 @@ export default function SpiderStatisticBoard() {
       </div>
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill ,minmax(100px, 1fr))",
-          gap: "8px",
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill ,minmax(100px, 1fr))',
+          gap: '8px',
         }}
       >
         {renderTags}

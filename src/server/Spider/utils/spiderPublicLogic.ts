@@ -1,11 +1,11 @@
-import {MyNRError} from "@/utils/MyNRError";
-import {HotNews, HotSpider, setting} from "@prisma/client";
-import SpiderDao from "@/server/db/dao/spider.dao";
-import {getSetting, updateSetting} from "@/server/Spider/utils/setting.cache";
-import SettingDao from "@/server/db/dao/setting.dao";
-import NewsDao from "@/server/db/dao/news.dao";
+import { MyNRError } from '@/utils/MyNRError';
+import { HotNews, HotSpider, setting } from '@prisma/client';
+import SpiderDao from '@/server/db/dao/spider.dao';
+import { getSetting, updateSetting } from '@/server/Spider/utils/setting.cache';
+import SettingDao from '@/server/db/dao/setting.dao';
+import NewsDao from '@/server/db/dao/news.dao';
 
-const isProd = process.env.CURRENT_ENV === 'production';
+const isProd = true; // process.env.CURRENT_ENV === 'production';
 
 const SITE_SETTING_KEY = 'Spider';
 
@@ -16,7 +16,10 @@ async function getSpiderSetting() {
   if (settings) {
     return settings;
   } else {
-    const settingsData = await SettingDao.get({key: SITE_SETTING_KEY, role: '2'});
+    const settingsData = await SettingDao.get({
+      key: SITE_SETTING_KEY,
+      role: '2',
+    });
     const settingsMap = new Map<string, setting>();
     if (Array.isArray(settingsData) && settingsData.length > 0) {
       settingsData.forEach((item) => {
@@ -34,7 +37,10 @@ async function getSpiderSetting() {
  */
 async function getSpiderIdAndUpdateTime(SPIDER_INFO: Pick<HotSpider, 'name' | 'description'>): Promise<Pick<HotSpider, 'updatedAt' | 'id'>> {
   // get spider id from database
-  const spiderResult = await SpiderDao.get({name: SPIDER_INFO.name, description: SPIDER_INFO.description});
+  const spiderResult = await SpiderDao.get({
+    name: SPIDER_INFO.name,
+    description: SPIDER_INFO.description,
+  });
   let spiderInfo: HotSpider | null = null;
 
   // if a spider result is array, get the first one
@@ -47,21 +53,20 @@ async function getSpiderIdAndUpdateTime(SPIDER_INFO: Pick<HotSpider, 'name' | 'd
   if (spiderInfo !== null) {
     return {
       id: spiderInfo.id,
-      updatedAt: spiderInfo.updatedAt
-    }
+      updatedAt: spiderInfo.updatedAt,
+    };
   } else {
     // create spider info
     const result = await SpiderDao.create(SPIDER_INFO);
     return {
       id: result.id,
-      updatedAt: result.updatedAt
-    }
+      updatedAt: result.updatedAt,
+    };
   }
 }
 
-
 export async function spiderPublicLogic(SPIDER_INFO: Pick<HotSpider, 'name' | 'description'>) {
-  const {updatedAt, id} = await getSpiderIdAndUpdateTime(SPIDER_INFO);
+  const { updatedAt, id } = await getSpiderIdAndUpdateTime(SPIDER_INFO);
   console.log(`spider ${SPIDER_INFO.name} with id ${id} start to working`);
 
   // check settings
@@ -72,14 +77,13 @@ export async function spiderPublicLogic(SPIDER_INFO: Pick<HotSpider, 'name' | 'd
   // 默认间隔一小时
   const interval: number = settings.get(`${SITE_SETTING_KEY}.interval`)?.value ? Number(settings.get(`${SITE_SETTING_KEY}.interval`)?.value) * 1000 * 60 : 1000 * 60 * 60;
 
-
   // 检查刷新间隔是否满足 interval
   if (Date.now() - new Date(updatedAt).getTime() < interval && isProd) {
     throw new MyNRError('刷新间隔未到', 403, {
       interval,
       updatedAt: new Date(updatedAt).getTime(),
-      now: Date.now()
-    })
+      now: Date.now(),
+    });
   } else {
     updateSetting(null);
   }
@@ -87,10 +91,9 @@ export async function spiderPublicLogic(SPIDER_INFO: Pick<HotSpider, 'name' | 'd
   return {
     settings,
     updatedAt,
-    id
-  }
+    id,
+  };
 }
-
 
 export async function updateSpiderUpdateTime(id: number) {
   console.log(`spider ${id} update time and work ends`);
@@ -105,7 +108,7 @@ export async function updateSpiderUpdateTime(id: number) {
 export async function checkAndOperateNews(data: Pick<HotNews, 'title' | 'uniqueId' | 'url' | 'image' | 'description'>[]) {
   // check if the news is already in database update or create
   const tasks = data.map(async (item) => {
-    const news = await NewsDao.get({uniqueId: item.uniqueId});
+    const news = await NewsDao.get({ uniqueId: item.uniqueId });
     try {
       if (Array.isArray(news) && news.length > 0) {
         return await NewsDao.update(news[0].id, item);
@@ -115,10 +118,9 @@ export async function checkAndOperateNews(data: Pick<HotNews, 'title' | 'uniqueI
     } catch (e) {
       throw new MyNRError('数据更新/创建失败', 500, {
         data: item,
-        originError: e
+        originError: e,
       });
     }
-
   });
 
   return await Promise.all(tasks);

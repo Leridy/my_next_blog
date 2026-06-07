@@ -1,6 +1,6 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface WoshipmDataStructure {
   controlTypeCode: number;
@@ -47,9 +47,9 @@ interface WoshipmResponse {
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'woshipm',
   description: 'woshipm 爬虫',
-}
+};
 
-const URL_GENERATOR = () => `https://www.woshipm.com/api2/app/article/popular/daily`
+const URL_GENERATOR = () => `https://www.woshipm.com/api2/app/article/popular/daily`;
 
 async function getData(): Promise<WoshipmResponse> {
   const url = URL_GENERATOR();
@@ -59,15 +59,8 @@ async function getData(): Promise<WoshipmResponse> {
 function dataTransformer(data: WoshipmDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId' | 'hotCount' | 'tags'>[] {
   return data.map((item) => {
     const {
-      data: {
-        articleTitle,
-        articleSummary,
-        id,
-        imageUrl,
-        tag,
-        articleAuthor,
-      },
-      scores
+      data: { articleTitle, articleSummary, id, imageUrl, tag, articleAuthor },
+      scores,
     } = item;
 
     const tags = tag.split(' ').filter(Boolean);
@@ -80,8 +73,8 @@ function dataTransformer(data: WoshipmDataStructure[], spiderId: number): Pick<H
       uniqueId: `woshipm-${id}`,
       spiderId,
       hotCount: scores || 0,
-      tags: Array.from(new Set([...tags, articleAuthor]))
-    }
+      tags: Array.from(new Set([...tags, articleAuthor])),
+    };
 
     return transformedItem;
   });
@@ -91,7 +84,7 @@ function dataTransformer(data: WoshipmDataStructure[], spiderId: number): Pick<H
  * main logic of getData from woshipm
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   // 获取人人都是产品经理数据
   const rawData = await getData();

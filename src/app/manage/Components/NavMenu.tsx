@@ -1,8 +1,8 @@
 'use client';
-import {Menu, MenuProps} from "antd";
-import {DashboardOutlined, LineChartOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
-import {usePathname, useRouter} from "next/navigation";
-import {useMemo} from "react";
+import { Menu, MenuProps } from 'antd';
+import { DashboardOutlined, LineChartOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { usePathname, useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 
 const navMenuItems: MenuProps['items'] = [
   {
@@ -14,20 +14,19 @@ const navMenuItems: MenuProps['items'] = [
   {
     key: 'hot',
     label: '热榜管理',
-    icon: <LineChartOutlined/>,
+    icon: <LineChartOutlined />,
   },
   {
     key: 'user',
     label: '用户管理',
-    icon: <UserOutlined/>
+    icon: <UserOutlined />,
   },
   {
     key: 'setting',
     label: '设置',
-    icon: <SettingOutlined/>
+    icon: <SettingOutlined />,
   },
-
-]
+];
 
 export default function NavMenu() {
   // use route
@@ -37,21 +36,21 @@ export default function NavMenu() {
     const splitPath = pathname?.split('/');
     const currentPath = splitPath?.length || 0 >= 3 ? splitPath?.[2] || '' : '/';
     return [currentPath];
-  }, [pathname])
+  }, [pathname]);
 
-  const handleClick = (e :{key:string}) => {
+  const handleClick = (e: { key: string }) => {
     router.push(`/manage/${e?.key}`);
   };
 
   return (
     <Menu
       onClick={handleClick}
-      className={"ml-10"}
+      className={'ml-10'}
       theme="dark"
       mode="horizontal"
       selectedKeys={selectedKeys}
       items={navMenuItems}
-      style={{flex: 1, minWidth: 0}}
+      style={{ flex: 1, minWidth: 0 }}
     />
-  )
+  );
 }

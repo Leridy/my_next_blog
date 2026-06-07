@@ -1,7 +1,6 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
-
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface ToutiaoDataStructure {
   ClusterId: number;
@@ -16,9 +15,9 @@ interface ToutiaoDataStructure {
     url: string;
     width: number;
     height: number;
-    url_list: { url: string }[]
+    url_list: { url: string }[];
     image_type: number;
-  }
+  };
   ClusterIdStr: string;
   ClusterType: number;
   QueryWord: string;
@@ -27,21 +26,20 @@ interface ToutiaoDataStructure {
     url: string;
     width: number;
     height: number;
-    url_list: { url: string }[]
+    url_list: { url: string }[];
     image_type: number;
-  }
+  };
   LabelDesc: string;
 }
 
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'toutiao',
   description: 'toutiao 爬虫',
-}
+};
 
 const URL_GENERATOR = () => `https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc`;
 
-
-async function getData(): Promise<{data:ToutiaoDataStructure[]}> {
+async function getData(): Promise<{ data: ToutiaoDataStructure[] }> {
   const url = URL_GENERATOR();
   return await http.get(url, {});
 }
@@ -56,18 +54,16 @@ function dataTransformer(data: ToutiaoDataStructure[], spiderId: number): Pick<H
       uniqueId: `toutiao-${item.ClusterId}`,
       spiderId,
       hotCount: Number(item.HotValue),
-      tags: [item.LabelDesc || item.Label]
-    }
+      tags: [item.LabelDesc || item.Label],
+    };
   });
 }
-
 
 /**
  * main logic of getData from 36kr
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
-
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const requestedData = await getData();
 
@@ -82,8 +78,5 @@ export default async function main() {
   // // update spider update time
   await updateSpiderUpdateTime(id);
 
-
   return transformedData;
 }
-
-

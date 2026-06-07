@@ -1,8 +1,8 @@
-import CommonStatisticCard from "./CommonStatisticCard";
-import {useCallback, useEffect, useMemo} from "react";
-import useApi from "../hooks/useApi";
-import MyPieChart from "./MyPieChart";
-import {visitor} from "@prisma/client";
+import CommonStatisticCard from './CommonStatisticCard';
+import { useCallback, useEffect, useMemo } from 'react';
+import useApi from '../hooks/useApi';
+import MyPieChart from './MyPieChart';
+import { visitor } from '@prisma/client';
 
 export default function VisitorStatisticBoard() {
   // 模仿 HotStatisticBoard 实现 VisitorStatisticCard
@@ -15,7 +15,7 @@ export default function VisitorStatisticBoard() {
     totalVisitorCount: number;
     newVisitorCount: number;
   }>({
-    apiURL: "/statistic/visitor",
+    apiURL: '/statistic/visitor',
   });
 
   const {
@@ -26,7 +26,7 @@ export default function VisitorStatisticBoard() {
     todayVisitedCount: number;
     totalVisitedCount: number;
   }>({
-    apiURL: "/statistic/visitor",
+    apiURL: '/statistic/visitor',
   });
 
   const {
@@ -34,7 +34,7 @@ export default function VisitorStatisticBoard() {
     loading: visitorRankLoading,
     items: visitorRankList,
   } = useApi<visitor>({
-    apiURL: "/statistic/visitor/rank",
+    apiURL: '/statistic/visitor/rank',
   });
 
   const averagePagePerVisitor = useMemo(() => {
@@ -42,11 +42,11 @@ export default function VisitorStatisticBoard() {
     return Math.ceil((visitedCount?.todayVisitedCount || 0) / (visitorCount?.todayVisitorCount || 1));
   }, [visitorCount, visitedCount]);
   useEffect(() => {
-    getVisitorCount("count");
+    getVisitorCount('count');
   }, [getVisitorCount]);
 
   useEffect(() => {
-    getVisitedCount("visited");
+    getVisitedCount('visited');
   }, [getVisitedCount]);
 
   useEffect(() => {
@@ -54,14 +54,14 @@ export default function VisitorStatisticBoard() {
   }, [getVisitorRankList]);
 
   const handleRefresh = useCallback(() => {
-    getVisitorCount("count");
-    getVisitedCount("visited");
+    getVisitorCount('count');
+    getVisitedCount('visited');
     getVisitorRankList();
   }, [getVisitedCount, getVisitorCount, getVisitorRankList]);
 
   return (
     <CommonStatisticCard
-      title={"访客统计"}
+      title={'访客统计'}
       onRefresh={handleRefresh}
       loading={visitorLoading || visitedLoading || visitorRankLoading}
     >
@@ -83,8 +83,7 @@ export default function VisitorStatisticBoard() {
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
           <span className="text-gray-600 text-sm">今日访客平均次数</span>
-          <span
-            className="text-2xl font-bold mt-2">{averagePagePerVisitor}</span>
+          <span className="text-2xl font-bold mt-2">{averagePagePerVisitor}</span>
         </div>
 
         <div className="flex flex-col items-center p-4 rounded-lg bg-blue-50">
@@ -95,39 +94,37 @@ export default function VisitorStatisticBoard() {
 
       <div
         style={{
-          width: "100%",
-          display: "flex",
-          minHeight: "200px",
-          flexWrap: "wrap",
+          width: '100%',
+          display: 'flex',
+          minHeight: '200px',
+          flexWrap: 'wrap',
         }}
       >
         <MyPieChart
           style={{
-            height: "200px",
-            width: "50%",
+            height: '200px',
+            width: '50%',
           }}
           options={{
             series: [
               {
-                type: "pie",
-                radius: "70%",
+                type: 'pie',
+                radius: '70%',
                 label: {
                   show: true,
-                  formatter: "{b}: {c} ({d}%)",
+                  formatter: '{b}: {c} ({d}%)',
                 },
                 avoidLabelOverlap: false,
                 itemStyle: {
                   borderRadius: 5,
-                  borderColor: "#fff",
+                  borderColor: '#fff',
                   borderWidth: 2,
                 },
                 data: [
-                  {name: "今日访客", value: visitorCount?.todayVisitorCount},
+                  { name: '今日访客', value: visitorCount?.todayVisitorCount },
                   {
-                    name: "历史访客",
-                    value:
-                      (visitorCount?.totalVisitorCount || 0) -
-                      (visitorCount?.todayVisitorCount || 0),
+                    name: '历史访客',
+                    value: (visitorCount?.totalVisitorCount || 0) - (visitorCount?.todayVisitorCount || 0),
                   },
                 ],
               },
@@ -137,34 +134,32 @@ export default function VisitorStatisticBoard() {
 
         <MyPieChart
           style={{
-            height: "200px",
-            width: "50%",
+            height: '200px',
+            width: '50%',
           }}
           options={{
             series: [
               {
-                type: "pie",
-                radius: "70%",
+                type: 'pie',
+                radius: '70%',
                 label: {
                   show: true,
-                  formatter: "{b}: {c} ({d}%)",
+                  formatter: '{b}: {c} ({d}%)',
                 },
                 avoidLabelOverlap: false,
                 itemStyle: {
                   borderRadius: 5,
-                  borderColor: "#fff",
+                  borderColor: '#fff',
                   borderWidth: 2,
                 },
                 data: [
                   {
-                    name: "今日访问次数",
+                    name: '今日访问次数',
                     value: visitedCount?.todayVisitedCount,
                   },
                   {
-                    name: "历史访问次数",
-                    value:
-                      (visitedCount?.totalVisitedCount || 0) -
-                      (visitedCount?.todayVisitedCount || 0),
+                    name: '历史访问次数',
+                    value: (visitedCount?.totalVisitedCount || 0) - (visitedCount?.todayVisitedCount || 0),
                   },
                 ],
               },
@@ -178,19 +173,17 @@ export default function VisitorStatisticBoard() {
       <div className="max-h-[200px] overflow-auto">
         {visitorRankList.map((item, index) => {
           return (
-            <div key={index} className={"flex justify-between items-center"}>
-
+            <div
+              key={index}
+              className={'flex justify-between items-center'}
+            >
               <a
                 href={`https://www.ip138.com/iplookup.php?ip=${item.ip}&action=2`}
-                target={"_blank"}
-                rel={"noreferrer"}
-                className={" hover:underline flex"}
+                target={'_blank'}
+                rel={'noreferrer'}
+                className={' hover:underline flex'}
               >
-                <span
-                  className={` w-6 flex items-center justify-center text-sm `}
-                >
-                  {index + 1}.
-                </span>
+                <span className={` w-6 flex items-center justify-center text-sm `}>{index + 1}.</span>
                 {item.ip} - {item.browserSign}
               </a>
               <span>{item.todayCount}</span>

@@ -1,18 +1,18 @@
 import * as echarts from 'echarts/core';
-import {useEffect, useRef} from "react";
-import {TooltipComponent, LegendComponent} from 'echarts/components';
-import {PieChart} from 'echarts/charts';
-import {LabelLayout} from 'echarts/features';
-import {CanvasRenderer} from 'echarts/renderers';
-import {EChartsOption, ECharts} from "echarts";
+import { useEffect, useRef } from 'react';
+import { TooltipComponent, LegendComponent } from 'echarts/components';
+import { PieChart } from 'echarts/charts';
+import { LabelLayout } from 'echarts/features';
+import { CanvasRenderer } from 'echarts/renderers';
+import { EChartsOption, ECharts } from 'echarts';
 
 const defaultOption = {
   tooltip: {
-    trigger: 'item'
+    trigger: 'item',
   },
   legend: {
     top: '5%',
-    left: 'center'
+    left: 'center',
   },
   series: [
     {
@@ -23,33 +23,27 @@ const defaultOption = {
       itemStyle: {
         borderRadius: 5,
         borderColor: '#fff',
-        borderWidth: 2
+        borderWidth: 2,
       },
       label: {
         show: false,
-        position: 'center'
+        position: 'center',
       },
       emphasis: {
         label: {
           show: true,
           fontSize: 40,
-          fontWeight: 'bold'
-        }
+          fontWeight: 'bold',
+        },
       },
       labelLine: {
-        show: false
+        show: false,
       },
-    }
-  ]
+    },
+  ],
 };
 
-echarts.use([
-  TooltipComponent,
-  LegendComponent,
-  PieChart,
-  CanvasRenderer,
-  LabelLayout
-]);
+echarts.use([TooltipComponent, LegendComponent, PieChart, CanvasRenderer, LabelLayout]);
 
 interface MyPieChartProps<T> {
   options?: EChartsOption;
@@ -58,10 +52,9 @@ interface MyPieChartProps<T> {
 }
 
 export default function MyPieChart<T>(props: MyPieChartProps<T>) {
-  const {options, data, style} = props;
+  const { options, data, style } = props;
   const ref = useRef(null);
   const myChart = useRef<ECharts | null>(null);
-
 
   useEffect(() => {
     // init chart
@@ -81,11 +74,11 @@ export default function MyPieChart<T>(props: MyPieChartProps<T>) {
     if (!myChart.current || !data) return;
     myChart.current.appendData({
       seriesIndex: 0,
-      data
-    })
+      data,
+    });
     return () => {
       if (myChart.current) myChart.current.dispose();
-    }
+    };
   }, [data]);
 
   return (
@@ -93,5 +86,5 @@ export default function MyPieChart<T>(props: MyPieChartProps<T>) {
       style={style}
       ref={ref}
     />
-  )
+  );
 }

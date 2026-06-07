@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 const requestHandler = (request: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
   // 在 headers 里面添加 user-agent the request possibly undefined
@@ -10,9 +10,9 @@ const requestHandler = (request: InternalAxiosRequestConfig): InternalAxiosReque
   request.headers['Accept-Language'] = 'zh-CN,zh;q=0.8,en;q=0.6';
 
   return request;
-}
+};
 
-const responseHandler = (response: AxiosResponse): AxiosResponse["data"] => {
+const responseHandler = (response: AxiosResponse): AxiosResponse['data'] => {
   // add response handler
   /**
    * if response status code starts with 2, return response.data
@@ -23,13 +23,12 @@ const responseHandler = (response: AxiosResponse): AxiosResponse["data"] => {
   } else if (response.status.toString().startsWith('2') && response.config.headers['return-raw']) {
     return response;
   }
-
-}
+};
 
 const errorHandler = (error: AxiosError) => {
   // add error handler
   throw error;
-}
+};
 
 // create an axios instance with handler above
 const instance = axios.create({});

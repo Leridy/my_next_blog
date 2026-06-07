@@ -1,20 +1,19 @@
-import hotDao from "@/server/db/dao/hot.dao";
-import {HotTopic} from "@prisma/client";
+import hotDao from '@/server/db/dao/hot.dao';
+import { HotTopic } from '@prisma/client';
 import * as Yup from 'yup';
-import {NextRequest, NextResponse} from "next/server";
-import {readableStreamToJSON} from "@/utils/readableStreamToJSON";
-import {APIErrorHandler, MyNRError} from "@/utils/MyNRError";
+import { NextRequest, NextResponse } from 'next/server';
+import { readableStreamToJSON } from '@/utils/readableStreamToJSON';
+import { APIErrorHandler, MyNRError } from '@/utils/MyNRError';
 
-
-async function get(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+async function get(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // 从 req 中获取 headers 的 'x-no-cache'
   // 如果为 true 则不设置缓存头
-  const {headers} = req;
+  const { headers } = req;
   const noCache = headers.get('x-no-cache') === 'true';
   const originQuery = Object.fromEntries(req.nextUrl.searchParams.entries());
-  const id = (await params).id
+  const id = (await params).id;
   let data: HotTopic[] | HotTopic | null = null;
-  const query: Partial<HotTopic> = id ? {id: Number(id)} : originQuery;
+  const query: Partial<HotTopic> = id ? { id: Number(id) } : originQuery;
 
   if ('enable' in query) {
     query.enable = originQuery.enable === 'true';
@@ -22,63 +21,68 @@ async function get(req: NextRequest, {params}: { params: Promise<{ id: string }>
 
   data = await hotDao.get(query);
 
-  if (!data) throw new MyNRError('你寻找的热门栏目不存在', 404, {
-    id, query,
-  });
+  if (!data)
+    throw new MyNRError('你寻找的热门栏目不存在', 404, {
+      id,
+      query,
+    });
 
   const shouldCache = data && Array.isArray(data) && data.length === 0;
 
   return NextResponse.json(data, {
     status: 200,
     // 添加缓存头
-    headers: noCache || shouldCache ? {} : {
-      'Cache-Control': 'public, max-age=600',
-      'last-modified': new Date().toUTCString(),
-    }
+    headers:
+      noCache || shouldCache
+        ? {}
+        : {
+            'Cache-Control': 'public, max-age=600',
+            'last-modified': new Date().toUTCString(),
+          },
   });
 }
-
 
 async function post(req: NextRequest) {
   const schema = Yup.object().shape({
     name: Yup.string().required(),
     url: Yup.string().required(),
-  })
-
+  });
 
   const data = await readableStreamToJSON<Omit<HotTopic, 'newsList' | 'id'>>(req.body);
-  if (typeof data !== 'object') throw new MyNRError('无效数据', 401, {data});
+  if (typeof data !== 'object') throw new MyNRError('无效数据', 401, { data });
   await schema.validate(data);
   const result = await hotDao.create(data);
-  return NextResponse.json(result, {status: 200});
+  return NextResponse.json(result, { status: 200 });
 }
 
-async function put(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+async function put(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const schema = Yup.object().shape({
     name: Yup.string().required(),
     url: Yup.string().required(),
-  })
+  });
   const pathname = req.nextUrl.pathname;
   const id = (await params).id;
   const data = await readableStreamToJSON<Omit<HotTopic, 'newsList' | 'id'>>(req.body);
-  if (typeof data !== 'object') throw new MyNRError('无效数据', 401, {data});
+  if (typeof data !== 'object') throw new MyNRError('无效数据', 401, { data });
   await schema.validateSync(data);
-  if (!id) throw new MyNRError('无效的 id', 401, {id, request: {body: data, pathname}});
+  if (!id)
+    throw new MyNRError('无效的 id', 401, {
+      id,
+      request: { body: data, pathname },
+    });
   const result = await hotDao.update(id, data);
-  return NextResponse.json(result, {status: 200});
+  return NextResponse.json(result, { status: 200 });
 }
 
-async function del(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+async function del(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const pathname = req.nextUrl.pathname;
   const id = (await params).id;
-  if (!id) throw new MyNRError('无效的 id', 401, {id, request: {pathname}});
+  if (!id) throw new MyNRError('无效的 id', 401, { id, request: { pathname } });
   const result = await hotDao.del(id);
-  return NextResponse.json(result, {status: 200});
+  return NextResponse.json(result, { status: 200 });
 }
 
 export const GET = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, get);
 export const POST = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, post);
 export const PUT = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, put);
 export const DELETE = (req: NextRequest, res: NextResponse) => APIErrorHandler(req, res, del);
-
-

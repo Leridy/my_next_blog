@@ -1,5 +1,5 @@
-import axios, {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
-import {notification} from "antd";
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { notification } from 'antd';
 
 const requestHandler = (request: InternalAxiosRequestConfig) => {
   // add jwt token to request header
@@ -8,9 +8,9 @@ const requestHandler = (request: InternalAxiosRequestConfig) => {
     request.headers['Authorization'] = `${token}`;
   }
   return request;
-}
+};
 
-const responseHandler = (response: AxiosResponse): AxiosResponse["data"] => {
+const responseHandler = (response: AxiosResponse): AxiosResponse['data'] => {
   // add response handler
   /**
    * if response status code starts with 2, return response.
@@ -20,13 +20,12 @@ const responseHandler = (response: AxiosResponse): AxiosResponse["data"] => {
   if (response.status.toString().startsWith('2')) {
     return response.data;
   }
-
-}
+};
 
 const errorHandler = (error: AxiosError) => {
   // add error handler
   throw axiosErrorToNetworkError(error);
-}
+};
 
 // create an axios instance with handler above
 const instance = axios.create({
@@ -37,7 +36,6 @@ instance.interceptors.request.use(requestHandler);
 instance.interceptors.response.use(responseHandler, errorHandler);
 
 export default instance;
-
 
 /**
  * 定义一个自己的 网络错误 error 类
@@ -65,9 +63,9 @@ export class NetworkError extends Error {
 export function axiosErrorToNetworkError(error: AxiosError) {
   // convert error to network error
   const status = error.response?.status || 500;
-  const message = error.message;
   // @ts-expect-error error response may not exist
   const bizMessage = error.response?.data?.message;
+  const message = error.message;
   const extraData = error.response?.data;
 
   const newError = new NetworkError(message, status, bizMessage, extraData, error);
@@ -75,6 +73,12 @@ export function axiosErrorToNetworkError(error: AxiosError) {
   if (error.config?.headers?.['x-ignore-error']) throw newError;
 
   switch (status) {
+    case 400:
+      notification.error({
+        message: '请求错误',
+        description: newError.bizMessage || newError.message || '请求错误，请检查参数',
+      });
+      break;
     case 401:
       notification.error({
         message: '未登录',
@@ -108,8 +112,3 @@ export function axiosErrorToNetworkError(error: AxiosError) {
   }
   throw newError;
 }
-
-
-
-
-

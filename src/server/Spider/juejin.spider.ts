@@ -1,6 +1,6 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
 
 interface JuejinDataStructure {
   content: {
@@ -23,13 +23,13 @@ interface JuejinDataStructure {
     hot_rank: number; // 热榜排名
     comment_count: number; // 评论数
     interest_count: number; // 点赞数
-  }
+  };
   author: {
     user_id: string; // 用户id
     name: string; // 用户名
     avatar: string; // 头像
     is_followed: boolean; // 是否关注
-  }
+  };
   author_counter: {
     level: number; // 等级
     power: number; // 力量
@@ -38,15 +38,16 @@ interface JuejinDataStructure {
     view: number; // 浏览数
     like: number; // 点赞数
     hot_rank: number; // 热榜排名
-  }
-  user_interact: { // 用户交互
+  };
+  user_interact: {
+    // 用户交互
     is_user_like: boolean; // 是否点赞
     is_user_collect: boolean; // 是否收藏
     is_follow: boolean; // 是否关注
-  }
+  };
 }
 
-interface JuejinResponse<T>{
+interface JuejinResponse<T> {
   err_no: number;
   err_msg: string;
   data: T[];
@@ -55,19 +56,18 @@ interface JuejinResponse<T>{
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'juejin',
   description: 'juejin 爬虫',
-}
+};
 
-const URL_GENERATOR = () => `https://api.juejin.cn/content_api/v1/content/article_rank?category_id=1&type=hot`
+const URL_GENERATOR = () => `https://api.juejin.cn/content_api/v1/content/article_rank?category_id=1&type=hot`;
 
-
-async function getData():Promise<JuejinResponse<JuejinDataStructure>> {
+async function getData(): Promise<JuejinResponse<JuejinDataStructure>> {
   const url = URL_GENERATOR();
-  return await http.get(url, {}) ;
+  return await http.get(url, {});
 }
 
 function dataTransformer(data: JuejinDataStructure[], spiderId: number): Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] {
   return data.map((item) => {
-    const {content_counter, author, content} = item;
+    const { content_counter, author, content } = item;
     return {
       title: content.title,
       description: content.brief || content.title,
@@ -76,19 +76,16 @@ function dataTransformer(data: JuejinDataStructure[], spiderId: number): Pick<Ho
       uniqueId: `juejin-${content.content_id}`,
       spiderId,
       hotCount: content_counter.like + content_counter.comment_count + content_counter.hot_rank,
-      tags: [author.name.length < 6 ? author.name : author.name.slice(0, 3) + '...']
-    }
+      tags: [author.name.length < 6 ? author.name : author.name.slice(0, 3) + '...'],
+    };
   });
 }
-
-
 
 /**
  * main logic of getData from 36kr
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
-
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const result = await getData();
 
@@ -99,8 +96,5 @@ export default async function main() {
   // // update spider update time
   await updateSpiderUpdateTime(id);
 
-
   return transformedData;
 }
-
-

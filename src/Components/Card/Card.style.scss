@@ -1,4 +1,4 @@
-@use "../../app/scss/animations.scss";
+@use '../../app/scss/animations.scss';
 
 .card {
   animation: slideIn ease-in-out 0.5s;
@@ -18,9 +18,4 @@
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
-
-
 }
-
-
-

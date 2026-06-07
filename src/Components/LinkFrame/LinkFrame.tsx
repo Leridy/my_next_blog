@@ -5,11 +5,9 @@ interface LinkFrameProps {
 }
 
 export default function LinkFrame(props: LinkFrameProps) {
-  const {url, title, onClose} = props;
+  const { url, title, onClose } = props;
   return (
-    <div
-        className={'fixed top-0 left-0 bg-white shadow-lg'}
-    >
+    <div className={'fixed top-0 left-0 bg-white shadow-lg'}>
       <nav>
         <h1>{title}</h1>
         <button onClick={onClose}>关闭</button>
@@ -26,6 +24,5 @@ export default function LinkFrame(props: LinkFrameProps) {
         }}
       />
     </div>
-
-  )
+  );
 }

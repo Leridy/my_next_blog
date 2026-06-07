@@ -1,8 +1,8 @@
-import http from "./http";
-import {HotNews, HotSpider} from "@prisma/client";
-import {checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime} from "@/server/Spider/utils/spiderPublicLogic";
-import getBiliWbi from "@/server/Spider/utils/getToken/bilibili";
-import {AxiosResponse} from "axios";
+import http from './http';
+import { HotNews, HotSpider } from '@prisma/client';
+import { checkAndOperateNews, spiderPublicLogic, updateSpiderUpdateTime } from '@/server/Spider/utils/spiderPublicLogic';
+import getBiliWbi from '@/server/Spider/utils/getToken/bilibili';
+import { AxiosResponse } from 'axios';
 
 interface BilibiliDataStructure1 {
   aid: number;
@@ -13,7 +13,7 @@ interface BilibiliDataStructure1 {
   copyright: number;
   pic: string;
   title: string;
-  pubdate: number;  // 发布时间
+  pubdate: number; // 发布时间
   ctime: number; // 创建时间
   desc: string;
   state: number;
@@ -32,12 +32,12 @@ interface BilibiliDataStructure1 {
     is_cooperation: number;
     ugc_pay_preview: number;
     no_background: number;
-  }
+  };
   owner: {
     mid: number;
     name: string;
     face: string;
-  }
+  };
   stat: {
     aid: number;
     view: number;
@@ -50,14 +50,14 @@ interface BilibiliDataStructure1 {
     his_rank: number;
     like: number;
     dislike: number;
-  }
+  };
   dynamic: string;
   cid: number;
   dimension: {
     width: number;
     height: number;
     rotate: number;
-  }
+  };
   short_link_v2: string;
   first_frame: string;
   pub_location: string;
@@ -81,22 +81,22 @@ interface BilibiliDataStructure2 {
   title: string;
   trend: null;
   video_review: number;
-  "rights": {
-    "bp": number;
-    "elec": number;
-    "download": number;
-    "movie": number;
-    "pay": number;
-    "hd5": number;
-    "no_reprint": number;
-    "autoplay": number;
-    "ugc_pay": number;
-    "is_cooperation": number;
-    "ugc_pay_preview": number;
-    "no_background": number;
-    "arc_pay": number;
-    "pay_free_watch": number;
-  }
+  rights: {
+    bp: number;
+    elec: number;
+    download: number;
+    movie: number;
+    pay: number;
+    hd5: number;
+    no_reprint: number;
+    autoplay: number;
+    ugc_pay: number;
+    is_cooperation: number;
+    ugc_pay_preview: number;
+    no_background: number;
+    arc_pay: number;
+    pay_free_watch: number;
+  };
 }
 
 interface BilibiliResponse<T> {
@@ -107,23 +107,21 @@ interface BilibiliResponse<T> {
 const SPIDER_INFO: Pick<HotSpider, 'name' | 'description'> = {
   name: 'bilibili',
   description: 'bilibili 爬虫',
-}
+};
 
-const URL_GENERATOR = (type: number, wbiData: string) => `https://api.bilibili.com/x/web-interface/ranking/v2?tid=${type}&type=all&${wbiData}`
-const URL_GENERATOR_BACKUP = (type: number) => `https://api.bilibili.com/x/web-interface/ranking?jsonp=jsonp?rid=${type}&type=1&callback=__jp0`
-
+const URL_GENERATOR = (type: number, wbiData: string) => `https://api.bilibili.com/x/web-interface/ranking/v2?tid=${type}&type=all&${wbiData}`;
+const URL_GENERATOR_BACKUP = (type: number) => `https://api.bilibili.com/x/web-interface/ranking?jsonp=jsonp?rid=${type}&type=1&callback=__jp0`;
 
 const HTTP_CONFIG = {
   method: 'GET',
   headers: {
     Referer: 'https://www.bilibili.com/ranking/all',
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
   },
-}
+};
 
 const ListType = {
-  "全站": 0,
+  全站: 0,
   // "动画" = 1,
   // "音乐" = 3,
   // "游戏" = 4,
@@ -135,18 +133,20 @@ const ListType = {
   // "生活" = 160,
   // "时尚" = 155,
   // "影视" = 181,
-}
+};
 
-async function getData(type: typeof ListType[keyof typeof ListType] = 0, spiderId: number) {
+async function getData(type: (typeof ListType)[keyof typeof ListType] = 0, spiderId: number) {
   const wbiData = await getBiliWbi();
   const url = URL_GENERATOR(type, wbiData);
   const backupUrl = URL_GENERATOR_BACKUP(type);
-  let res:AxiosResponse<BilibiliResponse<BilibiliDataStructure1>> | AxiosResponse<BilibiliResponse<BilibiliDataStructure2>> = await http.get<BilibiliResponse<BilibiliDataStructure1>>(url, {headers: HTTP_CONFIG.headers});
+  let res: AxiosResponse<BilibiliResponse<BilibiliDataStructure1>> | AxiosResponse<BilibiliResponse<BilibiliDataStructure2>> = await http.get<BilibiliResponse<BilibiliDataStructure1>>(url, { headers: HTTP_CONFIG.headers });
 
   let finalData: Pick<HotNews, 'title' | 'url' | 'description' | 'image' | 'spiderId' | 'uniqueId'>[] = [];
 
   if (!Array.isArray(res.data?.list)) {
-    res = await http.get<BilibiliResponse<BilibiliDataStructure2>>(backupUrl, {headers: HTTP_CONFIG.headers});
+    res = await http.get<BilibiliResponse<BilibiliDataStructure2>>(backupUrl, {
+      headers: HTTP_CONFIG.headers,
+    });
     finalData = dataTransformer2(res.data.list, spiderId);
   } else {
     finalData = dataTransformer1(res.data.list, spiderId);
@@ -165,8 +165,8 @@ function dataTransformer1(data: BilibiliDataStructure1[], spiderId: number): Pic
       uniqueId: `bilibili-${item.aid}`,
       spiderId,
       hotCount: item?.stat?.like || item.state,
-      tags: [item.tname]
-    }
+      tags: [item.tname],
+    };
   });
 }
 
@@ -181,8 +181,8 @@ function dataTransformer2(data: BilibiliDataStructure2[], spiderId: number): Pic
       uniqueId: `bilibili-${item.aid}`,
       spiderId,
       hotCount: item.play,
-      tags: [item.author]
-    }
+      tags: [item.author],
+    };
   });
 }
 
@@ -192,16 +192,14 @@ function mergeTypeData<T>(data: T[][]): T[] {
   }, [] as T[]);
 }
 
-
 /**
  * main logic of getData from 36kr
  */
 export default async function main() {
-  const {id} = await spiderPublicLogic(SPIDER_INFO);
-
+  const { id } = await spiderPublicLogic(SPIDER_INFO);
 
   const tasks = Object.keys(ListType).map(async (key) => {
-    const type = ListType[key as keyof typeof ListType]
+    const type = ListType[key as keyof typeof ListType];
     return await getData(type, id);
   });
 
@@ -209,13 +207,9 @@ export default async function main() {
 
   const transformedData = mergeTypeData(requestedData);
 
-
   // // data transform to your own format
   await checkAndOperateNews(transformedData);
   await updateSpiderUpdateTime(id);
 
-
   return transformedData;
 }
-
-
